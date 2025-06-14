@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from 'next/navigation';
+import agentsData from '@/data/agents.json';
+import personasData from '@/data/personas.json';
+import companiesData from '@/data/companies.json';
 import { ChatInput } from "./ChatInput";
 import { SuggestionChip } from "./SuggestionChip";
 import { CsvUploadArea } from "./CsvUploadArea";
@@ -77,48 +80,7 @@ const workflowSteps = [
   { label: "Find contacts", icon: "👥" },
 ];
 
-const researchStrategies: ResearchStrategy[] = [
-  {
-    id: "hiring",
-    icon: "🏢",
-    title: "Hiring Trend Analysis",
-    description: "Uncover growth signals and organizational changes through hiring patterns",
-    agents: [
-      {
-        id: "marketing-hiring",
-        title: "Marketing Personas Hiring?",
-        description: "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
-        researchQuestion: "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
-        questionType: "Boolean",
-        sources: ["Company Career Page"]
-      },
-      {
-        id: "data-hiring",
-        title: "Data Team Hiring?",
-        description: "Identify companies building or expanding their data teams"
-      },
-      {
-        id: "leadership-changes",
-        title: "High Impact Leadership Changes",
-        description: "Identify companies with recent leadership changes that suggest data infrastructure evaluation timing"
-      }
-    ]
-  },
-  {
-    id: "news",
-    icon: "📰",
-    title: "Company News & Events",
-    description: "Track major announcements, leadership changes, and strategic initiatives",
-    agents: []
-  },
-  {
-    id: "tech",
-    icon: "🔧",
-    title: "Tech & Product Insights",
-    description: "Analyze technical infrastructure and integration complexity",
-    agents: []
-  }
-];
+const researchStrategies = agentsData.categories;
 
 // Persona options for contact finding
 const personaOptions: ResearchStrategy[] = [
@@ -146,44 +108,7 @@ const personaOptions: ResearchStrategy[] = [
 ];
 
 // Detailed persona options for the grid
-const detailedPersonas: Persona[] = [
-  {
-    id: "strategic-marketing-executive",
-    icon: "👔",
-    title: "Strategic Marketing Executive",
-    description: "Senior marketing executive responsible for overall marketing strategy, brand positioning, and executive-level decision making across the organization."
-  },
-  {
-    id: "growth-marketing-leader",
-    icon: "🚀",
-    title: "Growth Marketing Leader",
-    description: "Revenue-focused marketing leader responsible for customer acquisition, growth experiments, and scaling marketing programs to drive measurable business impact."
-  },
-  {
-    id: "demand-generation-manager",
-    icon: "📊",
-    title: "Demand Generation Manager",
-    description: "Marketing specialist focused on creating qualified leads and building pipeline through targeted campaigns across digital channels and events."
-  },
-  {
-    id: "customer-lifecycle-manager",
-    icon: "🔄",
-    title: "Customer Lifecycle Marketing Manager",
-    description: "Marketing professional focused on customer retention, lifecycle automation, and post-purchase experience optimization to maximize customer value."
-  },
-  {
-    id: "marketing-operations-manager",
-    icon: "⚙️",
-    title: "Marketing Operations Manager",
-    description: "Operations specialist responsible for marketing processes, campaign execution workflows, and performance measurement across marketing functions."
-  },
-  {
-    id: "marketing-technology-manager",
-    icon: "🛠️",
-    title: "Marketing Technology Manager",
-    description: "Technology specialist responsible for marketing tech stack management, system integrations, and data analytics infrastructure across marketing tools."
-  }
-];
+const detailedPersonas = personasData.personas;
 
 const agentActions: AgentAction[] = [
   { icon: "🧪", label: "Test Agent", value: "test" },
@@ -199,113 +124,9 @@ const personaActions: PersonaAction[] = [
 
 console.log('Available persona actions:', personaActions);
 
-// Mock qualification results - exactly 3 qualified, 5 not qualified
-const mockQualificationResults: QualificationResult[] = [
-  {
-    companyName: "Stripe",
-    qualified: true,
-    website: "stripe.com",
-    industry: "FinTech",
-    hqCountry: "United States",
-    employeeCount: "5000+"
-  },
-  {
-    companyName: "Notion",
-    qualified: true,
-    website: "notion.so",
-    industry: "Productivity Software",
-    hqCountry: "United States",
-    employeeCount: "1000+"
-  },
-  {
-    companyName: "Figma",
-    qualified: false,
-    website: "figma.com",
-    industry: "Design Software",
-    hqCountry: "United States",
-    employeeCount: "1000+"
-  },
-  {
-    companyName: "Vercel",
-    qualified: false,
-    website: "vercel.com",
-    industry: "Developer Tools",
-    hqCountry: "United States",
-    employeeCount: "500+"
-  },
-  {
-    companyName: "Linear",
-    qualified: false,
-    website: "linear.app",
-    industry: "Project Management",
-    hqCountry: "United States",
-    employeeCount: "100+"
-  },
-  {
-    companyName: "Supabase",
-    qualified: true,
-    website: "supabase.com",
-    industry: "Database",
-    hqCountry: "United States",
-    employeeCount: "100+"
-  },
-  {
-    companyName: "Loom",
-    qualified: false,
-    website: "loom.com",
-    industry: "Video Software",
-    hqCountry: "United States",
-    employeeCount: "500+"
-  },
-  {
-    companyName: "Retool",
-    qualified: false,
-    website: "retool.com",
-    industry: "Low-Code Platform",
-    hqCountry: "United States",
-    employeeCount: "500+"
-  }
-];
-
-// Mock qualified companies with research results
-const mockQualifiedCompanies: QualifiedCompanyWithResearch[] = [
-  {
-    companyName: "Stripe",
-    website: "stripe.com",
-    industry: "FinTech",
-    hqCountry: "United States",
-    employeeCount: "5000+",
-    totalFunding: "$600M",
-    estimatedAnnualRevenue: "$1B+",
-    hqCity: "San Francisco",
-    yearFounded: "2010",
-    researchResults: "Currently hiring Marketing Operations Manager and Senior Growth Marketing roles"
-  },
-  {
-    companyName: "Notion",
-    website: "notion.so",
-    industry: "Productivity Software",
-    hqCountry: "United States",
-    employeeCount: "1000+",
-    totalFunding: "$275M",
-    estimatedAnnualRevenue: "$500M",
-    hqCity: "San Francisco",
-    yearFounded: "2013",
-    researchResults: "3 open marketing leadership positions including VP Marketing"
-  },
-  {
-    companyName: "Supabase",
-    website: "supabase.com",
-    industry: "Database",
-    hqCountry: "United States",
-    employeeCount: "100+",
-    totalFunding: "$116M",
-    estimatedAnnualRevenue: "$50M",
-    hqCity: "San Francisco",
-    yearFounded: "2020",
-    researchResults: "Actively recruiting Marketing Operations and Digital Marketing specialists"
-  }
-];
+// Mock data for testing
+const mockQualifiedCompanies = companiesData.qualifiedCompanies;
+const mockQualificationResults = companiesData.qualificationResults;
 
 interface SelectedPersona {
   id: string;

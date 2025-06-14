@@ -1,0 +1,40 @@
+{
+  "personas": [
+    {
+      "id": "strategic-marketing-executive",
+      "icon": "👔",
+      "title": "Strategic Marketing Executive",
+      "description": "Senior marketing executive responsible for overall marketing strategy, brand positioning, and executive-level decision making across the organization."
+    },
+    {
+      "id": "growth-marketing-leader",
+      "icon": "🚀",
+      "title": "Growth Marketing Leader",
+      "description": "Revenue-focused marketing leader responsible for customer acquisition, growth experiments, and scaling marketing programs to drive measurable business impact."
+    },
+    {
+      "id": "demand-generation-manager",
+      "icon": "📊",
+      "title": "Demand Generation Manager",
+      "description": "Marketing specialist focused on creating qualified leads and building pipeline through targeted campaigns across digital channels and events."
+    },
+    {
+      "id": "customer-lifecycle-manager",
+      "icon": "🔄",
+      "title": "Customer Lifecycle Marketing Manager",
+      "description": "Marketing professional focused on customer retention, lifecycle automation, and post-purchase experience optimization to maximize customer value."
+    },
+    {
+      "id": "marketing-operations-manager",
+      "icon": "⚙️",
+      "title": "Marketing Operations Manager",
+      "description": "Operations specialist responsible for marketing processes, campaign execution workflows, and performance measurement across marketing functions."
+    },
+    {
+      "id": "marketing-technology-manager",
+      "icon": "🛠️",
+      "title": "Marketing Technology Manager",
+      "description": "Technology specialist responsible for marketing tech stack management, system integrations, and data analytics infrastructure across marketing tools."
+    }
+  ]
+} 

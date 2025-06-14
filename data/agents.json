@@ -1,0 +1,44 @@
+{
+  "categories": [
+    {
+      "id": "hiring",
+      "title": "Hiring Trend Analysis",
+      "icon": "🏢",
+      "description": "Uncover growth signals and organizational changes through hiring patterns",
+      "agents": [
+        {
+          "id": "marketing-hiring",
+          "title": "Marketing Personas Hiring?",
+          "description": "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
+          "researchQuestion": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+          "questionType": "Boolean",
+          "sources": ["Company Career Page"]
+        },
+        {
+          "id": "data-hiring",
+          "title": "Data Team Hiring?",
+          "description": "Identify companies building or expanding their data teams"
+        },
+        {
+          "id": "leadership-changes",
+          "title": "High Impact Leadership Changes",
+          "description": "Identify companies with recent leadership changes that suggest data infrastructure evaluation timing"
+        }
+      ]
+    },
+    {
+      "id": "news",
+      "icon": "📰",
+      "title": "Company News & Events",
+      "description": "Track major announcements, leadership changes, and strategic initiatives",
+      "agents": []
+    },
+    {
+      "id": "tech",
+      "icon": "🔧",
+      "title": "Tech & Product Insights",
+      "description": "Analyze technical infrastructure and integration complexity",
+      "agents": []
+    }
+  ]
+} 

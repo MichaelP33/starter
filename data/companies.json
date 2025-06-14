@@ -1,0 +1,118 @@
+{
+  "qualifiedCompanies": [
+    {
+      "companyName": "Stripe",
+      "website": "stripe.com",
+      "industry": "FinTech",
+      "hqCountry": "United States",
+      "employeeCount": "5000+",
+      "totalFunding": "$2.2B",
+      "estimatedAnnualRevenue": "$1B+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2010",
+      "researchResults": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Notion",
+      "website": "notion.so",
+      "industry": "Productivity Software",
+      "hqCountry": "United States",
+      "employeeCount": "500-1000",
+      "totalFunding": "$343M",
+      "estimatedAnnualRevenue": "$100M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2013",
+      "researchResults": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Figma",
+      "website": "figma.com",
+      "industry": "Design Software",
+      "hqCountry": "United States",
+      "employeeCount": "500-1000",
+      "totalFunding": "$333M",
+      "estimatedAnnualRevenue": "$100M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2012",
+      "researchResults": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "qualified": true,
+      "assignedPersonas": 0
+    }
+  ],
+  "qualificationResults": [
+    {
+      "companyName": "Stripe",
+      "website": "stripe.com",
+      "industry": "FinTech",
+      "hqCountry": "United States",
+      "employeeCount": "5000+",
+      "totalFunding": "$2.2B",
+      "estimatedAnnualRevenue": "$1B+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2010",
+      "researchResults": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Notion",
+      "website": "notion.so",
+      "industry": "Productivity Software",
+      "hqCountry": "United States",
+      "employeeCount": "500-1000",
+      "totalFunding": "$343M",
+      "estimatedAnnualRevenue": "$100M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2013",
+      "researchResults": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Figma",
+      "website": "figma.com",
+      "industry": "Design Software",
+      "hqCountry": "United States",
+      "employeeCount": "500-1000",
+      "totalFunding": "$333M",
+      "estimatedAnnualRevenue": "$100M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2012",
+      "researchResults": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Linear",
+      "website": "linear.app",
+      "industry": "Productivity Software",
+      "hqCountry": "United States",
+      "employeeCount": "50-200",
+      "totalFunding": "$35M",
+      "estimatedAnnualRevenue": "$10M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2019",
+      "researchResults": "Growing product team but limited marketing team expansion. May be too early stage.",
+      "qualified": false,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Vercel",
+      "website": "vercel.com",
+      "industry": "Developer Tools",
+      "hqCountry": "United States",
+      "employeeCount": "200-500",
+      "totalFunding": "$313M",
+      "estimatedAnnualRevenue": "$50M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2015",
+      "researchResults": "Strong technical focus with growing marketing team. Multiple open positions for marketing roles.",
+      "qualified": true,
+      "assignedPersonas": 0
+    }
+  ]
+} 
