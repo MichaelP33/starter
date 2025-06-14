@@ -113,6 +113,48 @@
       "researchResults": "Strong technical focus with growing marketing team. Multiple open positions for marketing roles.",
       "qualified": true,
       "assignedPersonas": 0
+    },
+    {
+      "companyName": "Supabase",
+      "website": "supabase.com",
+      "industry": "Developer Tools",
+      "hqCountry": "United States",
+      "employeeCount": "50-200",
+      "totalFunding": "$116M",
+      "estimatedAnnualRevenue": "$10M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2019",
+      "researchResults": "Fast-growing open source platform with expanding marketing team. Actively hiring for marketing roles.",
+      "qualified": true,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Loom",
+      "website": "loom.com",
+      "industry": "Productivity Software",
+      "hqCountry": "United States",
+      "employeeCount": "200-500",
+      "totalFunding": "$203M",
+      "estimatedAnnualRevenue": "$50M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2015",
+      "researchResults": "Strong growth in video communication space. Limited marketing team expansion currently.",
+      "qualified": false,
+      "assignedPersonas": 0
+    },
+    {
+      "companyName": "Retool",
+      "website": "retool.com",
+      "industry": "Developer Tools",
+      "hqCountry": "United States",
+      "employeeCount": "200-500",
+      "totalFunding": "$141M",
+      "estimatedAnnualRevenue": "$50M+",
+      "hqCity": "San Francisco",
+      "yearFounded": "2017",
+      "researchResults": "Growing developer platform with focus on technical marketing. Limited marketing team expansion.",
+      "qualified": false,
+      "assignedPersonas": 0
     }
   ]
 } 
