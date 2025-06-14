@@ -62,6 +62,8 @@ export interface QualificationResult {
 
 export interface QualifiedCompanyWithResearch extends Account {
   researchResults: string;
+  qualified: boolean;
+  assignedPersonas: number;
 }
 
 interface FullQualificationResult extends QualificationResult {
@@ -79,4 +81,5 @@ export interface PersonaAction {
   icon: string;
   label: string;
   value: string;
+  onClick?: () => void;
 }

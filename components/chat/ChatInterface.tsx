@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { ChatInput } from "./ChatInput";
 import { SuggestionChip } from "./SuggestionChip";
 import { CsvUploadArea } from "./CsvUploadArea";
@@ -193,8 +194,10 @@ const agentActions: AgentAction[] = [
 const personaActions: PersonaAction[] = [
   { icon: "🧪", label: "Test Personas", value: "test" },
   { icon: "✏️", label: "Modify Personas", value: "modify" },
-  { icon: "➕", label: "Add to Campaign", value: "add" }
+  { icon: "🚀", label: "Launch Campaign", value: "launch" }
 ];
+
+console.log('Available persona actions:', personaActions);
 
 // Mock qualification results - exactly 3 qualified, 5 not qualified
 const mockQualificationResults: QualificationResult[] = [
@@ -311,6 +314,7 @@ interface SelectedPersona {
 }
 
 export function ChatInterface() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>("initial");
   const [workflowStep, setWorkflowStep] = useState(1);
   const [customizationStage, setCustomizationStage] = useState<'customize' | 'confirm'>('customize');
@@ -485,10 +489,20 @@ export function ChatInterface() {
   };
 
   const handleContinueToCampaign = () => {
+    console.log('handleContinueToCampaign called');
     console.log("Continue to campaign with personas:", selectedPersonas);
+    router.push('/inbox');
   };
 
   const handlePersonaAction = (action: PersonaAction) => {
+    console.log('handlePersonaAction called with:', action);
+    console.log('Action value:', action.value);
+    
+    if (action.value === "launch") {
+      console.log('Launch case triggered');
+      alert('Launch action working!');
+    }
+    
     if (action.value === "modify") {
       setIsPersonaModifyMode(true);
       setShowPersonaTestResults(false);
@@ -505,7 +519,6 @@ export function ChatInterface() {
         setShowPersonaTestResults(true);
       }, 3500);
     }
-    console.log("Persona action:", action);
   };
 
   const handlePersonaModificationSave = () => {
@@ -652,8 +665,32 @@ export function ChatInterface() {
     );
   };
 
+  // Helper function to get available persona actions based on state
+  const getPersonaActions = () => {
+    const baseActions = [
+      { icon: "🧪", label: "Test Personas", value: "test" },
+      { icon: "✏️", label: "Modify Personas", value: "modify" }
+    ];
+
+    // Add Launch Campaign action when in multi-persona selection mode
+    if (showMultiPersonaSelection && selectedPersonas.length > 0) {
+      baseActions.push({
+        icon: "🚀",
+        label: "Launch Campaign",
+        value: "launch"
+      });
+    }
+    
+    console.log('Available persona actions:', baseActions);
+    console.log('Each action:', baseActions.map(action => ({ value: action.value, label: action.label })));
+    
+    return baseActions;
+  };
+
   // Helper function to render persona action chips
   const renderPersonaActionChip = (action: PersonaAction) => {
+    console.log('Rendering chip for action:', action.value, action.label);
+    
     let isActive = false;
     
     // Determine if this action is currently active
@@ -666,7 +703,16 @@ export function ChatInterface() {
     return (
       <Button
         key={action.value}
-        onClick={() => handlePersonaAction(action)}
+        onClick={() => {
+          if (action.value === "launch" && showMultiPersonaSelection) {
+            console.log('Correct Launch Campaign clicked');
+            alert('This is the right Launch Campaign button!');
+            // Eventually: router.push('/inbox');
+          } else {
+            console.log('Chip clicked:', action.value);
+            handlePersonaAction(action);
+          }
+        }}
         variant={isActive ? "default" : "outline"}
         className={`rounded-full text-sm font-medium py-2 px-4 h-auto transition-colors duration-200 shadow-sm ${
           isActive
@@ -699,15 +745,32 @@ export function ChatInterface() {
                 <>
                   <div className="space-y-3">
                     <h2 className="text-lg font-medium text-primary">
-                      Great! You've selected {selectedPersonas.length} persona{selectedPersonas.length !== 1 ? 's' : ''}. Add more or test your targeting.
+                      Perfect! You have {selectedPersonas.length} persona{selectedPersonas.length !== 1 ? 's' : ''} selected. Add more personas or launch your campaign.
                     </h2>
                     <p className="text-muted-foreground">
-                      Step 3 of 3: Configure personas and targeting
+                      Step 3 of 3: Launch targeted outreach
                     </p>
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    {personaActions.map(renderPersonaActionChip)}
+                    <button
+                      onClick={() => {
+                        // Scroll to the "Add another persona type" section
+                        const addPersonaSection = document.querySelector('[data-section="add-persona"]');
+                        if (addPersonaSection) {
+                          addPersonaSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+                    >
+                      ➕ Add More Personas
+                    </button>
+                    <button
+                      onClick={handleContinueToCampaign}
+                      className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+                    >
+                      🚀 Launch Campaign
+                    </button>
                   </div>
 
                   <div className="pt-4">
@@ -730,7 +793,7 @@ export function ChatInterface() {
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    {personaActions.map(renderPersonaActionChip)}
+                    {getPersonaActions().map(renderPersonaActionChip)}
                   </div>
 
                   <div className="pt-4">
