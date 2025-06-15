@@ -17,6 +17,7 @@ interface MultiPersonaSelectionCardProps {
   onEditPersona: (persona: SelectedPersona) => void;
   onRemovePersona: (personaId: string) => void;
   onBuildPersona: (persona: Persona) => void;
+  onContinueToCampaign: () => void;
 }
 
 export function MultiPersonaSelectionCard({
@@ -25,6 +26,7 @@ export function MultiPersonaSelectionCard({
   onEditPersona,
   onRemovePersona,
   onBuildPersona,
+  onContinueToCampaign,
 }: MultiPersonaSelectionCardProps) {
   const isPersonaSelected = (personaId: string) => {
     return selectedPersonas.some(p => p.id === personaId);
@@ -153,6 +155,16 @@ export function MultiPersonaSelectionCard({
                 );
               })}
             </div>
+          </div>
+
+          {/* Continue to Campaign Button */}
+          <div className="pt-4 border-t border-gray-200">
+            <Button 
+              onClick={onContinueToCampaign}
+              className="w-full bg-[#6366f1] hover:bg-[#6366f1]/90 text-white h-12 text-base font-medium"
+            >
+              Continue to Campaign
+            </Button>
           </div>
         </div>
       </div>

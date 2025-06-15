@@ -1,4 +1,11 @@
-export type Step = 'initial' | 'uploading' | 'customizing' | 'researching' | 'agent-details' | 'find-contacts';
+export type Step = 
+  | "initial"
+  | "uploading"
+  | "customizing"
+  | "researching"
+  | "agent-details"
+  | "find-contacts"
+  | "campaign";
 
 export interface Account {
   companyName: string;
@@ -30,11 +37,23 @@ export interface ResearchStrategy {
 
 export interface Agent {
   id: string;
+  categoryId: string;
   title: string;
   description: string;
-  researchQuestion?: string;
-  questionType?: string;
-  sources?: string[];
+  researchQuestion: string;
+  questionType: QuestionType;
+  sources: string[];
+  sourcesByQuestionType?: {
+    Boolean: string[];
+    Number: string[];
+    Picklist: string[];
+  };
+  rewriteTemplates?: {
+    Boolean: string;
+    Number: string;
+    Picklist: string;
+  };
+  availableQuestionTypes?: QuestionType[];
 }
 
 export interface AgentAction {
@@ -43,7 +62,7 @@ export interface AgentAction {
   value: string;
 }
 
-export type QuestionType = 'Boolean' | 'Number' | 'Picklist' | 'Percentage' | 'Currency';
+export type QuestionType = 'Boolean' | 'Number' | 'Picklist';
 
 export interface SourceOption {
   id: string;
@@ -60,10 +79,71 @@ export interface QualificationResult {
   employeeCount: string;
 }
 
-export interface QualifiedCompanyWithResearch extends Account {
-  researchResults: string;
+export interface SelectedPersona {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface AgentResult {
+  companyId: string;
+  companyName: string;
+  industry: string;
+  employeeCount: string;
+  hqCountry: string;
+  hqState: string | null;
+  hqCity: string;
+  website: string;
+  totalFunding: string;
+  estimatedAnnualRevenue: string;
   qualified: boolean;
-  assignedPersonas: number;
+  confidence: number;
+  confidenceScore: number;
+  whyQualified: string;
+  evidence: Array<{
+    type: string;
+    title: string;
+    description: string;
+    confidence: number;
+    source: string;
+  }>;
+  researchDate: string;
+  agentId: string;
+  agentName: string;
+  researchSummary: string;
+  dataSources: string[];
+  yearFounded: number;
+}
+
+export interface QualifiedCompanyWithResearch extends AgentResult {
+  researchResults: {
+    summary: string;
+    sources: string[];
+  };
+  assignedPersonas: string[];
+  hqCity: string;
+  yearFounded: number;
+}
+
+export interface PersonaTestResult {
+  id: string;
+  contactName: string;
+  contactTitle: string;
+  email: string;
+  linkedinProfile: string;
+  personaMatch: string;
+  matchScore: number;
+  companyId: string;
+  companyName: string;
+}
+
+export interface MultiPersonaSelectionCardProps {
+  selectedPersonas: SelectedPersona[];
+  availablePersonas: Persona[];
+  onEditPersona: (persona: SelectedPersona) => void;
+  onRemovePersona: (personaId: string) => void;
+  onBuildPersona: (persona: Persona) => void;
+  onContinueToCampaign: () => void;
 }
 
 interface FullQualificationResult extends QualificationResult {
@@ -82,4 +162,20 @@ export interface PersonaAction {
   label: string;
   value: string;
   onClick?: () => void;
+}
+
+export interface Company {
+  id: string;
+  companyName: string;
+  website: string;
+  industry: string;
+  employeeCount: string;
+  employeeCountNumeric: number;
+  hqCountry: string;
+  hqCity: string;
+  hqState: string | null;
+  totalFunding: string;
+  estimatedAnnualRevenue: string;
+  yearFounded: number;
+  tags: string[];
 }

@@ -5,7 +5,13 @@ import { ResearchStrategy } from "./types";
 import { cn } from "@/lib/utils";
 
 interface ResearchStrategyCardProps {
-  strategy: ResearchStrategy;
+  strategy: {
+    id: string;
+    icon: string;
+    title: string;
+    description: string;
+    agents: any[];
+  };
   isSelected: boolean;
   onClick: () => void;
 }

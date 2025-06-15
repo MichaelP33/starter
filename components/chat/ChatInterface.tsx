@@ -1,10 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import agentsData from '@/data/agents.json';
-import personasData from '@/data/personas.json';
-import companiesData from '@/data/companies.json';
+import { useDataConfig } from '@/hooks/useDataConfig';
+import { ResultsGenerator } from '@/utils/ResultsGenerator';
+import { ContactGenerator } from '@/utils/ContactGenerator';
+import { 
+  Agent, 
+  AgentResult, 
+  Persona, 
+  SelectedPersona, 
+  Step,
+  Account,
+  EnrichmentOption,
+  ResearchStrategy,
+  AgentAction,
+  QualificationResult,
+  QualifiedCompanyWithResearch,
+  PersonaAction,
+  PersonaTestResult
+} from './types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { ChatInput } from "./ChatInput";
 import { SuggestionChip } from "./SuggestionChip";
 import { CsvUploadArea } from "./CsvUploadArea";
@@ -13,24 +32,34 @@ import { AccountTable } from "./AccountTable";
 import { QualifiedCompaniesTable } from "./QualifiedCompaniesTable";
 import { ResearchStrategyCard } from "./ResearchStrategyCard";
 import { AgentCard } from "./AgentCard";
-import { AgentDetails } from "./AgentDetails";
 import { KoalaLoadingIndicator } from "./KoalaLoadingIndicator";
 import { QualificationResultsTable } from "./QualificationResultsTable";
 import { PersonaCard } from "./PersonaCard";
 import { PersonaConfigurationModal } from "./PersonaConfigurationModal";
 import { PersonaConfigurationCard } from "./PersonaConfigurationCard";
 import { PersonaModificationCard } from "./PersonaModificationCard";
-import { PersonaTestResultsTable, mockPersonaResults } from "./PersonaTestResultsTable";
+import { PersonaTestResultsTable } from "./PersonaTestResultsTable";
 import { MultiPersonaSelectionCard } from "./MultiPersonaSelectionCard";
 import { motion } from "framer-motion";
-import { Step, Account, EnrichmentOption, ResearchStrategy, Agent, AgentAction, QualificationResult, QualifiedCompanyWithResearch, Persona, PersonaAction } from "./types";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import AgentDetails from "./AgentDetails";
 
 interface Suggestion {
+  title: string;
+  description: string;
   icon: string;
-  label: string;
-  value: string;
+  onClick: () => void;
+}
+
+interface GeneratedContact {
+  id: string;
+  name: string;
+  title: string;
+  email: string;
+  linkedin: string;
+  personaMatch: string;
+  matchScore: number;
+  companyId: string;
+  companyName: string;
 }
 
 const containerVariants = {
@@ -80,8 +109,6 @@ const workflowSteps = [
   { label: "Find contacts", icon: "👥" },
 ];
 
-const researchStrategies = agentsData.categories;
-
 // Persona options for contact finding
 const personaOptions: ResearchStrategy[] = [
   {
@@ -107,9 +134,6 @@ const personaOptions: ResearchStrategy[] = [
   }
 ];
 
-// Detailed persona options for the grid
-const detailedPersonas = personasData.personas;
-
 const agentActions: AgentAction[] = [
   { icon: "🧪", label: "Test Agent", value: "test" },
   { icon: "✏️", label: "Modify Agent", value: "modify" },
@@ -124,18 +148,18 @@ const personaActions: PersonaAction[] = [
 
 console.log('Available persona actions:', personaActions);
 
-// Mock data for testing
-const mockQualifiedCompanies = companiesData.qualifiedCompanies;
-const mockQualificationResults = companiesData.qualificationResults;
-
-interface SelectedPersona {
-  id: string;
-  title: string;
-  description: string;
-}
+// Create a test component
+const AgentDetailsTest = ({ agent }: { agent: any }) => (
+  <div>Testing: {agent?.title}</div>
+);
 
 export function ChatInterface() {
   const router = useRouter();
+  const { companies, agents, personas, isLoadingCompanies, isLoadingAgents, isLoadingPersonas, hasError, errors } = useDataConfig();
+  
+  // State hooks
+  const [resultsGenerator, setResultsGenerator] = useState<ResultsGenerator | null>(null);
+  const [contactGenerator, setContactGenerator] = useState<ContactGenerator | null>(null);
   const [currentStep, setCurrentStep] = useState<Step>("initial");
   const [workflowStep, setWorkflowStep] = useState(1);
   const [customizationStage, setCustomizationStage] = useState<'customize' | 'confirm'>('customize');
@@ -158,22 +182,144 @@ export function ChatInterface() {
   const [message, setMessage] = useState("");
   const [uploadedAccounts, setUploadedAccounts] = useState<Account[]>([]);
   const [enrichmentOptions, setEnrichmentOptions] = useState<EnrichmentOption[]>(initialEnrichmentOptions);
+  const [qualificationResults, setQualificationResults] = useState<AgentResult[]>([]);
+  const [qualifiedCompanies, setQualifiedCompanies] = useState<QualifiedCompanyWithResearch[]>([]);
+  const [personaTestResults, setPersonaTestResults] = useState<PersonaTestResult[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+
+  // Group agents by category
+  const agentsByCategory = agents?.reduce((acc, agent) => {
+    const categoryId = agent.categoryId || 'other';
+    if (!acc[categoryId]) acc[categoryId] = [];
+    acc[categoryId].push(agent);
+    return acc;
+  }, {} as Record<string, Agent[]>);
+
+  // Create category display data
+  const categories = [
+    { 
+      id: 'hiring', 
+      title: 'Hiring Trend Analysis', 
+      icon: '🏢',
+      description: 'Uncover growth signals and organizational changes through hiring patterns',
+      agents: agentsByCategory?.['hiring'] || []
+    },
+    { 
+      id: 'news', 
+      title: 'Company News & Events', 
+      icon: '📰',
+      description: 'Track major announcements, leadership changes, and strategic initiatives',
+      agents: agentsByCategory?.['news'] || []
+    },
+    { 
+      id: 'tech', 
+      title: 'Tech & Product Insights', 
+      icon: '🔧',
+      description: 'Analyze technical infrastructure and integration complexity',
+      agents: agentsByCategory?.['tech'] || []
+    }
+  ];
+
+  // Add diagnostic logging
+  console.log('🔍 ChatInterface Data Loading:', {
+    companies: companies?.length || 0,
+    agents: agents?.length || 0, 
+    personas: personas?.length || 0,
+    isLoading: {
+      companies: isLoadingCompanies,
+      agents: isLoadingAgents,
+      personas: isLoadingPersonas
+    },
+    hasError,
+    errors,
+    firstAgent: agents?.[0]?.title || 'none',
+    firstCompany: companies?.[0]?.companyName || 'none'
+  });
+
+  // Initialize generators
+  useEffect(() => {
+    if (companies.length > 0 && agents.length > 0) {
+      setResultsGenerator(new ResultsGenerator(companies, agents));
+    }
+    if (companies.length > 0 && personas.length > 0) {
+      setContactGenerator(new ContactGenerator(companies, personas));
+    }
+  }, [companies, agents, personas]);
+
+  // Loading state
+  if (isLoadingCompanies || isLoadingAgents || isLoadingPersonas) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+          <div className="space-y-2">
+            <p className="text-lg font-medium">Loading data...</p>
+            <div className="flex gap-4 justify-center text-sm text-muted-foreground">
+              <span className={isLoadingCompanies ? "animate-pulse" : ""}>
+                Companies {isLoadingCompanies ? "..." : "✓"}
+              </span>
+              <span className={isLoadingAgents ? "animate-pulse" : ""}>
+                Agents {isLoadingAgents ? "..." : "✓"}
+              </span>
+              <span className={isLoadingPersonas ? "animate-pulse" : ""}>
+                Personas {isLoadingPersonas ? "..." : "✓"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (hasError) {
+    return (
+      <div className="space-y-4">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error loading data</AlertTitle>
+          <AlertDescription>
+            <div className="space-y-2">
+              {errors.companies && (
+                <div>Companies: {errors.companies.message}</div>
+              )}
+              {errors.agents && (
+                <div>Agents: {errors.agents.message}</div>
+              )}
+              {errors.personas && (
+                <div>Personas: {errors.personas.message}</div>
+              )}
+            </div>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   const suggestions: Suggestion[] = [
     {
+      title: "Upload CSV of target accounts",
+      description: "I'd like to upload a CSV of my target accounts.",
       icon: "📤",
-      label: "Upload CSV of target accounts",
-      value: "I'd like to upload a CSV of my target accounts.",
+      onClick: () => {
+        setCurrentStep("uploading");
+      },
     },
     {
+      title: "Create lookalike list from existing customers",
+      description: "I want to create a lookalike list from my existing customers.",
       icon: "👥",
-      label: "Create lookalike list from existing customers",
-      value: "I want to create a lookalike list from my existing customers.",
+      onClick: () => {
+        handleSend("I want to create a lookalike list from my existing customers.");
+      },
     },
     {
+      title: "Describe my ideal customer profile",
+      description: "I want to describe my ideal customer profile.",
       icon: "🎯",
-      label: "Describe my ideal customer profile",
-      value: "I want to describe my ideal customer profile.",
+      onClick: () => {
+        handleSend("I want to describe my ideal customer profile.");
+      },
     },
   ];
 
@@ -183,10 +329,10 @@ export function ChatInterface() {
   };
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
-    if (suggestion.label === "Upload CSV of target accounts") {
+    if (suggestion.title === "Upload CSV of target accounts") {
       setCurrentStep("uploading");
     } else {
-      handleSend(suggestion.value);
+      handleSend(suggestion.description);
     }
   };
 
@@ -212,6 +358,7 @@ export function ChatInterface() {
   };
 
   const handleBuildAgent = (agent: Agent) => {
+    console.log('Selected agent details:', agent);
     setSelectedAgent(agent);
     setIsAgentEditMode(false);
     setShowTestResults(false);
@@ -219,27 +366,47 @@ export function ChatInterface() {
     setCurrentStep("agent-details");
   };
 
-  const handleAgentAction = (action: AgentAction) => {
-    if (action.value === "modify") {
+  const handleAgentAction = async (action: string, agent: Agent | null) => {
+    if (!agent) return;
+    
+    if (action === 'test') {
+      console.log('🧪 TESTING AGENT DEBUG:');
+      console.log('Selected agent:', {
+        id: agent.id,
+        title: agent.title,
+        categoryId: agent.categoryId,
+        questionType: agent.questionType,
+        researchQuestion: agent.researchQuestion
+      });
+      console.log('Agent ID format check:', {
+        hasHyphens: agent.id.includes('-'),
+        hasUnderscores: agent.id.includes('_'),
+        length: agent.id.length,
+        rawId: agent.id
+      });
+      
+      setIsTestingAgent(true);
+      console.log('🔍 Testing agent:', {
+        agentId: agent.id,
+        agentTitle: agent.title,
+        agentType: typeof agent.id
+      });
+      const results = resultsGenerator?.generateResults(agent.id);
+      if (results) {
+        setQualificationResults(results);
+        setTimeout(() => {
+          setIsTestingAgent(false);
+          setShowTestResults(true);
+        }, 4000);
+      }
+    } else if (action === 'modify') {
       setIsAgentEditMode(true);
       setShowTestResults(false);
       setShowFullResults(false);
-    } else if (action.value === "test") {
-      setIsTestingAgent(true);
-      setIsAgentEditMode(false);
-      setShowTestResults(false);
-      setShowFullResults(false);
-      // Simulate testing for exactly 4 seconds
-      setTimeout(() => {
-        setIsTestingAgent(false);
-        setShowTestResults(true);
-      }, 4000);
-    } else if (action.value === "add") {
-      // Transition to Find contacts step
+    } else if (action === 'add') {
       setWorkflowStep(3);
       setCurrentStep("find-contacts");
       setActiveTab('qualified');
-      // Reset persona states to show category selection first
       setSelectedPersona(null);
       setSelectedPersonaCategoryId(null);
       setShowMultiPersonaSelection(false);
@@ -285,7 +452,7 @@ export function ChatInterface() {
     // Convert back to Persona type for editing
     const personaToEdit: Persona = {
       id: persona.id,
-      icon: detailedPersonas.find(p => p.id === persona.id)?.icon || "👔",
+      icon: personas.find(p => p.id === persona.id)?.icon || "👔",
       title: persona.title,
       description: persona.description
     };
@@ -302,17 +469,59 @@ export function ChatInterface() {
     setIsTestingPersonas(true);
     setShowPersonaTestResults(false);
     setShowMultiPersonaSelection(false);
-    // Simulate testing for exactly 3-4 seconds
-    setTimeout(() => {
-      setIsTestingPersonas(false);
-      setShowPersonaTestResults(true);
-    }, 3500);
+    
+    // Generate contacts using ContactGenerator
+    if (contactGenerator && qualifiedCompanies.length > 0) {
+      // Convert QualifiedCompanyWithResearch to Company for ContactGenerator
+      const companiesForContacts = qualifiedCompanies.map(qc => ({
+        id: qc.companyId,
+        companyName: qc.companyName,
+        industry: qc.industry,
+        employeeCount: qc.employeeCount,
+        hqCountry: qc.hqCountry,
+        hqState: qc.hqState,
+        website: qc.website,
+        totalFunding: qc.totalFunding,
+        estimatedAnnualRevenue: qc.estimatedAnnualRevenue,
+        employeeCountNumeric: parseInt(qc.employeeCount.replace(/,/g, '')),
+        hqCity: '',
+        yearFounded: parseInt(qc.yearFounded.toString()),
+        tags: []
+      }));
+
+      const contacts = contactGenerator.generateContactsForCompanies(
+        companiesForContacts,
+        selectedPersonas.length
+      );
+      
+      // Convert GeneratedContact to PersonaTestResult
+      const testResults = contacts.map(contact => ({
+        id: contact.id,
+        contactName: contact.name,
+        contactTitle: contact.title,
+        email: contact.email,
+        linkedinProfile: contact.linkedin,
+        personaMatch: contact.personaMatch,
+        matchScore: contact.matchScore,
+        companyId: contact.companyId,
+        companyName: contact.companyName
+      }));
+      
+      setPersonaTestResults(testResults);
+      
+      // Simulate testing for exactly 3-4 seconds
+      setTimeout(() => {
+        setIsTestingPersonas(false);
+        setShowPersonaTestResults(true);
+      }, 3500);
+    }
   };
 
   const handleContinueToCampaign = () => {
-    console.log('handleContinueToCampaign called');
-    console.log("Continue to campaign with personas:", selectedPersonas);
-    router.push('/inbox');
+    // Transition to campaign step
+    setWorkflowStep(4);
+    setCurrentStep("campaign");
+    setShowMultiPersonaSelection(false);
   };
 
   const handlePersonaAction = (action: PersonaAction) => {
@@ -469,10 +678,16 @@ export function ChatInterface() {
       isActive = true;
     }
 
+    console.log('Rendering action chip:', {
+      action: action.value,
+      isActive,
+      isAgentEditMode
+    });
+
     return (
       <Button
         key={action.value}
-        onClick={() => handleAgentAction(action)}
+        onClick={() => handleAgentAction(action.value, selectedAgent)}
         variant={isActive ? "default" : "outline"}
         className={`rounded-full text-sm font-medium py-2 px-4 h-auto transition-colors duration-200 shadow-sm ${
           isActive
@@ -547,9 +762,13 @@ export function ChatInterface() {
     );
   };
 
+  // Update mock data to use data from useDataConfig
+  const mockQualifiedCompanies = companies.filter(c => c.tags.includes('qualified')) || [];
+  const mockQualificationResults = qualificationResults;
+
   if (currentStep === "find-contacts") {
-    const qualifiedCount = mockQualifiedCompanies.length;
-    const totalCount = mockQualificationResults.length;
+    const qualifiedCount = qualifiedCompanies.length;
+    const totalCount = qualificationResults.length;
     
     return (
       <div className="flex flex-col w-full h-screen">
@@ -683,7 +902,7 @@ export function ChatInterface() {
                   <KoalaLoadingIndicator />
                   <div className="space-y-2">
                     <p className="text-lg font-medium text-gray-800 max-w-md">
-                      Testing Strategic Marketing Executive persona on a sample of your target list...
+                      Testing {selectedPersonas.length} personas on your qualified companies...
                     </p>
                     <p className="text-sm text-gray-600 max-w-md">
                       Finding contacts that match your persona criteria
@@ -693,7 +912,7 @@ export function ChatInterface() {
               </div>
             ) : showPersonaTestResults ? (
               <div className="p-8">
-                <PersonaTestResultsTable results={mockPersonaResults} />
+                <PersonaTestResultsTable results={personaTestResults} />
               </div>
             ) : isPersonaModifyMode && selectedPersona ? (
               <PersonaModificationCard 
@@ -704,11 +923,10 @@ export function ChatInterface() {
             ) : showMultiPersonaSelection ? (
               <MultiPersonaSelectionCard
                 selectedPersonas={selectedPersonas}
-                availablePersonas={detailedPersonas}
+                availablePersonas={personas}
                 onEditPersona={handleEditPersona}
                 onRemovePersona={handleRemovePersona}
                 onBuildPersona={handlePersonaBuild}
-                onTestAllPersonas={handleTestAllPersonas}
                 onContinueToCampaign={handleContinueToCampaign}
               />
             ) : selectedPersona ? (
@@ -728,7 +946,7 @@ export function ChatInterface() {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    {detailedPersonas.map((persona) => (
+                    {personas.map((persona) => (
                       <PersonaCard
                         key={persona.id}
                         persona={persona}
@@ -782,7 +1000,7 @@ export function ChatInterface() {
                     <div>
                       {activeTab === 'qualified' ? (
                         <QualifiedCompaniesTable
-                          companies={mockQualifiedCompanies}
+                          companies={qualifiedCompanies}
                           enrichmentOptions={enrichmentOptions}
                         />
                       ) : (
@@ -821,7 +1039,7 @@ export function ChatInterface() {
             >
               <div className="space-y-3">
                 <p className="text-lg font-medium text-primary">
-                  Let's explore the Marketing Personas Hiring agent. You can test it on your companies or modify the approach before adding it to your campaign.
+                  Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
                 </p>
               </div>
 
@@ -843,19 +1061,25 @@ export function ChatInterface() {
                 <div className="text-center space-y-6">
                   <KoalaLoadingIndicator />
                   <p className="text-lg font-medium text-gray-800 max-w-md">
-                    Testing the Marketing Personas Hiring agent across a sample of companies from your target list...
+                    Testing the {selectedAgent?.title} agent across a sample of companies from your target list...
                   </p>
                 </div>
               </div>
             ) : showTestResults ? (
               <div className="p-8">
                 <QualificationResultsTable 
-                  results={showFullResults ? mockQualificationResults : mockQualificationResults.filter(r => r.qualified)} 
+                  results={showFullResults ? qualificationResults : qualificationResults.filter((r: AgentResult) => r.qualified)} 
                   onViewAllResults={!showFullResults ? handleViewAllResults : undefined}
                 />
               </div>
             ) : (
-              selectedAgent && <AgentDetails agent={selectedAgent} isEditMode={isAgentEditMode} />
+              selectedAgent && (
+                <AgentDetails 
+                  agent={selectedAgent} 
+                  isEditMode={isAgentEditMode}
+                  icon={categories.find(c => c.id === selectedCategoryId)?.icon || "🤖"}
+                />
+              )
             )}
           </div>
         </div>
@@ -884,28 +1108,49 @@ export function ChatInterface() {
               </div>
 
               <div className="space-y-4">
-                {researchStrategies.map((strategy) => (
+                {categories.map((category) => (
                   <ResearchStrategyCard
-                    key={strategy.id}
-                    strategy={strategy}
-                    isSelected={selectedResearchStrategyId === strategy.id}
-                    onClick={() => setSelectedResearchStrategyId(strategy.id)}
+                    key={category.id}
+                    strategy={{
+                      id: category.id,
+                      icon: category.icon,
+                      title: category.title,
+                      description: category.description,
+                      agents: category.agents
+                    }}
+                    isSelected={selectedCategoryId === category.id}
+                    onClick={() => {
+                      setSelectedCategoryId(category.id);
+                      setSelectedResearchStrategyId(null);
+                    }}
                   />
                 ))}
               </div>
             </motion.div>
           </div>
           <div className="w-[60%] p-8 bg-muted/10 overflow-y-auto">
-            {selectedResearchStrategyId ? (
+            {selectedCategoryId ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="space-y-6"
               >
-                <h2 className="text-lg font-medium">Available Research Agents</h2>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-medium">
+                      {categories.find(c => c.id === selectedCategoryId)?.title}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {categories.find(c => c.id === selectedCategoryId)?.description}
+                    </p>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    {categories.find(c => c.id === selectedCategoryId)?.agents.length} agents available
+                  </span>
+                </div>
                 <div className="grid grid-cols-1 gap-4">
-                  {researchStrategies
-                    .find((s) => s.id === selectedResearchStrategyId)
+                  {categories
+                    .find(c => c.id === selectedCategoryId)
                     ?.agents.map((agent) => (
                       <AgentCard 
                         key={agent.id} 
@@ -921,7 +1166,7 @@ export function ChatInterface() {
                 animate={{ opacity: 1 }}
                 className="h-full flex items-center justify-center text-muted-foreground"
               >
-                Select a research strategy to see suggested agents
+                Select a research category to see available agents
               </motion.div>
             )}
           </div>
@@ -983,11 +1228,16 @@ export function ChatInterface() {
               animate="visible"
             >
               {suggestions.map((suggestion, index) => (
-                <motion.div key={index} variants={itemVariants}>
+                <motion.div
+                  key={suggestion.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
                   <SuggestionChip
                     icon={suggestion.icon}
-                    label={suggestion.label}
-                    onClick={() => handleSuggestionClick(suggestion)}
+                    label={suggestion.title}
+                    onClick={suggestion.onClick}
                   />
                 </motion.div>
               ))}

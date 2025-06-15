@@ -12,17 +12,53 @@
           "description": "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
           "researchQuestion": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
           "questionType": "Boolean",
-          "sources": ["Company Career Page"]
+          "sources": ["Company Career Pages", "Professional Networks", "Job Posting Platforms"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Career Pages", "Professional Networks", "Job Posting Platforms"],
+            "Number": ["Company Career Pages", "Job Posting Platforms", "Professional Networks"],
+            "Picklist": ["Job Posting Platforms", "Company Career Pages", "Professional Networks"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Does the company have any open positions for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles?",
+            "Number": "How many marketing-related positions (Leadership, Operations, Growth, Digital) are currently open at this company?",
+            "Picklist": "What types of marketing roles is the company currently hiring for? Categories: Marketing Leadership, Marketing Operations, Growth Marketing, Digital Marketing."
+          }
         },
         {
           "id": "data-hiring",
           "title": "Data Team Hiring?",
-          "description": "Identify companies building or expanding their data teams"
+          "description": "Identify companies building or expanding their data teams",
+          "researchQuestion": "Does the company have any open positions for Data Engineers, Data Scientists, or Analytics roles?",
+          "questionType": "Boolean",
+          "sources": ["Company Career Pages", "Professional Networks", "Job Posting Platforms"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Career Pages", "Professional Networks", "Job Posting Platforms"],
+            "Number": ["Company Career Pages", "Job Posting Platforms", "Professional Networks"],
+            "Picklist": ["Job Posting Platforms", "Company Career Pages", "Professional Networks"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Does the company have any open positions for Data Engineers, Data Scientists, or Analytics roles?",
+            "Number": "How many data-related positions (Data Engineers, Data Scientists, Analytics roles) are currently open at this company?",
+            "Picklist": "What types of data roles is the company currently hiring for? Categories: Data Engineering, Data Science, Analytics, Data Leadership."
+          }
         },
         {
           "id": "leadership-changes",
           "title": "High Impact Leadership Changes",
-          "description": "Identify companies with recent leadership changes that suggest data infrastructure evaluation timing"
+          "description": "Identify companies with recent leadership changes that suggest data infrastructure evaluation timing",
+          "researchQuestion": "Has the company made any recent changes to their CTO, VP of Engineering, or Head of Data roles?",
+          "questionType": "Boolean",
+          "sources": ["Executive LinkedIn Profiles", "Company Press Releases", "Professional Networks"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Executive LinkedIn Profiles", "Company Press Releases", "Professional Networks"],
+            "Number": ["Executive LinkedIn Profiles", "Company Press Releases", "Industry Publications"],
+            "Picklist": ["Executive LinkedIn Profiles", "Company Press Releases", "Industry Publications"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company had any recent C-level, VP, or senior leadership changes in the last 6 months?",
+            "Number": "How many senior leadership changes (C-level, VP, Director level) has the company had in the last 6 months?",
+            "Picklist": "What is the relevance level of recent leadership changes to Segment's value proposition? Categories: Very High Relevance (CDO, VP Data, CMO within 6 months), High Relevance (VP Marketing, CTO, Head of Analytics within 12 months), Moderate Relevance (VP Product, VP Engineering within 12 months), Low Relevance (Other C-level or VP roles)."
+          }
         }
       ]
     },
@@ -31,14 +67,142 @@
       "icon": "📰",
       "title": "Company News & Events",
       "description": "Track major announcements, leadership changes, and strategic initiatives",
-      "agents": []
+      "agents": [
+        {
+          "id": "news-funding",
+          "title": "Recent Funding Rounds",
+          "description": "Identify companies that have recently raised funding, indicating budget for new initiatives",
+          "researchQuestion": "Has the company raised any funding rounds in the last 12 months?",
+          "questionType": "Boolean",
+          "sources": ["Financial Data Platforms", "Company Press Releases", "Business News Publications"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Financial Data Platforms", "Company Press Releases", "Business News Publications"],
+            "Number": ["Financial Data Platforms", "Investor Relations Pages", "Business News Publications"],
+            "Picklist": ["Financial Data Platforms", "Business News Publications", "Industry Publications"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company raised any funding rounds in the last 12 months?",
+            "Number": "How much funding has the company raised in the last 12 months (in millions)?",
+            "Picklist": "What type of funding round did the company most recently raise? Categories: Seed, Series A, Series B, Series C+, Growth Equity, Other."
+          }
+        },
+        {
+          "id": "news-ma",
+          "title": "Recent M&A Activity",
+          "description": "Identify companies involved in mergers, acquisitions, or being acquired",
+          "researchQuestion": "Has the company been involved in any M&A activity in the last 12 months?",
+          "questionType": "Boolean",
+          "sources": ["Company Press Releases", "Business News Publications", "Financial News Sources"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Press Releases", "Business News Publications", "Financial News Sources"],
+            "Number": ["Financial Data Platforms", "Company Press Releases", "Business Intelligence Databases"],
+            "Picklist": ["Business News Publications", "Company Blog Posts", "Industry Publications"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company been involved in any M&A activity (acquired, made acquisitions, or announced mergers) in the last 12 months?",
+            "Number": "What is the total value (in millions USD) of M&A transactions the company has been involved in during the last 12 months?",
+            "Picklist": "What type of M&A activity has the company been involved in? Categories: Company Was Acquired, Made Strategic Acquisition, Made Multiple Acquisitions, Announced Merger, Acquired Data/Analytics Company."
+          }
+        },
+        {
+          "id": "news-expansion",
+          "title": "Market Expansion",
+          "description": "Track companies expanding into new markets or regions",
+          "researchQuestion": "Has the company announced any new market expansions or office openings?",
+          "questionType": "Boolean",
+          "sources": ["Company Press Releases", "Investor Relations Pages", "Business News Publications"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Press Releases", "Investor Relations Pages", "Business News Publications"],
+            "Number": ["Company Press Releases", "Investor Relations Pages", "Business Intelligence Databases"],
+            "Picklist": ["Company Blog Posts", "Industry Research Reports", "Business News Publications"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company expanded into new markets or regions in the last 12 months?",
+            "Number": "How many new markets or regions has the company expanded into in the last 12 months?",
+            "Picklist": "What type of market expansion suggests budget allocation for new data infrastructure? Categories: New Geographic Markets (multi-region data compliance needs), New Industry Vertical (different data requirements), Enterprise Market Entry (complex data integration needs), International Expansion (data localization requirements)."
+          }
+        },
+        {
+          "id": "news-announcements",
+          "title": "Recent Company News & Announcements",
+          "description": "Track major company announcements that suggest growth or change",
+          "researchQuestion": "Has the company made any major announcements in the last 6 months?",
+          "questionType": "Boolean",
+          "sources": ["Company Blog Posts", "Company Press Releases", "Business News Publications"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Blog Posts", "Company Press Releases", "Business News Publications"],
+            "Number": ["Company Blog Posts", "Company Press Releases", "Business Intelligence Databases"],
+            "Picklist": ["Company Blog Posts", "Industry Publications", "Business News Publications"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company made any major announcements (partnerships, awards, milestones) in the last 6 months that suggest growth or change?",
+            "Number": "How many major announcements (partnerships, awards, milestones) has the company made in the last 6 months?",
+            "Picklist": "What type of recent company news suggests readiness for data infrastructure investment? Categories: Major Partnership Announcements, Industry Awards/Recognition, Significant Customer Milestone, Executive Speaking Engagements, Thought Leadership Publication."
+          }
+        }
+      ]
     },
     {
       "id": "tech",
       "icon": "🔧",
       "title": "Tech & Product Insights",
       "description": "Analyze technical infrastructure and integration complexity",
-      "agents": []
+      "agents": [
+        {
+          "id": "tech-product",
+          "title": "Product Launches",
+          "description": "Monitor companies launching new products or major features",
+          "researchQuestion": "Has the company launched any new products or major features in the last 6 months?",
+          "questionType": "Boolean",
+          "sources": ["Company Blog Posts", "Product Discovery Platforms", "Tech News Outlets"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Blog Posts", "Product Discovery Platforms", "Tech News Outlets"],
+            "Number": ["Company Blog Posts", "Developer Communities", "Job Posting Platforms"],
+            "Picklist": ["Company Blog Posts", "Product Discovery Platforms", "Tech News Outlets"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Has the company launched any new products or major features in the last 6 months?",
+            "Number": "How many new products or major features has the company launched in the last 6 months?",
+            "Picklist": "What type of product launch suggests increased data complexity? Categories: New Product Line (additional data streams), Customer-Facing Analytics Feature (data presentation needs), API/Integration Platform (data connectivity requirements), Mobile App Launch (cross-platform data tracking)."
+          }
+        },
+        {
+          "id": "tech-migration",
+          "title": "Data Infrastructure Migration",
+          "description": "Identify companies undergoing data infrastructure changes",
+          "researchQuestion": "Is the company currently migrating or upgrading their data infrastructure?",
+          "questionType": "Boolean",
+          "sources": ["Company Blog Posts", "Developer Communities", "Tech News Outlets"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Blog Posts", "Developer Communities", "Tech News Outlets"],
+            "Number": ["Company Blog Posts", "Developer Communities", "Job Posting Platforms"],
+            "Picklist": ["Company Blog Posts", "Developer Communities", "Tech News Outlets"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Is the company currently migrating or upgrading their data infrastructure or analytics platform?",
+            "Number": "How many data infrastructure or analytics platform changes has the company made in the last 12 months?",
+            "Picklist": "What type of data infrastructure change suggests timing for Segment evaluation? Categories: Cloud Migration In Progress, Data Warehouse Modernization, Analytics Platform Replacement, Customer Data Platform Evaluation."
+          }
+        },
+        {
+          "id": "tech-stack",
+          "title": "Key Technology Stack Mentions",
+          "description": "Analyze technology mentions in job postings, blogs, and case studies for Segment fit indicators",
+          "researchQuestion": "What technologies and tools are mentioned in the company's job postings and tech stack?",
+          "questionType": "Boolean",
+          "sources": ["Company Blog Posts", "Developer Communities", "Job Posting Platforms"],
+          "sourcesByQuestionType": {
+            "Boolean": ["Company Blog Posts", "Developer Communities", "Job Posting Platforms"],
+            "Number": ["Company Blog Posts", "Developer Communities", "Job Posting Platforms"],
+            "Picklist": ["Company Blog Posts", "Developer Communities", "Tech News Outlets"]
+          },
+          "rewriteTemplates": {
+            "Boolean": "Does the company mention specific data and analytics technologies in their job postings, blog posts, or case studies?",
+            "Number": "How many different data and analytics technologies does the company mention in their job postings, blog posts, or case studies?",
+            "Picklist": "What type of technology mentions suggest Segment fit? Categories: Segment Competitors (mentions Adobe Analytics, Mixpanel, Amplitude, Heap), Data Warehouse Modern Stack (mentions Snowflake, BigQuery, Databricks), Complex Integration Setup (mentions Zapier, custom APIs, multiple ETL tools), Analytics-Heavy Stack (mentions Tableau, Looker, dbt with multiple data sources)."
+          }
+        }
+      ]
     }
   ]
 } 

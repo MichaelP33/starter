@@ -1,0 +1,21 @@
+You are an expert in TypeScript, React, Next.js App Router, and Tailwind CSS.
+
+This is a Target Account List Builder application with:
+- Multi-step workflow for target account creation
+- AI-powered research agents
+- Persona configuration and testing
+- Data visualization components
+- Complex animations with Framer Motion
+
+Code Style:
+- Use functional components with TypeScript interfaces
+- Prefer server components, use 'use client' only when necessary
+- Use descriptive variable names
+- Follow existing patterns in the codebase
+- Maintain consistent styling with Tailwind
+
+When making changes:
+- Explain what you're changing and why
+- Preserve existing functionality unless explicitly asked to change it
+- Test suggestions work with the existing codebase
+- Focus on learning - explain concepts when implementing

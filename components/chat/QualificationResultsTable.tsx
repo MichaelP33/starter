@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { QualificationResult } from "./types";
+import { AgentResult } from './types';
 import { CompanyAnalysisPanel } from "./CompanyAnalysisPanel";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface QualificationResultsTableProps {
-  results: QualificationResult[];
+  results: AgentResult[];
   onViewAllResults?: () => void;
 }
 
@@ -27,117 +27,101 @@ const qualificationInsights: Record<string, string> = {
 };
 
 export function QualificationResultsTable({ results, onViewAllResults }: QualificationResultsTableProps) {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState("");
-  
-  const qualifiedResults = results.filter(result => result.qualified);
-  const totalCount = results.length;
-  const qualifiedCount = qualifiedResults.length;
+  console.log('📊 Results received by UI:', results.map(r => ({
+    companyName: r.companyName,
+    whyQualified: r.whyQualified,
+    researchSummary: r.researchSummary,
+    evidence: r.evidence
+  })));
 
-  const handleCompanyClick = (companyName: string) => {
+  const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+  const handleViewDetails = (companyName: string) => {
     setSelectedCompany(companyName);
     setIsPanelOpen(true);
   };
 
   const handleClosePanel = () => {
     setIsPanelOpen(false);
+    setSelectedCompany(null);
   };
 
+  const selectedResult = selectedCompany 
+    ? results.find(r => r.companyName === selectedCompany)
+    : undefined;
+
+  const qualifiedResults = results.filter(result => result.qualified);
+  const totalCount = results.length;
+  const qualifiedCount = qualifiedResults.length;
+
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl shadow-lg border border-gray-100 p-6"
-      >
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Test Results</h2>
-              {onViewAllResults && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={onViewAllResults}
-                  className="text-primary hover:text-primary/80 text-sm"
-                >
-                  View all results
-                </Button>
-              )}
-            </div>
-            <p className="text-muted-foreground">
-              {qualifiedCount} of {totalCount} companies qualified for Marketing Personas Hiring
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-muted/20 bg-white overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b border-muted/20">
-                  <TableHead className="bg-muted/5 py-4 font-medium w-1/3">Company Name</TableHead>
-                  <TableHead className="bg-muted/5 py-4 font-medium border-l border-muted/20">Why Qualified</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {qualifiedResults.map((result, index) => (
-                  <TableRow
-                    key={result.companyName}
-                    className="hover:bg-muted/5 transition-colors duration-200"
-                  >
-                    <TableCell className="py-4 font-medium">
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.15 }}
-                        className="flex items-center gap-3"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                        <span className="font-medium text-foreground">
-                          {result.companyName}
-                        </span>
-                        <button
-                          onClick={() => handleCompanyClick(result.companyName)}
-                          className="text-gray-500 hover:text-gray-700 cursor-pointer transition-colors duration-200 ml-2 text-sm"
-                        >
-                          View details
-                        </button>
-                      </motion.div>
-                    </TableCell>
-                    <TableCell className="py-4 border-l border-muted/20">
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.15 + 0.1 }}
-                        className="text-gray-700"
-                      >
-                        {qualificationInsights[result.companyName]}
-                      </motion.div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="bg-green-50/50 border border-green-200/50 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-green-800">
-              <CheckCircle2 className="w-5 h-5" />
-              <span className="font-medium">
-                {qualifiedCount} qualified companies identified
-              </span>
-            </div>
-            <p className="text-sm text-green-700 mt-1">
-              These companies show strong hiring signals for marketing roles and are prime targets for your personalized outreach campaign.
-            </p>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-medium">Qualification Results</h2>
+          <p className="text-sm text-muted-foreground">
+            {qualifiedCount} of {totalCount} companies qualified
+          </p>
         </div>
-      </motion.div>
+        {onViewAllResults && (
+          <Button
+            variant="outline"
+            onClick={onViewAllResults}
+            className="text-sm"
+          >
+            View All Results
+          </Button>
+        )}
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Company</TableHead>
+              <TableHead>Qualified</TableHead>
+              <TableHead>Why Qualified</TableHead>
+              <TableHead>Confidence</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {results.map((result) => (
+              <TableRow key={result.companyId} className="hover:bg-gray-50">
+                <TableCell className="font-medium">
+                  {result.companyName}
+                </TableCell>
+                <TableCell>
+                  {result.qualified ? "Yes" : "No"}
+                </TableCell>
+                <TableCell>
+                  {result.whyQualified}
+                </TableCell>
+                <TableCell>
+                  {Math.round(result.confidence * 100)}%
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewDetails(result.companyName)}
+                  >
+                    View Details
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
       <CompanyAnalysisPanel
         isOpen={isPanelOpen}
         onClose={handleClosePanel}
-        companyName={selectedCompany}
+        companyName={selectedCompany || ""}
+        result={selectedResult}
       />
-    </>
+    </div>
   );
 }

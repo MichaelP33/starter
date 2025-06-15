@@ -69,29 +69,18 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   };
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
-    const fullText = company.researchResults;
+    const fullText = company.researchResults.summary;
     const truncatedText = truncateText(fullText);
     const needsTruncation = fullText.length > 70;
 
-    if (!needsTruncation) {
-      return (
-        <div className="text-gray-700 leading-relaxed">
-          {fullText}
-        </div>
-      );
-    }
-
     return (
-      <div className="space-y-2">
-        <div className="text-gray-700 leading-relaxed">
-          {truncatedText}
+      <div className="relative group">
+        <div className="text-sm leading-relaxed">
+          {needsTruncation ? truncatedText : fullText}
         </div>
-        <button
-          onClick={() => handleViewDetails(company.companyName)}
-          className="text-gray-500 hover:text-gray-700 cursor-pointer transition-colors duration-200 text-sm"
-        >
-          View details
-        </button>
+        {needsTruncation && (
+          <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        )}
       </div>
     );
   };
@@ -99,10 +88,14 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   const renderCompanyNameCell = (company: QualifiedCompanyWithResearch) => {
     return (
       <div className="flex items-center gap-3">
-        <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-        <span className="font-medium text-foreground">
-          {company.companyName}
-        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-gray-900 truncate">
+            {company.companyName}
+          </p>
+          <p className="text-sm text-gray-500 truncate">
+            {company.website}
+          </p>
+        </div>
       </div>
     );
   };
@@ -170,11 +163,26 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
                               side="top" 
                               className="max-w-sm bg-gray-800 text-white border-gray-700 shadow-lg p-3"
                             >
-                              <p className="text-sm leading-relaxed">{company.researchResults}</p>
+                              <div className="p-4 space-y-4">
+                                <div className="space-y-2">
+                                  <h3 className="text-sm font-medium text-gray-900">Research Summary</h3>
+                                  <p className="text-sm leading-relaxed">{company.researchResults.summary}</p>
+                                </div>
+                                <div className="space-y-2">
+                                  <h3 className="text-sm font-medium text-gray-900">Data Sources</h3>
+                                  <ul className="text-sm space-y-1">
+                                    {company.researchResults.sources.map((source, index) => (
+                                      <li key={index} className="text-muted-foreground">{source}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
                             </TooltipContent>
                           </Tooltip>
                         ) : (
-                          company[column.field]
+                          <div className="text-sm text-gray-900">
+                            {String(company[column.field as keyof QualifiedCompanyWithResearch])}
+                          </div>
                         )}
                       </motion.div>
                     </TableCell>

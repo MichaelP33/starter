@@ -10,33 +10,39 @@ interface AgentCardProps {
   onBuildClick: (agent: Agent) => void;
 }
 
-const agentStyles = {
-  "marketing-hiring": {
-    border: "border-blue-100",
-    background: "bg-blue-50/30",
-    hover: "hover:border-blue-200 hover:bg-blue-50/50",
-  },
-  "data-hiring": {
-    border: "border-emerald-100",
-    background: "bg-emerald-50/30",
-    hover: "hover:border-emerald-200 hover:bg-emerald-50/50",
-  },
-  "leadership-changes": {
-    border: "border-purple-100",
-    background: "bg-purple-50/30",
-    hover: "hover:border-purple-200 hover:bg-purple-50/50",
-  },
-};
-
-const whyExplanations = {
-  "marketing-hiring": "Companies hiring for data-driven marketing roles likely have budget and data infrastructure pain that Segment directly addresses.",
-  "data-hiring": "Companies hiring for data roles likely have budget and are struggling with data quality, integration complexity, or scaling issues that Segment solves.",
-  "leadership-changes": "Companies with recent leadership changes likely have budget and a mandate to fix existing data infrastructure problems that Segment solves.",
+const getCategoryStyles = (categoryId: string) => {
+  switch (categoryId) {
+    case 'hiring':
+      return {
+        border: "border-blue-100",
+        background: "bg-blue-50/30",
+        hover: "hover:border-blue-200 hover:bg-blue-50/50",
+      };
+    case 'news':
+      return {
+        border: "border-emerald-100",
+        background: "bg-emerald-50/30",
+        hover: "hover:border-emerald-200 hover:bg-emerald-50/50",
+      };
+    case 'tech':
+      return {
+        border: "border-purple-100",
+        background: "bg-purple-50/30",
+        hover: "hover:border-purple-200 hover:bg-purple-50/50",
+      };
+    default:
+      return {
+        border: "border-gray-100",
+        background: "bg-gray-50/30",
+        hover: "hover:border-gray-200 hover:bg-gray-50/50",
+      };
+  }
 };
 
 export function AgentCard({ agent, onBuildClick }: AgentCardProps) {
-  const styles = agentStyles[agent.id as keyof typeof agentStyles];
-  const whyText = whyExplanations[agent.id as keyof typeof whyExplanations];
+  // Get category ID from agent ID (e.g., "marketing-hiring" -> "hiring")
+  const categoryId = agent.id.split('-')[1] || 'default';
+  const styles = getCategoryStyles(categoryId);
 
   return (
     <motion.div
@@ -45,11 +51,9 @@ export function AgentCard({ agent, onBuildClick }: AgentCardProps) {
       className={`p-6 rounded-lg border transition-all duration-200 ${styles.border} ${styles.background} ${styles.hover}`}
     >
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">{agent.title}</h3>
-        <p className="text-muted-foreground">{agent.description}</p>
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold">Why?</h4>
-          <p className="text-sm text-gray-600">{whyText}</p>
+          <h3 className="text-lg font-medium">{agent.title}</h3>
+          <p className="text-muted-foreground">{agent.description}</p>
         </div>
         <Button 
           onClick={() => onBuildClick(agent)}

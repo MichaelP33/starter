@@ -1,160 +1,248 @@
 {
   "qualifiedCompanies": [
     {
+      "companyId": "stripe",
       "companyName": "Stripe",
       "website": "stripe.com",
       "industry": "FinTech",
       "hqCountry": "United States",
       "employeeCount": "5000+",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$2.2B",
       "estimatedAnnualRevenue": "$1B+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2010",
-      "researchResults": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "yearFounded": 2010,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "dataSources": ["LinkedIn", "Company Website", "News Articles"],
+      "confidenceScore": 0.85,
+      "researchResults": {
+        "summary": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+        "sources": ["LinkedIn", "Company Website", "News Articles"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "notion",
       "companyName": "Notion",
       "website": "notion.so",
       "industry": "Productivity Software",
       "hqCountry": "United States",
       "employeeCount": "500-1000",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$343M",
       "estimatedAnnualRevenue": "$100M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2013",
-      "researchResults": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "yearFounded": 2013,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.82,
+      "researchResults": {
+        "summary": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "figma",
       "companyName": "Figma",
       "website": "figma.com",
       "industry": "Design Software",
       "hqCountry": "United States",
       "employeeCount": "500-1000",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$333M",
       "estimatedAnnualRevenue": "$100M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2012",
-      "researchResults": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "yearFounded": 2012,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "dataSources": ["LinkedIn", "Company Website", "News Articles"],
+      "confidenceScore": 0.88,
+      "researchResults": {
+        "summary": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+        "sources": ["LinkedIn", "Company Website", "News Articles"]
+      },
+      "assignedPersonas": []
     }
   ],
   "qualificationResults": [
     {
+      "companyId": "stripe",
       "companyName": "Stripe",
       "website": "stripe.com",
       "industry": "FinTech",
       "hqCountry": "United States",
       "employeeCount": "5000+",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$2.2B",
       "estimatedAnnualRevenue": "$1B+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2010",
-      "researchResults": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "yearFounded": 2010,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+      "dataSources": ["LinkedIn", "Company Website", "News Articles"],
+      "confidenceScore": 0.85,
+      "researchResults": {
+        "summary": "Strong growth signals with recent expansion into new markets and product lines. Actively hiring across marketing and data teams.",
+        "sources": ["LinkedIn", "Company Website", "News Articles"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "notion",
       "companyName": "Notion",
       "website": "notion.so",
       "industry": "Productivity Software",
       "hqCountry": "United States",
       "employeeCount": "500-1000",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$343M",
       "estimatedAnnualRevenue": "$100M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2013",
-      "researchResults": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "yearFounded": 2013,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.82,
+      "researchResults": {
+        "summary": "Rapidly growing with significant marketing team expansion. Multiple open positions for marketing leadership roles.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "figma",
       "companyName": "Figma",
       "website": "figma.com",
       "industry": "Design Software",
       "hqCountry": "United States",
       "employeeCount": "500-1000",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$333M",
       "estimatedAnnualRevenue": "$100M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2012",
-      "researchResults": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "yearFounded": 2012,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+      "dataSources": ["LinkedIn", "Company Website", "News Articles"],
+      "confidenceScore": 0.88,
+      "researchResults": {
+        "summary": "Strong growth trajectory with recent Adobe acquisition. Expanding marketing operations and team.",
+        "sources": ["LinkedIn", "Company Website", "News Articles"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "linear",
       "companyName": "Linear",
       "website": "linear.app",
       "industry": "Productivity Software",
       "hqCountry": "United States",
       "employeeCount": "50-200",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$35M",
       "estimatedAnnualRevenue": "$10M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2019",
-      "researchResults": "Growing product team but limited marketing team expansion. May be too early stage.",
+      "yearFounded": 2019,
       "qualified": false,
-      "assignedPersonas": 0
+      "researchSummary": "Growing product team but limited marketing team expansion. May be too early stage.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.65,
+      "researchResults": {
+        "summary": "Growing product team but limited marketing team expansion. May be too early stage.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "vercel",
       "companyName": "Vercel",
       "website": "vercel.com",
       "industry": "Developer Tools",
       "hqCountry": "United States",
       "employeeCount": "200-500",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$313M",
       "estimatedAnnualRevenue": "$50M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2015",
-      "researchResults": "Strong technical focus with growing marketing team. Multiple open positions for marketing roles.",
+      "yearFounded": 2015,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Strong technical focus with growing marketing team. Multiple open positions for marketing roles.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.78,
+      "researchResults": {
+        "summary": "Strong technical focus with growing marketing team. Multiple open positions for marketing roles.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "supabase",
       "companyName": "Supabase",
       "website": "supabase.com",
       "industry": "Developer Tools",
       "hqCountry": "United States",
       "employeeCount": "50-200",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$116M",
       "estimatedAnnualRevenue": "$10M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2019",
-      "researchResults": "Fast-growing open source platform with expanding marketing team. Actively hiring for marketing roles.",
+      "yearFounded": 2019,
       "qualified": true,
-      "assignedPersonas": 0
+      "researchSummary": "Fast-growing open source platform with expanding marketing team. Actively hiring for marketing roles.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.75,
+      "researchResults": {
+        "summary": "Fast-growing open source platform with expanding marketing team. Actively hiring for marketing roles.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "loom",
       "companyName": "Loom",
       "website": "loom.com",
       "industry": "Productivity Software",
       "hqCountry": "United States",
       "employeeCount": "200-500",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$203M",
       "estimatedAnnualRevenue": "$50M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2015",
-      "researchResults": "Strong growth in video communication space. Limited marketing team expansion currently.",
+      "yearFounded": 2015,
       "qualified": false,
-      "assignedPersonas": 0
+      "researchSummary": "Strong growth in video communication space. Limited marketing team expansion currently.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.62,
+      "researchResults": {
+        "summary": "Strong growth in video communication space. Limited marketing team expansion currently.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     },
     {
+      "companyId": "retool",
       "companyName": "Retool",
       "website": "retool.com",
       "industry": "Developer Tools",
       "hqCountry": "United States",
       "employeeCount": "200-500",
+      "hqCity": "San Francisco",
+      "hqState": "California",
       "totalFunding": "$141M",
       "estimatedAnnualRevenue": "$50M+",
-      "hqCity": "San Francisco",
-      "yearFounded": "2017",
-      "researchResults": "Growing developer platform with focus on technical marketing. Limited marketing team expansion.",
+      "yearFounded": 2017,
       "qualified": false,
-      "assignedPersonas": 0
+      "researchSummary": "Growing developer platform with focus on technical marketing. Limited marketing team expansion.",
+      "dataSources": ["LinkedIn", "Company Website"],
+      "confidenceScore": 0.68,
+      "researchResults": {
+        "summary": "Growing developer platform with focus on technical marketing. Limited marketing team expansion.",
+        "sources": ["LinkedIn", "Company Website"]
+      },
+      "assignedPersonas": []
     }
   ]
 } 

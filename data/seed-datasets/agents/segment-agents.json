@@ -57,6 +57,11 @@
           "Marketing team appears stable with no current hiring activity",
           "No evidence of marketing team expansion in current job listings"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+        "Number": "How many open marketing positions does the company currently have posted on their careers page or LinkedIn?",
+        "Picklist": "What types of marketing roles is the company currently hiring for on their careers page or LinkedIn?"
       }
     },
     {
@@ -89,6 +94,11 @@
           "Data team appears stable with no current open positions",
           "No evidence of data infrastructure team growth in recent postings"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Does the company currently have any open positions for Data Engineers, Data Scientists, Analytics Engineers, or Data Platform roles?",
+        "Number": "How many open data team positions does the company currently have posted on their careers page or LinkedIn?",
+        "Picklist": "What types of data team roles is the company currently hiring for on their careers page or LinkedIn?"
       }
     },
     {
@@ -121,6 +131,11 @@
           "No evidence of marketing executive departures or new hires in past 6 months",
           "Marketing leadership structure unchanged according to public information"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company had any new hires or departures in marketing leadership (CMO, VP Marketing, Director of Marketing) in the past 6 months?",
+        "Number": "How many marketing leadership changes has the company had in the past 6 months?",
+        "Picklist": "What types of marketing leadership changes has the company had in the past 6 months?"
       }
     },
     {
@@ -159,6 +174,11 @@
           "No evidence of recent investment or funding activity in public records",
           "Last funding round was over 12 months ago based on available information"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any funding rounds in the past 12 months?",
+        "Number": "How much funding has the company raised in the past 12 months?",
+        "Picklist": "What type of funding round did the company most recently announce?"
       }
     },
     {
@@ -191,6 +211,11 @@
           "No evidence of significant product announcements or feature releases recently",
           "Company focus appears to be on optimizing existing products rather than new launches"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any major product launches, new features, or product expansions in the past 6 months?",
+        "Number": "How many major product launches or features has the company announced in the past 6 months?",
+        "Picklist": "What types of products or features has the company launched in the past 6 months?"
       }
     },
     {
@@ -224,6 +249,11 @@
           "Recent communications emphasize deepening existing market presence rather than expansion",
           "No announcements of new market entry or geographic expansion in past 12 months"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company expanded into any new markets, regions, or customer segments in the past 12 months?",
+        "Number": "How many new markets, regions, or customer segments has the company expanded into in the past 12 months?",
+        "Picklist": "What types of markets, regions, or customer segments has the company expanded into in the past 12 months?"
       }
     },
     {
@@ -248,14 +278,19 @@
           "Announced acquisition of {company_type} company to expand {capability} capabilities",
           "Recent strategic partnership with {partner_type} announced to enhance data integration",
           "Completed merger with {industry} company creating need for unified customer data platform",
-          "Strategic acquisition announced focusing on {technology} and customer data consolidation"
+          "Acquisition of {company_name} announced to strengthen {business_area} offerings"
         ],
         "falseEvidence": [
-          "No recent M&A activity or strategic partnerships announced in past 12 months",
-          "Company focus has been on organic growth rather than acquisitions",
-          "No major corporate development activity reported in recent company communications",
-          "Strategic initiatives focused on internal development rather than external partnerships"
+          "No recent M&A activity or major partnerships announced in company communications",
+          "Company appears focused on organic growth without recent acquisitions",
+          "No evidence of mergers, acquisitions, or strategic partnerships in past 12 months",
+          "Recent announcements focus on internal initiatives rather than external growth"
         ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any acquisitions, mergers, or major strategic partnerships within the last 12 months?",
+        "Number": "How many acquisitions, mergers, or major strategic partnerships has the company announced in the last 12 months?",
+        "Picklist": "What types of acquisitions, mergers, or strategic partnerships has the company announced in the last 12 months?"
       }
     },
     {

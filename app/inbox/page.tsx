@@ -37,7 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import companiesData from "@/data/companies.json";
-import agentsData from "@/data/agents.json";
+import { useDataConfig } from "@/hooks/useDataConfig";
 import { CompanyAnalysisPanel } from "@/components/chat/CompanyAnalysisPanel";
 
 interface Contact {
@@ -105,10 +105,14 @@ export default function CampaignInbox() {
   const [showResearchQuestion, setShowResearchQuestion] = useState(false);
   const [showCampaignDetails, setShowCampaignDetails] = useState(false);
 
+  const { agents, isLoadingAgents } = useDataConfig();
+
+  if (isLoadingAgents) {
+    return <div>Loading...</div>;
+  }
+
   // Get the marketing hiring agent data
-  const marketingHiringAgent = agentsData.categories
-    .find(cat => cat.id === "hiring")
-    ?.agents.find(agent => agent.id === "marketing-hiring");
+  const marketingHiringAgent = agents.find(agent => agent.id === "marketing-hiring");
 
   const toggleRow = (companyName: string) => {
     setExpandedRows(prev => {
@@ -203,32 +207,18 @@ export default function CampaignInbox() {
     : companiesData.qualificationResults;
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
-    const fullText = company.researchResults;
+    const fullText = company.researchResults.summary;
     const truncatedText = truncateText(fullText);
     const needsTruncation = fullText.length > 70;
 
-    if (!needsTruncation) {
-      return (
-        <div className="text-gray-700 leading-relaxed">
-          {fullText}
-        </div>
-      );
-    }
-
     return (
-      <div className="space-y-2">
-        <div className="text-gray-700 leading-relaxed">
-          {truncatedText}
+      <div className="relative group">
+        <div className="text-sm leading-relaxed">
+          {needsTruncation ? truncatedText : fullText}
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleViewDetails(company.companyName);
-          }}
-          className="text-gray-500 hover:text-gray-700 cursor-pointer transition-colors duration-200 text-sm"
-        >
-          View details
-        </button>
+        {needsTruncation && (
+          <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        )}
       </div>
     );
   };
@@ -525,7 +515,15 @@ export default function CampaignInbox() {
                                     {/* Research Results */}
                                     <div className="space-y-2">
                                       <h3 className="text-sm font-medium text-gray-900">Research Results</h3>
-                                      <p className="text-sm text-gray-600">{company.researchResults}</p>
+                                      <p className="text-sm text-gray-600">{company.researchResults.summary}</p>
+                                      <div className="mt-2">
+                                        <h4 className="text-xs font-medium text-gray-500">Sources:</h4>
+                                        <ul className="mt-1 space-y-1">
+                                          {company.researchResults.sources.map((source, index) => (
+                                            <li key={index} className="text-xs text-gray-600">{source}</li>
+                                          ))}
+                                        </ul>
+                                      </div>
                                     </div>
 
                                     {/* Company Details */}
