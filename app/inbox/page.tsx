@@ -271,193 +271,137 @@ export default function CampaignInbox() {
             className="space-y-8"
           >
             {/* Campaign Overview */}
-            <div className="grid grid-cols-4 gap-6">
-              <div className="col-span-3">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                  {/* Campaign Header */}
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">
-                          {marketingHiringAgent?.title}
-                        </h1>
-                        <div className="flex items-center gap-4 mt-2">
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Calendar className="w-4 h-4" />
-                            Started 2 weeks ago
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-gray-500">
-                            <Clock className="w-4 h-4" />
-                            Last updated {new Date().toLocaleDateString()}
-                          </div>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                {/* Campaign Header */}
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h1 className="text-2xl font-semibold text-gray-900">
+                        {marketingHiringAgent?.title}
+                      </h1>
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          Started 2 weeks ago
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Clock className="w-4 h-4" />
+                          Last updated {new Date().toLocaleDateString()}
                         </div>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
-                          <Users className="w-4 h-4 text-gray-500" />
-                          <span className="text-sm font-medium text-gray-900">{totalPersonas} Personas</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-lg">
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">
-                            {qualifiedCount}/{totalCount} Qualified
-                          </span>
-                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
+                        <Users className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm font-medium text-gray-900">{totalPersonas} Personas</span>
+                      </div>
+                      <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-lg">
+                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-700">
+                          {qualifiedCount}/{totalCount} Qualified
+                        </span>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Campaign Progress */}
-                  <div className="p-6 border-b border-gray-100">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-medium text-gray-900">Campaign Progress</h3>
-                      <button
-                        onClick={() => setShowCampaignDetails(!showCampaignDetails)}
-                        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
-                      >
-                        {showCampaignDetails ? 'Hide Details' : 'Show Details'}
-                        <ChevronDown className={`w-4 h-4 transition-transform ${showCampaignDetails ? 'rotate-180' : ''}`} />
-                      </button>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                          style={{ width: `${(qualifiedCount / totalCount) * 100}%` }}
-                        />
+                {/* Research Context */}
+                <div className="p-6 border-b border-gray-100">
+                  <div className="grid grid-cols-2 divide-x divide-gray-100">
+                    {/* Left Column */}
+                    <div className="pr-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="flex items-center gap-2">
+                          <Search className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium text-gray-900">Research Agent</span>
+                        </div>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                          {marketingHiringAgent?.questionType}
+                        </span>
                       </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <div className="text-sm text-gray-500 mb-1">Target Companies</div>
-                          <div className="text-2xl font-semibold text-gray-900">{totalCount}</div>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                            {marketingHiringAgent?.title}
+                          </h3>
+                          <p className="text-sm text-gray-500 line-clamp-2">
+                            {marketingHiringAgent?.description}
+                          </p>
                         </div>
-                        <div className="p-4 bg-green-50 rounded-lg">
-                          <div className="text-sm text-green-600 mb-1">Qualified</div>
-                          <div className="text-2xl font-semibold text-green-700">{qualifiedCount}</div>
-                        </div>
-                        <div className="p-4 bg-blue-50 rounded-lg">
-                          <div className="text-sm text-blue-600 mb-1">Success Rate</div>
-                          <div className="text-2xl font-semibold text-blue-700">
-                            {Math.round((qualifiedCount / totalCount) * 100)}%
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
 
-                  {/* Research Context */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-2 divide-x divide-gray-100">
-                      {/* Left Column */}
-                      <div className="pr-6">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="flex items-center gap-2">
-                            <Search className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-medium text-gray-900">Research Agent</span>
-                          </div>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                            {marketingHiringAgent?.questionType}
-                          </span>
-                        </div>
-                        
-                        <div className="space-y-4">
-                          <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                              {marketingHiringAgent?.title}
-                            </h3>
-                            <p className="text-sm text-gray-500 line-clamp-2">
-                              {marketingHiringAgent?.description}
+                        <div className="pt-4 border-t border-gray-100">
+                          <button
+                            onClick={() => setShowResearchQuestion(!showResearchQuestion)}
+                            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                          >
+                            <Info className="w-4 h-4" />
+                            {showResearchQuestion ? 'Hide' : 'Show'} Research Question
+                          </button>
+                          {showResearchQuestion && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              {marketingHiringAgent?.researchQuestion}
                             </p>
-                          </div>
-
-                          <div className="pt-4 border-t border-gray-100">
-                            <button
-                              onClick={() => setShowResearchQuestion(!showResearchQuestion)}
-                              className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                            >
-                              <Info className="w-4 h-4" />
-                              {showResearchQuestion ? 'Hide' : 'Show'} Research Question
-                            </button>
-                            {showResearchQuestion && (
-                              <p className="mt-2 text-sm text-gray-600">
-                                {marketingHiringAgent?.researchQuestion}
-                              </p>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
+                    </div>
 
-                      {/* Right Column */}
-                      <div className="pl-6">
-                        <div className="space-y-6">
-                          <div>
-                            <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
-                              <Target className="w-4 h-4" />
-                              Outbound Strategy
-                            </div>
-                            <p className="text-sm text-gray-600">
-                              Target companies actively expanding marketing teams with leadership roles
-                            </p>
+                    {/* Right Column */}
+                    <div className="pl-6">
+                      <div className="space-y-6">
+                        <div>
+                          <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
+                            <Target className="w-4 h-4" />
+                            Outbound Strategy
                           </div>
+                          <p className="text-sm text-gray-600">
+                            Target companies actively expanding marketing teams with leadership roles
+                          </p>
+                        </div>
 
-                          <div className="pt-4 border-t border-gray-100">
-                            <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
-                              <Users className="w-4 h-4" />
-                              Enrolled Personas
-                            </div>
-                            <div className="space-y-1">
-                              <div className="text-sm text-gray-900">Strategic Marketing Executive</div>
-                              <div className="text-sm text-gray-900">Growth Marketing Leader</div>
-                            </div>
+                        <div className="pt-4 border-t border-gray-100">
+                          <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
+                            <Users className="w-4 h-4" />
+                            Enrolled Personas
+                          </div>
+                          <div className="space-y-1">
+                            <div className="text-sm text-gray-900">Strategic Marketing Executive</div>
+                            <div className="text-sm text-gray-900">Growth Marketing Leader</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Quick Stats */}
-              <div className="space-y-6">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-4">
-                    <Activity className="w-4 h-4" />
-                    Campaign Stats
+                {/* Campaign Progress */}
+                <div className="p-6 bg-gray-50/50 border-b border-gray-100">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">Campaign Progress</h3>
                   </div>
                   <div className="space-y-4">
-                    <div>
-                      <div className="text-sm text-gray-500">Qualification Rate</div>
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {Math.round((qualifiedCount / totalCount) * 100)}%
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                        style={{ width: `${(qualifiedCount / totalCount) * 100}%` }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="p-4 bg-white rounded-lg border border-gray-100">
+                        <div className="text-sm text-gray-500 mb-1">Qualification Rate</div>
+                        <div className="text-2xl font-semibold text-gray-900">63%</div>
+                      </div>
+                      <div className="p-4 bg-white rounded-lg border border-gray-100">
+                        <div className="text-sm text-green-600 mb-1">Messages Sent</div>
+                        <div className="text-2xl font-semibold text-green-700">0</div>
+                      </div>
+                      <div className="p-4 bg-white rounded-lg border border-gray-100">
+                        <div className="text-sm text-blue-600 mb-1">Response Rate</div>
+                        <div className="text-2xl font-semibold text-blue-700">0%</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-gray-500">Avg. Personas per Company</div>
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {(totalPersonas / qualifiedCount).toFixed(1)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-4">
-                    <BarChart3 className="w-4 h-4" />
-                    Quick Actions
-                  </div>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                      <FileText className="w-4 h-4" />
-                      Export Results
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                      <Users className="w-4 h-4" />
-                      Manage Personas
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                      <ArrowUpRight className="w-4 h-4" />
-                      View Analytics
-                    </Button>
                   </div>
                 </div>
               </div>
