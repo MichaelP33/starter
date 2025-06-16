@@ -1,0 +1,393 @@
+{
+  "metadata": {
+    "name": "Segment CDP - Agent Definitions",
+    "description": "Complete agent definitions for Segment's CDP targeting across hiring, news, and tech categories",
+    "version": "1.0",
+    "lastUpdated": "2025-06-15",
+    "totalAgents": 10
+  },
+  "agentCategories": {
+    "hiring": {
+      "categoryId": "hiring",
+      "categoryTitle": "Hiring Trend Analysis",
+      "categoryIcon": "🏢",
+      "categoryDescription": "Uncover growth signals and organizational changes through hiring patterns"
+    },
+    "news": {
+      "categoryId": "news",
+      "categoryTitle": "Company News & Events",
+      "categoryIcon": "📰",
+      "categoryDescription": "Track major announcements, leadership changes, and strategic initiatives"
+    },
+    "tech": {
+      "categoryId": "tech",
+      "categoryTitle": "Tech & Product Insights",
+      "categoryIcon": "🔧",
+      "categoryDescription": "Analyze technical infrastructure and integration complexity"
+    }
+  },
+  "agents": [
+    {
+      "id": "marketing-hiring",
+      "categoryId": "hiring",
+      "title": "Marketing Team Hiring?",
+      "description": "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
+      "researchQuestion": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+      "questionType": "Boolean",
+      "sources": ["Company Career Page", "LinkedIn Jobs"],
+      "segmentRelevance": "Companies hiring marketing roles likely have budget and need better customer data infrastructure",
+      "estimatedQualified": "8-12 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Actively Hiring",
+          "falseLabel": "No - Not Currently Hiring",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "Multiple marketing leadership positions posted on careers page including {role1} and {role2}",
+          "Recent LinkedIn job postings for senior marketing roles with focus on growth and data-driven marketing",
+          "Careers page shows expansion of marketing team with {number} open positions",
+          "Active recruiting for marketing operations and growth marketing leadership roles"
+        ],
+        "falseEvidence": [
+          "No marketing leadership positions currently posted on careers page or LinkedIn",
+          "Recent job postings focused on engineering and product roles only",
+          "Marketing team appears stable with no current hiring activity",
+          "No evidence of marketing team expansion in current job listings"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+        "Number": "How many open marketing positions does the company currently have posted on their careers page or LinkedIn?",
+        "Picklist": "What types of marketing roles is the company currently hiring for on their careers page or LinkedIn?"
+      }
+    },
+    {
+      "id": "data-hiring",
+      "categoryId": "hiring",
+      "title": "Data Team Hiring?",
+      "description": "Identify companies building or expanding their data teams with engineers, analysts, and data scientists",
+      "researchQuestion": "Does the company currently have any open positions for Data Engineers, Data Scientists, Analytics Engineers, or Data Platform roles?",
+      "questionType": "Boolean",
+      "sources": ["Company Career Page", "LinkedIn Jobs"],
+      "segmentRelevance": "Companies hiring data roles are scaling data infrastructure and likely need better data integration",
+      "estimatedQualified": "10-15 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Data Team Expansion",
+          "falseLabel": "No - No Data Hiring",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "Multiple data roles posted including Data Engineer, Analytics Engineer, and Data Scientist positions",
+          "Recent job postings indicate data team expansion with focus on {technology} and analytics infrastructure",
+          "Careers page shows {number} open data-related positions across analytics and engineering",
+          "Active hiring for senior data roles including Staff Data Engineer and Principal Data Scientist"
+        ],
+        "falseEvidence": [
+          "No data-specific roles currently posted on careers page",
+          "Job postings focused on other technical areas without data team expansion",
+          "Data team appears stable with no current open positions",
+          "No evidence of data infrastructure team growth in recent postings"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Does the company currently have any open positions for Data Engineers, Data Scientists, Analytics Engineers, or Data Platform roles?",
+        "Number": "How many open data team positions does the company currently have posted on their careers page or LinkedIn?",
+        "Picklist": "What types of data team roles is the company currently hiring for on their careers page or LinkedIn?"
+      }
+    },
+    {
+      "id": "leadership-changes",
+      "categoryId": "hiring",
+      "title": "Marketing Leadership Changes",
+      "description": "Identify companies with recent marketing or data leadership changes that suggest technology evaluation timing",
+      "researchQuestion": "Has the company had any new hires or departures in marketing leadership (CMO, VP Marketing, Director of Marketing) in the past 6 months?",
+      "questionType": "Boolean",
+      "sources": ["LinkedIn Updates", "Company Press Releases", "Crunchbase"],
+      "segmentRelevance": "New leadership often evaluates existing tech stack and considers new solutions",
+      "estimatedQualified": "5-8 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Recent Leadership Change",
+          "falseLabel": "No - Stable Leadership",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "New {title} hired {timeframe} ago, likely evaluating current marketing technology stack",
+          "Recent departure of {title} followed by new hire indicates potential technology reassessment",
+          "LinkedIn announcements show marketing leadership transition at {title} level",
+          "Company press release announced new marketing leadership hire with technology background"
+        ],
+        "falseEvidence": [
+          "No recent changes in marketing leadership positions based on LinkedIn and company announcements",
+          "Current marketing leadership team appears stable with no recent transitions",
+          "No evidence of marketing executive departures or new hires in past 6 months",
+          "Marketing leadership structure unchanged according to public information"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company had any new hires or departures in marketing leadership (CMO, VP Marketing, Director of Marketing) in the past 6 months?",
+        "Number": "How many marketing leadership changes has the company had in the past 6 months?",
+        "Picklist": "What types of marketing leadership changes has the company had in the past 6 months?"
+      }
+    },
+    {
+      "id": "funding-news",
+      "categoryId": "news",
+      "title": "Recent Funding Round",
+      "description": "Identify companies that have raised funding in the past 12 months, indicating growth and budget availability",
+      "researchQuestion": "Has the company announced any funding rounds (Series A, B, C, etc.) in the past 12 months?",
+      "questionType": "Picklist",
+      "sources": ["Crunchbase", "TechCrunch", "Company Press Releases"],
+      "segmentRelevance": "Recently funded companies have budget for growth infrastructure and data tools",
+      "estimatedQualified": "12-18 companies",
+      "resultTypes": {
+        "Picklist": {
+          "options": [
+            "Series A ($1M-$15M)",
+            "Series B ($10M-$50M)", 
+            "Series C ($25M-$100M)",
+            "Series D+ ($50M+)",
+            "No Recent Funding"
+          ],
+          "multiSelect": false,
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "fundingEvidence": [
+          "Announced {funding_type} round of {amount} led by {investor} in {timeframe}",
+          "Recent funding round of {amount} announced to fuel growth in {focus_area}",
+          "Completed {funding_type} financing with participation from {investors}",
+          "Raised {amount} in {funding_type} round to expand {business_area} and technology infrastructure"
+        ],
+        "noFundingEvidence": [
+          "No funding announcements in past 12 months according to Crunchbase and company communications",
+          "Company appears to be operating on existing capital without recent funding rounds",
+          "No evidence of recent investment or funding activity in public records",
+          "Last funding round was over 12 months ago based on available information"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any funding rounds in the past 12 months?",
+        "Number": "How much funding has the company raised in the past 12 months?",
+        "Picklist": "What type of funding round did the company most recently announce?"
+      }
+    },
+    {
+      "id": "product-launch",
+      "categoryId": "news",
+      "title": "Major Product Launch",
+      "description": "Track companies launching new products or features that likely require customer data infrastructure",
+      "researchQuestion": "Has the company announced any major product launches, new features, or product expansions in the past 6 months?",
+      "questionType": "Boolean",
+      "sources": ["Company Blog", "Product Hunt", "Tech News", "Company Press Releases"],
+      "segmentRelevance": "Product launches create new data collection needs and customer tracking requirements",
+      "estimatedQualified": "8-12 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Recent Product Launch",
+          "falseLabel": "No - No Major Launches",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "Launched {product_name} in {timeframe} expanding into {market_area}",
+          "Recent product announcement for {product_type} creating new customer touchpoints",
+          "Company blog details major feature release requiring enhanced customer data tracking",
+          "Product Hunt launch of {product_name} indicates new customer acquisition focus"
+        ],
+        "falseEvidence": [
+          "No major product launches announced in company blog or press releases in past 6 months",
+          "Product development appears focused on existing offerings without new launches",
+          "No evidence of significant product announcements or feature releases recently",
+          "Company focus appears to be on optimizing existing products rather than new launches"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any major product launches, new features, or product expansions in the past 6 months?",
+        "Number": "How many major product launches or features has the company announced in the past 6 months?",
+        "Picklist": "What types of products or features has the company launched in the past 6 months?"
+      }
+    },
+    {
+      "id": "expansion-news",
+      "categoryId": "news",
+      "title": "Market Expansion", 
+      "description": "Identify companies expanding to new markets, regions, or customer segments",
+      "researchQuestion": "How many new markets, regions, or customer segments has the company expanded into in the past 12 months?",
+      "questionType": "Number",
+      "sources": ["Company Press Releases", "Company Blog", "Industry News"],
+      "segmentRelevance": "Market expansion creates complex customer data needs across different regions and segments",
+      "estimatedQualified": "6-10 companies",
+      "resultTypes": {
+        "Number": {
+          "unit": "expansions",
+          "minValue": 0,
+          "maxValue": 10,
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "expansionEvidence": [
+          "Expanded into {number} new markets including {region1} and {region2} in the past year",
+          "Recent announcements detail expansion into {market_type} segment and {geographic_area}",
+          "Company blog outlines {number} major market expansion initiatives launched recently",
+          "Press releases indicate geographic expansion into {number} new regions"
+        ],
+        "noExpansionEvidence": [
+          "No evidence of market expansion or geographic growth in recent company communications",
+          "Company appears focused on current markets without expansion initiatives",
+          "Recent communications emphasize deepening existing market presence rather than expansion",
+          "No announcements of new market entry or geographic expansion in past 12 months"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company expanded into any new markets, regions, or customer segments in the past 12 months?",
+        "Number": "How many new markets, regions, or customer segments has the company expanded into in the past 12 months?",
+        "Picklist": "What types of markets, regions, or customer segments has the company expanded into in the past 12 months?"
+      }
+    },
+    {
+      "id": "ma-activity",
+      "categoryId": "news",
+      "title": "M&A Activity",
+      "description": "Track recent mergers, acquisitions, or strategic partnerships that create data integration needs",
+      "researchQuestion": "Has the company announced any acquisitions, mergers, or major strategic partnerships within the last 12 months?",
+      "questionType": "Boolean",
+      "sources": ["Company Press Releases", "SEC Filings", "Industry News", "Crunchbase"],
+      "segmentRelevance": "M&A activity creates immediate need for customer data consolidation and integration",
+      "estimatedQualified": "4-7 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Recent M&A Activity",
+          "falseLabel": "No - No Recent M&A",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "Announced acquisition of {company_type} company to expand {capability} capabilities",
+          "Recent strategic partnership with {partner_type} announced to enhance data integration",
+          "Completed merger with {industry} company creating need for unified customer data platform",
+          "Acquisition of {company_name} announced to strengthen {business_area} offerings"
+        ],
+        "falseEvidence": [
+          "No recent M&A activity or major partnerships announced in company communications",
+          "Company appears focused on organic growth without recent acquisitions",
+          "No evidence of mergers, acquisitions, or strategic partnerships in past 12 months",
+          "Recent announcements focus on internal initiatives rather than external growth"
+        ]
+      },
+      "rewriteTemplates": {
+        "Boolean": "Has the company announced any acquisitions, mergers, or major strategic partnerships within the last 12 months?",
+        "Number": "How many acquisitions, mergers, or major strategic partnerships has the company announced in the last 12 months?",
+        "Picklist": "What types of acquisitions, mergers, or strategic partnerships has the company announced in the last 12 months?"
+      }
+    },
+    {
+      "id": "data-warehouse-migration",
+      "categoryId": "tech",
+      "title": "Recent Data Warehouse Migration",
+      "description": "Identify companies that have migrated or are planning to migrate their data warehouse within the last 12 months",
+      "researchQuestion": "Has the company announced or completed a data warehouse migration (to Snowflake, BigQuery, Databricks, etc.) within the last 12 months?",
+      "questionType": "Boolean",
+      "sources": ["Engineering Blog", "Company Tech Announcements", "Job Postings", "Conference Talks"],
+      "segmentRelevance": "Data warehouse migrations create opportunities for customer data infrastructure modernization",
+      "estimatedQualified": "7-11 companies",
+      "resultTypes": {
+        "Boolean": {
+          "trueLabel": "Yes - Recent DW Migration",
+          "falseLabel": "No - No Recent Migration",
+          "confidenceRequired": true
+        }
+      },
+      "evidenceTemplates": {
+        "trueEvidence": [
+          "Engineering blog post announced migration from legacy data warehouse to {new_platform}",
+          "Recent job postings mention experience with {platform} migration and data infrastructure modernization",
+          "Company tech talks discuss ongoing data warehouse modernization project",
+          "Engineering team blog details completed migration to cloud-native data platform"
+        ],
+        "falseEvidence": [
+          "No recent announcements about data warehouse changes or migrations",
+          "Engineering blog and job postings suggest stable data infrastructure without major changes",
+          "No evidence of data platform modernization initiatives in public communications",
+          "Current data infrastructure appears stable without recent migration activity"
+        ]
+      }
+    },
+    {
+      "id": "integration-complexity",
+      "categoryId": "tech",
+      "title": "Integration Complexity Score",
+      "description": "Assess the technical complexity of integrating with the company's current infrastructure",
+      "researchQuestion": "Based on the company's size, tech stack, and engineering practices, what is the estimated integration complexity score (1-10)?",
+      "questionType": "Number",
+      "sources": ["Engineering Blog", "GitHub", "Job Postings", "Tech Stack Analysis"],
+      "segmentRelevance": "Integration complexity affects sales cycle length and implementation success",
+      "estimatedQualified": "15-20 companies",
+      "resultTypes": {
+        "Number": {
+          "unit": "complexity score",
+          "minValue": 1,
+          "maxValue": 10,
+          "confidenceRequired": false,
+          "scale": {
+            "1-3": "Low Complexity - Standard integrations",
+            "4-6": "Medium Complexity - Some custom work needed", 
+            "7-10": "High Complexity - Significant engineering effort"
+          }
+        }
+      },
+      "evidenceTemplates": {
+        "complexityEvidence": [
+          "Engineering blog indicates {complexity_level} technical infrastructure with {technology_focus}",
+          "GitHub repositories and job postings suggest {complexity_assessment} integration requirements",
+          "Company size and technical team structure indicates {complexity_level} implementation complexity",
+          "Tech stack analysis reveals {complexity_factors} affecting integration difficulty"
+        ]
+      }
+    },
+    {
+      "id": "data-maturity",
+      "categoryId": "tech",
+      "title": "Data Maturity Level",
+      "description": "Evaluate the company's data sophistication and readiness for advanced CDP features",
+      "researchQuestion": "What is the company's current data maturity level based on their data practices, team structure, and tool usage?",
+      "questionType": "Picklist", 
+      "sources": ["Engineering Blog", "Data Team Job Postings", "Conference Talks", "Tech Stack"],
+      "segmentRelevance": "Data maturity indicates readiness for CDP investment and feature adoption potential",
+      "estimatedQualified": "12-16 companies",
+      "resultTypes": {
+        "Picklist": {
+          "options": [
+            "Basic - Simple analytics, manual processes",
+            "Developing - Some automation, basic data team", 
+            "Intermediate - Dedicated data team, modern tools",
+            "Advanced - Sophisticated data infrastructure, ML/AI",
+            "Expert - Data-driven culture, cutting-edge practices"
+          ],
+          "multiSelect": false,
+          "confidenceRequired": false
+        }
+      },
+      "evidenceTemplates": {
+        "maturityEvidence": [
+          "Engineering blog and job postings indicate {maturity_level} data practices with {specific_indicators}",
+          "Data team structure and tool usage suggests {maturity_assessment} data sophistication",
+          "Conference talks and technical content demonstrate {maturity_level} data capabilities",
+          "Public information about data practices indicates {maturity_level} organizational data maturity"
+        ]
+      }
+    }
+  ]
+} 

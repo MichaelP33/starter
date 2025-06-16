@@ -1,0 +1,563 @@
+{
+  "metadata": {
+    "name": "Segment CDP - Buyer Personas",
+    "description": "Comprehensive persona data structure for Segment's key buyer categories",
+    "version": "1.0",
+    "lastUpdated": "2025-06-15",
+    "totalPersonas": 12
+  },
+  "personaCategories": {
+    "data-driven-marketers": {
+      "categoryId": "data-driven-marketers",
+      "categoryTitle": "Data-Driven Marketers",
+      "categoryIcon": "📊",
+      "categoryDescription": "Marketing professionals who rely on data and analytics to drive campaign performance and customer insights"
+    },
+    "data-team": {
+      "categoryId": "data-team", 
+      "categoryTitle": "Data Team",
+      "categoryIcon": "🔬",
+      "categoryDescription": "Data engineers, analysts, and scientists responsible for data infrastructure and analytics"
+    },
+    "engineering-leadership": {
+      "categoryId": "engineering-leadership",
+      "categoryTitle": "Engineering Leadership", 
+      "categoryIcon": "⚙️",
+      "categoryDescription": "Technical leaders overseeing product development, infrastructure, and engineering teams"
+    },
+    "executive-leadership": {
+      "categoryId": "executive-leadership",
+      "categoryTitle": "Executive Leadership",
+      "categoryIcon": "👔", 
+      "categoryDescription": "C-level executives and senior leadership making strategic technology and budget decisions"
+    }
+  },
+  "personas": [
+    {
+      "id": "growth-marketing-leader",
+      "categoryId": "data-driven-marketers",
+      "icon": "🚀",
+      "title": "Growth Marketing Leader",
+      "description": "Revenue-focused marketing leader responsible for customer acquisition, growth experiments, and scaling marketing programs through data-driven insights",
+      "seniority": "Senior",
+      "departmentFocus": "Marketing",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Customer acquisition strategy and execution",
+        "Growth experimentation and optimization", 
+        "Marketing attribution and performance measurement",
+        "Cross-channel campaign orchestration",
+        "Customer lifecycle optimization"
+      ],
+      "painPoints": [
+        "Fragmented customer data across multiple tools",
+        "Difficulty attributing conversions across channels",
+        "Lack of real-time customer insights",
+        "Manual data export/import processes",
+        "Inconsistent customer tracking across touchpoints"
+      ],
+      "segmentUseCases": [
+        "Multi-touch attribution modeling",
+        "Customer journey tracking and analysis", 
+        "Real-time personalization triggers",
+        "Cohort analysis and retention tracking",
+        "Marketing automation data integration"
+      ],
+      "commonTitles": [
+        "VP of Growth",
+        "Head of Growth Marketing",
+        "Director of Growth",
+        "VP of Marketing",
+        "Chief Growth Officer",
+        "Growth Marketing Director",
+        "VP of Customer Acquisition",
+        "Head of Performance Marketing"
+      ],
+      "reportingStructure": "Reports to CMO or CEO",
+      "budgetAuthority": "High",
+      "technicalProficiency": "Medium-High",
+      "decisionMakingRole": "Primary influencer/decision maker"
+    },
+    {
+      "id": "marketing-operations-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "⚙️",
+      "title": "Marketing Operations Manager",
+      "description": "Operations specialist responsible for marketing technology stack, data integration, and campaign performance measurement",
+      "seniority": "Mid-Senior",
+      "departmentFocus": "Marketing",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Marketing technology stack management",
+        "Data integration and workflow automation",
+        "Campaign performance tracking and reporting",
+        "Lead scoring and qualification processes",
+        "Marketing attribution and ROI measurement"
+      ],
+      "painPoints": [
+        "Complex integrations between marketing tools",
+        "Data silos and inconsistent customer records",
+        "Manual reporting and data reconciliation",
+        "Difficulty tracking customer journey across systems",
+        "Limited real-time data for campaign optimization"
+      ],
+      "segmentUseCases": [
+        "Marketing tool data unification",
+        "Automated lead scoring and routing",
+        "Campaign performance dashboards",
+        "Customer data synchronization across platforms",
+        "Attribution modeling and reporting"
+      ],
+      "commonTitles": [
+        "Marketing Operations Manager",
+        "Director of Marketing Operations",
+        "Marketing Technology Manager",
+        "Head of Marketing Ops",
+        "Senior Marketing Operations Specialist",
+        "VP of Marketing Operations",
+        "Marketing Analytics Manager"
+      ],
+      "reportingStructure": "Reports to VP Marketing or CMO",
+      "budgetAuthority": "Medium",
+      "technicalProficiency": "High",
+      "decisionMakingRole": "Technical evaluator and implementer"
+    },
+    {
+      "id": "performance-marketing-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "📈",
+      "title": "Performance Marketing Manager",
+      "description": "Data-driven marketer focused on paid acquisition, conversion optimization, and performance measurement across digital channels",
+      "seniority": "Mid-Senior",
+      "departmentFocus": "Marketing",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Paid advertising campaign management",
+        "Conversion rate optimization",
+        "Performance analytics and reporting",
+        "Customer acquisition cost optimization",
+        "Multi-channel attribution analysis"
+      ],
+      "painPoints": [
+        "Attribution gaps across paid channels",
+        "Difficulty measuring true customer lifetime value",
+        "Manual reporting across multiple ad platforms",
+        "Limited visibility into post-click customer behavior",
+        "Inconsistent conversion tracking"
+      ],
+      "segmentUseCases": [
+        "Cross-channel conversion attribution",
+        "Customer lifetime value calculation",
+        "Real-time performance dashboards",
+        "Audience segmentation for targeting",
+        "Post-click behavior analysis"
+      ],
+      "commonTitles": [
+        "Performance Marketing Manager",
+        "Director of Performance Marketing",
+        "Head of Paid Acquisition",
+        "Digital Marketing Manager",
+        "Paid Media Manager",
+        "Customer Acquisition Manager",
+        "Growth Marketing Manager"
+      ],
+      "reportingStructure": "Reports to Growth/Marketing Director",
+      "budgetAuthority": "Medium",
+      "technicalProficiency": "High",
+      "decisionMakingRole": "Technical evaluator and user"
+    },
+    {
+      "id": "data-engineer",
+      "categoryId": "data-team",
+      "icon": "🔧",
+      "title": "Data Engineer",
+      "description": "Technical specialist responsible for building and maintaining data pipelines, ETL processes, and data infrastructure",
+      "seniority": "Mid-Senior",
+      "departmentFocus": "Data/Engineering",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Data pipeline development and maintenance",
+        "ETL/ELT process design and optimization",
+        "Data warehouse architecture and management",
+        "API integrations and data connectors",
+        "Data quality monitoring and validation"
+      ],
+      "painPoints": [
+        "Complex API integrations for data sources",
+        "Data quality issues and inconsistencies",
+        "Scaling data pipelines for growing volumes",
+        "Maintaining multiple custom integrations",
+        "Real-time data processing requirements"
+      ],
+      "segmentUseCases": [
+        "Pre-built data connectors and integrations",
+        "Real-time data streaming capabilities",
+        "Data transformation and normalization",
+        "Automated data quality monitoring",
+        "Scalable data pipeline infrastructure"
+      ],
+      "commonTitles": [
+        "Data Engineer",
+        "Senior Data Engineer",
+        "Staff Data Engineer",
+        "Principal Data Engineer",
+        "Data Infrastructure Engineer",
+        "Analytics Engineer",
+        "Platform Data Engineer"
+      ],
+      "reportingStructure": "Reports to Engineering Manager or Data Team Lead",
+      "budgetAuthority": "Low-Medium",
+      "technicalProficiency": "Very High",
+      "decisionMakingRole": "Technical implementer and evaluator"
+    },
+    {
+      "id": "data-analyst",
+      "categoryId": "data-team",
+      "icon": "📊",
+      "title": "Data Analyst",
+      "description": "Analytics professional responsible for customer data analysis, reporting, and business intelligence",
+      "seniority": "Mid",
+      "departmentFocus": "Data/Analytics",
+      "segmentFit": "Secondary",
+      "keyResponsibilities": [
+        "Customer behavior analysis and reporting",
+        "Business intelligence dashboard creation",
+        "Data visualization and storytelling",
+        "Customer segmentation and cohort analysis",
+        "Performance metrics tracking and analysis"
+      ],
+      "painPoints": [
+        "Difficulty accessing clean, consistent customer data",
+        "Manual data preparation and cleaning processes",
+        "Limited real-time data for analysis",
+        "Fragmented customer journey data",
+        "Time-consuming data extraction processes"
+      ],
+      "segmentUseCases": [
+        "Clean, consistent customer data for analysis",
+        "Real-time customer behavior tracking",
+        "Pre-built analytics templates and dashboards",
+        "Customer journey visualization",
+        "Automated data preparation and cleaning"
+      ],
+      "commonTitles": [
+        "Data Analyst",
+        "Senior Data Analyst",
+        "Customer Analytics Manager",
+        "Business Intelligence Analyst",
+        "Marketing Data Analyst",
+        "Product Data Analyst",
+        "Growth Analyst"
+      ],
+      "reportingStructure": "Reports to Data Team Lead or Analytics Manager",
+      "budgetAuthority": "Low",
+      "technicalProficiency": "Medium-High",
+      "decisionMakingRole": "End user and requirements gatherer"
+    },
+    {
+      "id": "head-of-data",
+      "categoryId": "data-team",
+      "icon": "🎯",
+      "title": "Head of Data",
+      "description": "Senior leader responsible for data strategy, team management, and data infrastructure decisions",
+      "seniority": "Senior",
+      "departmentFocus": "Data",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Data strategy and roadmap development",
+        "Data team hiring and management",
+        "Data infrastructure technology decisions",
+        "Cross-functional data initiatives",
+        "Data governance and compliance"
+      ],
+      "painPoints": [
+        "Scaling data infrastructure with company growth",
+        "Managing complex data integration projects",
+        "Ensuring data quality and consistency",
+        "Balancing speed vs. data governance",
+        "Vendor management and technology selection"
+      ],
+      "segmentUseCases": [
+        "Comprehensive customer data platform",
+        "Scalable data integration infrastructure",
+        "Data governance and compliance tools",
+        "Team efficiency and productivity tools",
+        "Strategic data initiative enablement"
+      ],
+      "commonTitles": [
+        "Head of Data",
+        "VP of Data",
+        "Chief Data Officer",
+        "Director of Data",
+        "VP of Analytics",
+        "Head of Data Engineering",
+        "Data Team Lead"
+      ],
+      "reportingStructure": "Reports to CTO or CEO",
+      "budgetAuthority": "High",
+      "technicalProficiency": "High",
+      "decisionMakingRole": "Primary decision maker"
+    },
+    {
+      "id": "engineering-manager",
+      "categoryId": "engineering-leadership",
+      "icon": "⚙️",
+      "title": "Engineering Manager",
+      "description": "Technical leader managing engineering teams, product development, and technical architecture decisions",
+      "seniority": "Senior",
+      "departmentFocus": "Engineering",
+      "segmentFit": "Secondary",
+      "keyResponsibilities": [
+        "Engineering team management and hiring",
+        "Technical architecture and infrastructure decisions",
+        "Product development roadmap planning",
+        "Engineering productivity and tooling",
+        "Cross-functional collaboration with product teams"
+      ],
+      "painPoints": [
+        "Complex customer data integration requirements",
+        "Scaling data infrastructure with product growth",
+        "Developer productivity and tool selection",
+        "Technical debt from custom data solutions",
+        "Compliance and security requirements"
+      ],
+      "segmentUseCases": [
+        "Developer-friendly APIs and SDKs",
+        "Reduced engineering overhead for data infrastructure",
+        "Scalable customer data solutions",
+        "Compliance and security features",
+        "Integration with existing engineering workflows"
+      ],
+      "commonTitles": [
+        "Engineering Manager",
+        "Senior Engineering Manager",
+        "Director of Engineering",
+        "VP of Engineering",
+        "Head of Engineering",
+        "Engineering Team Lead",
+        "Principal Engineering Manager"
+      ],
+      "reportingStructure": "Reports to VP Engineering or CTO",
+      "budgetAuthority": "Medium-High",
+      "technicalProficiency": "Very High",
+      "decisionMakingRole": "Technical evaluator and influencer"
+    },
+    {
+      "id": "cto",
+      "categoryId": "engineering-leadership",
+      "icon": "👨‍💻",
+      "title": "Chief Technology Officer",
+      "description": "Senior executive responsible for technology strategy, engineering organization, and technical infrastructure decisions",
+      "seniority": "Executive",
+      "departmentFocus": "Technology",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Technology strategy and roadmap development",
+        "Engineering organization building and scaling",
+        "Technical infrastructure and architecture decisions",
+        "Technology vendor evaluation and selection",
+        "Technical due diligence for partnerships"
+      ],
+      "painPoints": [
+        "Scaling technology infrastructure with business growth",
+        "Build vs. buy decisions for data infrastructure",
+        "Managing technical debt and legacy systems",
+        "Ensuring system reliability and security",
+        "Balancing innovation with operational stability"
+      ],
+      "segmentUseCases": [
+        "Strategic technology partnership and integration",
+        "Scalable customer data infrastructure",
+        "Developer productivity and API ecosystem",
+        "Enterprise security and compliance",
+        "Technical team enablement and efficiency"
+      ],
+      "commonTitles": [
+        "Chief Technology Officer",
+        "CTO",
+        "VP of Engineering",
+        "Chief Architect",
+        "Head of Technology",
+        "VP of Technology",
+        "Chief Technical Officer"
+      ],
+      "reportingStructure": "Reports to CEO",
+      "budgetAuthority": "Very High",
+      "technicalProficiency": "Very High",
+      "decisionMakingRole": "Primary decision maker"
+    },
+    {
+      "id": "cmo",
+      "categoryId": "executive-leadership",
+      "icon": "📈",
+      "title": "Chief Marketing Officer",
+      "description": "Senior executive responsible for marketing strategy, brand management, and customer acquisition across the organization",
+      "seniority": "Executive",
+      "departmentFocus": "Marketing",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Marketing strategy and brand positioning",
+        "Customer acquisition and retention strategy",
+        "Marketing budget allocation and ROI optimization",
+        "Marketing technology stack decisions",
+        "Cross-functional growth initiatives"
+      ],
+      "painPoints": [
+        "Proving marketing ROI and attribution",
+        "Unifying customer data across marketing channels",
+        "Scaling personalization and customer experience",
+        "Managing complex marketing technology stack",
+        "Demonstrating marketing impact on revenue"
+      ],
+      "segmentUseCases": [
+        "Unified customer view across all marketing touchpoints",
+        "Marketing attribution and ROI measurement",
+        "Real-time personalization at scale",
+        "Customer journey optimization",
+        "Marketing performance dashboards and reporting"
+      ],
+      "commonTitles": [
+        "Chief Marketing Officer",
+        "CMO",
+        "VP of Marketing",
+        "Head of Marketing",
+        "Chief Brand Officer",
+        "VP of Growth Marketing",
+        "Chief Customer Officer"
+      ],
+      "reportingStructure": "Reports to CEO",
+      "budgetAuthority": "Very High",
+      "technicalProficiency": "Medium",
+      "decisionMakingRole": "Primary decision maker"
+    },
+    {
+      "id": "ceo",
+      "categoryId": "executive-leadership",
+      "icon": "👔",
+      "title": "Chief Executive Officer",
+      "description": "Top executive responsible for overall company strategy, growth, and major technology investment decisions",
+      "seniority": "Executive",
+      "departmentFocus": "Executive",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Company strategy and vision setting",
+        "Major technology investment decisions",
+        "Organizational growth and scaling",
+        "Investor relations and fundraising",
+        "Cross-functional leadership and alignment"
+      ],
+      "painPoints": [
+        "Scaling customer experience with company growth",
+        "Data-driven decision making across the organization",
+        "Technology investment ROI and strategic alignment",
+        "Competitive differentiation through data and personalization",
+        "Organizational efficiency and productivity"
+      ],
+      "segmentUseCases": [
+        "Strategic customer data initiatives",
+        "Company-wide data democratization",
+        "Competitive advantage through customer insights",
+        "Revenue growth through data-driven personalization",
+        "Operational efficiency through data integration"
+      ],
+      "commonTitles": [
+        "Chief Executive Officer",
+        "CEO",
+        "Founder & CEO",
+        "Co-Founder",
+        "President & CEO",
+        "Founder"
+      ],
+      "reportingStructure": "Reports to Board of Directors",
+      "budgetAuthority": "Ultimate",
+      "technicalProficiency": "Low-Medium",
+      "decisionMakingRole": "Ultimate decision maker"
+    },
+    {
+      "id": "vp-product",
+      "categoryId": "executive-leadership",
+      "icon": "🎯",
+      "title": "VP of Product",
+      "description": "Senior product leader responsible for product strategy, user experience, and product-driven growth initiatives",
+      "seniority": "Senior",
+      "departmentFocus": "Product",
+      "segmentFit": "Secondary",
+      "keyResponsibilities": [
+        "Product strategy and roadmap development",
+        "User experience and product optimization",
+        "Product-driven growth initiatives",
+        "Cross-functional product collaboration",
+        "Product analytics and user behavior analysis"
+      ],
+      "painPoints": [
+        "Understanding user behavior across product touchpoints",
+        "Measuring product feature adoption and engagement",
+        "Personalizing product experiences for different user segments",
+        "Tracking product-led growth metrics",
+        "Optimizing user onboarding and activation"
+      ],
+      "segmentUseCases": [
+        "Product analytics and user behavior tracking",
+        "Customer journey mapping across product features",
+        "Personalized product experiences",
+        "User segmentation and targeting",
+        "Product-led growth measurement"
+      ],
+      "commonTitles": [
+        "VP of Product",
+        "Head of Product",
+        "Chief Product Officer",
+        "Director of Product",
+        "VP of Product Management",
+        "Product Lead"
+      ],
+      "reportingStructure": "Reports to CEO or COO",
+      "budgetAuthority": "High",
+      "technicalProficiency": "Medium-High",
+      "decisionMakingRole": "Primary decision maker for product initiatives"
+    },
+    {
+      "id": "revenue-operations",
+      "categoryId": "executive-leadership",
+      "icon": "💰",
+      "title": "VP of Revenue Operations",
+      "description": "Senior operations leader responsible for revenue strategy, sales and marketing alignment, and revenue optimization",
+      "seniority": "Senior",
+      "departmentFocus": "Revenue Operations",
+      "segmentFit": "Primary",
+      "keyResponsibilities": [
+        "Revenue strategy and optimization",
+        "Sales and marketing alignment",
+        "Revenue operations technology stack",
+        "Customer lifecycle and retention analysis",
+        "Revenue forecasting and reporting"
+      ],
+      "painPoints": [
+        "Fragmented customer data across sales and marketing systems",
+        "Difficulty tracking customer journey from awareness to revenue",
+        "Manual reporting and revenue analysis processes",
+        "Lack of real-time visibility into pipeline and conversions",
+        "Inconsistent customer attribution across touchpoints"
+      ],
+      "segmentUseCases": [
+        "Unified customer journey tracking from marketing to revenue",
+        "Sales and marketing attribution modeling",
+        "Customer lifecycle value analysis",
+        "Revenue operations dashboards and reporting",
+        "Automated lead scoring and routing"
+      ],
+      "commonTitles": [
+        "VP of Revenue Operations",
+        "Head of Revenue Operations",
+        "Chief Revenue Officer",
+        "Director of Revenue Operations",
+        "VP of Sales Operations",
+        "Revenue Operations Manager"
+      ],
+      "reportingStructure": "Reports to CEO or CRO",
+      "budgetAuthority": "High",
+      "technicalProficiency": "Medium-High",
+      "decisionMakingRole": "Primary decision maker for revenue operations"
+    }
+  ]
+} 
