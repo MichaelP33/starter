@@ -26,7 +26,8 @@ import {
   Settings,
   Target,
   Users,
-  XCircle
+  XCircle,
+  ExternalLink
 } from "lucide-react";
 import { QualifiedCompanyWithResearch, SelectedPersona, PersonaTestResult } from "@/components/chat/types";
 import { Button } from "@/components/ui/button";
@@ -299,16 +300,22 @@ export default function CampaignInbox() {
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
     const fullText = company.researchResults.summary;
     const truncatedText = truncateText(fullText);
-    const needsTruncation = fullText.length > 70;
+    const needsTruncation = fullText.length > 50;
 
     return (
-      <div className="relative group">
-        <div className="text-sm leading-relaxed">
-          {needsTruncation ? truncatedText : fullText}
+      <div className="group relative">
+        <div className="text-sm">
+          {truncatedText}
+          {needsTruncation && (
+            <button
+              onClick={() => handleViewDetails(company.companyName)}
+              className="ml-1 text-gray-500 hover:text-gray-800 text-xs inline-flex items-center"
+            >
+              See More
+              <ExternalLink className="w-3 h-3 ml-1" />
+            </button>
+          )}
         </div>
-        {needsTruncation && (
-          <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-        )}
       </div>
     );
   };
@@ -674,6 +681,7 @@ export default function CampaignInbox() {
         isOpen={isPanelOpen}
         onClose={handleClosePanel}
         companyName={selectedCompany}
+        result={qualifiedCompanies.find(c => c.companyName === selectedCompany)}
       />
     </TooltipProvider>
   );
