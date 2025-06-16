@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -28,7 +28,7 @@ import {
   Users,
   XCircle
 } from "lucide-react";
-import { QualifiedCompanyWithResearch } from "@/components/chat/types";
+import { QualifiedCompanyWithResearch, SelectedPersona, PersonaTestResult } from "@/components/chat/types";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -39,6 +39,7 @@ import {
 import companiesData from "@/data/companies.json";
 import { useDataConfig } from "@/hooks/useDataConfig";
 import { CompanyAnalysisPanel } from "@/components/chat/CompanyAnalysisPanel";
+import { Agent } from "@/components/chat/types";
 
 interface Contact {
   name: string;
@@ -97,6 +98,14 @@ const mockContacts: MockContacts = {
   ]
 };
 
+interface CampaignData {
+  agent: Agent;
+  qualifiedCompanies: QualifiedCompanyWithResearch[];
+  selectedPersonas: SelectedPersona[];
+  personaTestResults: PersonaTestResult[];
+  createdAt: string;
+}
+
 export default function CampaignInbox() {
   const [activeTab, setActiveTab] = useState<'qualified' | 'full'>('qualified');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -104,15 +113,33 @@ export default function CampaignInbox() {
   const [selectedCompany, setSelectedCompany] = useState("");
   const [showResearchQuestion, setShowResearchQuestion] = useState(false);
   const [showCampaignDetails, setShowCampaignDetails] = useState(false);
+  const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
 
   const { agents, isLoadingAgents } = useDataConfig();
+
+  // Load campaign data from localStorage
+  useEffect(() => {
+    const storedData = localStorage.getItem('campaignData');
+    if (storedData) {
+      const data = JSON.parse(storedData) as CampaignData;
+      console.log('📥 Loaded campaign data:', data);
+      setCampaignData(data);
+    }
+  }, []);
 
   if (isLoadingAgents) {
     return <div>Loading...</div>;
   }
 
-  // Get the marketing hiring agent data
-  const marketingHiringAgent = agents.find(agent => agent.id === "marketing-hiring");
+  // Use campaign data if available, otherwise fall back to mock data
+  const agent = campaignData?.agent || agents.find(agent => agent.id === "marketing-hiring");
+  const qualifiedCompanies = campaignData?.qualifiedCompanies || [];
+  const selectedPersonas = campaignData?.selectedPersonas || [];
+  const personaTestResults = campaignData?.personaTestResults || [];
+
+  const qualifiedCount = qualifiedCompanies.filter(c => c.qualified).length;
+  const totalCount = qualifiedCompanies.length;
+  const totalPersonas = selectedPersonas.length;
 
   const toggleRow = (companyName: string) => {
     setExpandedRows(prev => {
@@ -139,10 +166,6 @@ export default function CampaignInbox() {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
   };
-
-  const qualifiedCount = companiesData.qualificationResults.filter(c => c.qualified).length;
-  const totalCount = companiesData.qualificationResults.length;
-  const totalPersonas = companiesData.qualificationResults.reduce((sum, c) => sum + (c.qualified ? 2 : 0), 0);
 
   const renderContactCard = (contact: Contact) => (
     <motion.div
@@ -203,8 +226,8 @@ export default function CampaignInbox() {
   ];
 
   const filteredCompanies = activeTab === 'qualified' 
-    ? companiesData.qualificationResults.filter(c => c.qualified)
-    : companiesData.qualificationResults;
+    ? qualifiedCompanies.filter(c => c.qualified)
+    : qualifiedCompanies;
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
     const fullText = company.researchResults.summary;
@@ -223,6 +246,15 @@ export default function CampaignInbox() {
     );
   };
 
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-gray-50/50">
@@ -234,7 +266,7 @@ export default function CampaignInbox() {
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <span className="text-gray-900 font-medium">Campaigns</span>
                   <ChevronRight className="w-4 h-4" />
-                  <span className="text-gray-900 font-medium">{marketingHiringAgent?.title}</span>
+                  <span className="text-gray-900 font-medium">{agent?.title}</span>
                 </div>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
                   Active
@@ -268,16 +300,16 @@ export default function CampaignInbox() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h1 className="text-2xl font-semibold text-gray-900">
-                        {marketingHiringAgent?.title}
+                        {agent?.title}
                       </h1>
                       <div className="flex items-center gap-4 mt-2">
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <Calendar className="w-4 h-4" />
-                          Started 2 weeks ago
+                          Started {formatDate(campaignData?.createdAt)}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <Clock className="w-4 h-4" />
-                          Last updated {new Date().toLocaleDateString()}
+                          Last updated {formatDate(new Date().toISOString())}
                         </div>
                       </div>
                     </div>
@@ -307,17 +339,17 @@ export default function CampaignInbox() {
                           <span className="text-sm font-medium text-gray-900">Research Agent</span>
                         </div>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                          {marketingHiringAgent?.questionType}
+                          {agent?.questionType}
                         </span>
                       </div>
                       
                       <div className="space-y-4">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {marketingHiringAgent?.title}
+                            {agent?.title}
                           </h3>
                           <p className="text-sm text-gray-500 line-clamp-2">
-                            {marketingHiringAgent?.description}
+                            {agent?.description}
                           </p>
                         </div>
 
@@ -331,7 +363,7 @@ export default function CampaignInbox() {
                           </button>
                           {showResearchQuestion && (
                             <p className="mt-2 text-sm text-gray-600">
-                              {marketingHiringAgent?.researchQuestion}
+                              {agent?.researchQuestion}
                             </p>
                           )}
                         </div>
@@ -347,7 +379,7 @@ export default function CampaignInbox() {
                             Outbound Strategy
                           </div>
                           <p className="text-sm text-gray-600">
-                            Target companies actively expanding marketing teams with leadership roles
+                            {agent?.description}
                           </p>
                         </div>
 
@@ -357,8 +389,11 @@ export default function CampaignInbox() {
                             Enrolled Personas
                           </div>
                           <div className="space-y-1">
-                            <div className="text-sm text-gray-900">Strategic Marketing Executive</div>
-                            <div className="text-sm text-gray-900">Growth Marketing Leader</div>
+                            {selectedPersonas.map(persona => (
+                              <div key={persona.id} className="text-sm text-gray-900">
+                                {persona.title}
+                              </div>
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -381,7 +416,9 @@ export default function CampaignInbox() {
                     <div className="grid grid-cols-3 gap-4">
                       <div className="p-4 bg-white rounded-lg border border-gray-100">
                         <div className="text-sm text-gray-500 mb-1">Qualification Rate</div>
-                        <div className="text-2xl font-semibold text-gray-900">63%</div>
+                        <div className="text-2xl font-semibold text-gray-900">
+                          {Math.round((qualifiedCount / totalCount) * 100)}%
+                        </div>
                       </div>
                       <div className="p-4 bg-white rounded-lg border border-gray-100">
                         <div className="text-sm text-green-600 mb-1">Messages Sent</div>
@@ -496,7 +533,7 @@ export default function CampaignInbox() {
                           </TableCell>
                           <TableCell className="py-3">
                             <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {company.qualified ? "2 Personas" : "0 Personas"}
+                              {company.qualified ? `${selectedPersonas.length} Personas` : "0 Personas"}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -550,15 +587,23 @@ export default function CampaignInbox() {
                                     </div>
 
                                     {/* Sample Contacts */}
-                                    {mockContacts[company.companyName] && (
+                                    {personaTestResults.filter(c => c.companyName === company.companyName).length > 0 && (
                                       <div className="space-y-3">
                                         <h3 className="text-sm font-medium text-gray-900">Sample Contacts</h3>
                                         <div className="grid gap-4">
-                                          {mockContacts[company.companyName].map((contact) => (
-                                            <div key={contact.name}>
-                                              {renderContactCard(contact)}
-                                            </div>
-                                          ))}
+                                          {personaTestResults
+                                            .filter(c => c.companyName === company.companyName)
+                                            .map(contact => (
+                                              <div key={contact.id}>
+                                                {renderContactCard({
+                                                  name: contact.contactName,
+                                                  title: contact.contactTitle,
+                                                  linkedin: contact.linkedinProfile,
+                                                  personaMatch: contact.personaMatch,
+                                                  matchScore: contact.matchScore
+                                                })}
+                                              </div>
+                                            ))}
                                         </div>
                                       </div>
                                     )}

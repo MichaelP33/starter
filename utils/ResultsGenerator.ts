@@ -282,6 +282,71 @@ export class ResultsGenerator {
     });
   }
 
+  generateDefaultResults(agentId: string, count: number = 3): AgentResult[] {
+    console.log('🔍 GENERATING DEFAULT RESULTS:');
+    console.log('Agent ID:', agentId);
+    console.log('Requested count:', count);
+
+    // Get the company set for this agent
+    const companySet = this.mockResults?.[agentId]?.companySets || [];
+    console.log('Available company set:', companySet);
+
+    // Take the first N companies from the set
+    const targetCompanyIds = companySet.slice(0, count);
+    console.log('Selected company IDs:', targetCompanyIds);
+
+    // Get the full company data for these IDs
+    const targetCompanies = this.companies.filter(company => 
+      targetCompanyIds.includes(company.id)
+    );
+    console.log('Found companies:', targetCompanies.map(c => ({ id: c.id, name: c.companyName })));
+
+    // Generate results using the same logic as generateResults but without delay
+    return targetCompanies.map(company => {
+      const evidence = this.mockResults?.[agentId]?.evidenceTemplates?.map(template => ({
+        type: 'news',
+        title: template.replace('[COMPANY]', company.companyName),
+        description: template.replace('[COMPANY]', company.companyName),
+        confidence: 0.92,
+        source: 'Company Website'
+      })) || [];
+
+      const researchSummary = this.mockResults?.[agentId]?.researchSummary?.replace(
+        '[COMPANY]', 
+        company.companyName
+      ) || '';
+
+      const whyQualified = this.mockResults?.[agentId]?.whyQualified?.replace(
+        '[COMPANY]', 
+        company.companyName
+      ) || '';
+
+      return {
+        companyId: company.id,
+        companyName: company.companyName,
+        qualified: true,
+        evidence,
+        researchSummary,
+        whyQualified,
+        confidence: 0.92,
+        confidenceScore: 92,
+        researchDate: new Date().toISOString(),
+        agentId,
+        agentName: this.agents.find(a => a.id === agentId)?.title || '',
+        industry: company.industry,
+        employeeCount: company.employeeCount,
+        hqCountry: company.hqCountry,
+        hqState: company.hqState,
+        hqCity: company.hqCity || '',
+        website: company.website,
+        totalFunding: company.totalFunding,
+        estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+        yearFounded: company.yearFounded,
+        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News']
+      };
+    });
+  }
+
   private mockResults: Record<string, {
     companySets: string[];
     evidenceTemplates: string[];

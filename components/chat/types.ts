@@ -5,7 +5,8 @@ export type Step =
   | "researching"
   | "agent-details"
   | "find-contacts"
-  | "campaign";
+  | "campaign"
+  | "inbox";
 
 export interface Account {
   companyName: string;

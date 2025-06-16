@@ -11,65 +11,20 @@ import {
 import { motion } from "framer-motion";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { useState } from "react";
-
-interface PersonaTestResult {
-  companyName: string;
-  contactName: string;
-  contactTitle: string;
-  linkedinProfile: string;
-  matchScore: number;
-}
+import { PersonaTestResult } from './types';
+import { Button } from '@/components/ui/button';
 
 interface PersonaTestResultsTableProps {
   results: PersonaTestResult[];
+  onAddThisPersona?: () => void;
+  onBackToConfiguration?: () => void;
 }
 
-const mockPersonaResults: PersonaTestResult[] = [
-  {
-    companyName: "Stripe",
-    contactName: "Sarah Chen",
-    contactTitle: "VP of Marketing",
-    linkedinProfile: "linkedin.com/in/sarahchen",
-    matchScore: 95
-  },
-  {
-    companyName: "Stripe",
-    contactName: "Marcus Rodriguez",
-    contactTitle: "Chief Marketing Officer",
-    linkedinProfile: "linkedin.com/in/marcusrodriguez",
-    matchScore: 98
-  },
-  {
-    companyName: "Notion",
-    contactName: "Jennifer Park",
-    contactTitle: "Head of Marketing Strategy",
-    linkedinProfile: "linkedin.com/in/jenniferpark",
-    matchScore: 92
-  },
-  {
-    companyName: "Notion",
-    contactName: "Alex Thompson",
-    contactTitle: "VP of Brand & Marketing",
-    linkedinProfile: "linkedin.com/in/alexthompson",
-    matchScore: 87
-  },
-  {
-    companyName: "Supabase",
-    contactName: "David Kim",
-    contactTitle: "VP of Brand & Marketing",
-    linkedinProfile: "linkedin.com/in/davidkim",
-    matchScore: 89
-  },
-  {
-    companyName: "Supabase",
-    contactName: "Lisa Wang",
-    contactTitle: "Director of Marketing",
-    linkedinProfile: "linkedin.com/in/lisawang",
-    matchScore: 84
-  }
-];
-
-export function PersonaTestResultsTable({ results }: PersonaTestResultsTableProps) {
+export function PersonaTestResultsTable({ 
+  results,
+  onAddThisPersona,
+  onBackToConfiguration 
+}: PersonaTestResultsTableProps) {
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
 
   const handleViewDetails = (contactName: string) => {
@@ -99,94 +54,56 @@ export function PersonaTestResultsTable({ results }: PersonaTestResultsTableProp
           </p>
         </div>
 
-        <div className="rounded-lg border border-muted/20 bg-white overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b border-muted/20">
-                <TableHead className="bg-muted/5 py-4 font-medium">Company Name</TableHead>
-                <TableHead className="bg-muted/5 py-4 font-medium border-l border-muted/20">Contact Name</TableHead>
-                <TableHead className="bg-muted/5 py-4 font-medium border-l border-muted/20">Contact Title</TableHead>
-                <TableHead className="bg-muted/5 py-4 font-medium border-l border-muted/20">LinkedIn Profile</TableHead>
-                <TableHead className="bg-muted/5 py-4 font-medium border-l border-muted/20">Match Score</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {results.map((result, index) => (
-                <TableRow
-                  key={`${result.companyName}-${result.contactName}`}
-                  className="hover:bg-muted/5 transition-colors duration-200"
-                >
-                  <TableCell className="py-4 font-medium">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center gap-3"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                      <span className="font-medium text-foreground">
-                        {result.companyName}
-                      </span>
-                    </motion.div>
-                  </TableCell>
-                  <TableCell className="py-4 border-l border-muted/20">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 + 0.05 }}
-                      className="space-y-1"
-                    >
-                      <div className="font-medium text-gray-900">{result.contactName}</div>
-                      <button
-                        onClick={() => handleViewDetails(result.contactName)}
-                        className="text-gray-500 hover:text-gray-700 cursor-pointer transition-colors duration-200 text-sm"
-                      >
-                        View details
-                      </button>
-                    </motion.div>
-                  </TableCell>
-                  <TableCell className="py-4 border-l border-muted/20">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 + 0.1 }}
-                      className="text-gray-700"
-                    >
-                      {result.contactTitle}
-                    </motion.div>
-                  </TableCell>
-                  <TableCell className="py-4 border-l border-muted/20">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 + 0.15 }}
-                    >
-                      <a
-                        href={`https://${result.linkedinProfile}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        <span className="text-sm">LinkedIn</span>
-                      </a>
-                    </motion.div>
-                  </TableCell>
-                  <TableCell className="py-4 border-l border-muted/20">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: index * 0.1 + 0.2 }}
-                    >
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getMatchScoreColor(result.matchScore)}`}>
-                        {result.matchScore}% match
-                      </span>
-                    </motion.div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Contact
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Company
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Persona Match
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Match Score
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {results.map((result) => (
+                  <tr key={result.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">
+                            {result.contactName}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {result.contactTitle}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{result.companyName}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{result.personaMatch}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {Math.round(result.matchScore)}%
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="bg-green-50/50 border border-green-200/50 rounded-lg p-4">
@@ -200,10 +117,25 @@ export function PersonaTestResultsTable({ results }: PersonaTestResultsTableProp
             These contacts match your Strategic Marketing Executive persona criteria and are ready for personalized outreach.
           </p>
         </div>
+
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="flex gap-3">
+            <Button 
+              onClick={onAddThisPersona}
+              className="bg-[#6366f1] hover:bg-[#6366f1]/90 text-white h-12 text-base font-medium"
+            >
+              Add This Persona to Campaign
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={onBackToConfiguration}
+              className="h-12"
+            >
+              Back to Configuration
+            </Button>
+          </div>
+        </div>
       </div>
     </motion.div>
   );
 }
-
-// Export the mock data for use in ChatInterface
-export { mockPersonaResults };

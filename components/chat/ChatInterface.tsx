@@ -62,6 +62,12 @@ interface GeneratedContact {
   companyName: string;
 }
 
+interface SelectedAgentConfig {
+  agent: Agent;
+  testResults: AgentResult[];
+  qualifiedCompanies: QualifiedCompanyWithResearch[];
+}
+
 const containerVariants = {
   hidden: { 
     opacity: 0,
@@ -186,6 +192,7 @@ export function ChatInterface() {
   const [qualifiedCompanies, setQualifiedCompanies] = useState<QualifiedCompanyWithResearch[]>([]);
   const [personaTestResults, setPersonaTestResults] = useState<PersonaTestResult[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedAgentConfig, setSelectedAgentConfig] = useState<SelectedAgentConfig | null>(null);
 
   // Group agents by category
   const agentsByCategory = agents?.reduce((acc, agent) => {
@@ -378,22 +385,51 @@ export function ChatInterface() {
         questionType: agent.questionType,
         researchQuestion: agent.researchQuestion
       });
-      console.log('Agent ID format check:', {
-        hasHyphens: agent.id.includes('-'),
-        hasUnderscores: agent.id.includes('_'),
-        length: agent.id.length,
-        rawId: agent.id
-      });
       
       setIsTestingAgent(true);
-      console.log('🔍 Testing agent:', {
-        agentId: agent.id,
-        agentTitle: agent.title,
-        agentType: typeof agent.id
-      });
       const results = resultsGenerator?.generateResults(agent.id);
       if (results) {
         setQualificationResults(results);
+        
+        // Convert AgentResult[] to QualifiedCompanyWithResearch[]
+        const qualifiedCompanies = results
+          .filter(result => result.qualified)
+          .map(result => ({
+            companyId: result.companyId,
+            companyName: result.companyName,
+            industry: result.industry,
+            employeeCount: result.employeeCount,
+            hqCountry: result.hqCountry,
+            hqState: result.hqState,
+            hqCity: result.hqCity || '',
+            website: result.website,
+            totalFunding: result.totalFunding,
+            estimatedAnnualRevenue: result.estimatedAnnualRevenue,
+            yearFounded: result.yearFounded,
+            researchSummary: result.researchSummary,
+            whyQualified: result.whyQualified,
+            evidence: result.evidence,
+            qualified: true,
+            researchResults: {
+              summary: result.researchSummary,
+              sources: result.dataSources
+            },
+            assignedPersonas: [],
+            confidence: result.confidence,
+            confidenceScore: result.confidenceScore,
+            researchDate: result.researchDate,
+            dataSources: result.dataSources,
+            agentId: result.agentId,
+            agentName: result.agentName
+          }));
+
+        // Update selectedAgentConfig with test results
+        setSelectedAgentConfig({
+          agent,
+          testResults: results,
+          qualifiedCompanies
+        });
+
         setTimeout(() => {
           setIsTestingAgent(false);
           setShowTestResults(true);
@@ -404,6 +440,91 @@ export function ChatInterface() {
       setShowTestResults(false);
       setShowFullResults(false);
     } else if (action === 'add') {
+      // Check if we have test results
+      if (qualificationResults && qualificationResults.length > 0) {
+        // Use actual test results
+        const qualifiedCompanies = qualificationResults
+          .filter(result => result.qualified)
+          .map(result => ({
+            companyId: result.companyId,
+            companyName: result.companyName,
+            industry: result.industry,
+            employeeCount: result.employeeCount,
+            hqCountry: result.hqCountry,
+            hqState: result.hqState,
+            hqCity: result.hqCity || '',
+            website: result.website,
+            totalFunding: result.totalFunding,
+            estimatedAnnualRevenue: result.estimatedAnnualRevenue,
+            yearFounded: result.yearFounded,
+            researchSummary: result.researchSummary,
+            whyQualified: result.whyQualified,
+            evidence: result.evidence,
+            qualified: true,
+            researchResults: {
+              summary: result.researchSummary,
+              sources: result.dataSources
+            },
+            assignedPersonas: [],
+            confidence: result.confidence,
+            confidenceScore: result.confidenceScore,
+            researchDate: result.researchDate,
+            dataSources: result.dataSources,
+            agentId: result.agentId,
+            agentName: result.agentName
+          }));
+
+        setSelectedAgentConfig({
+          agent,
+          testResults: qualificationResults,
+          qualifiedCompanies
+        });
+      } else {
+        // Generate default results using a subset of companies
+        if (resultsGenerator && agent) {
+          const defaultResults = resultsGenerator.generateDefaultResults(agent.id, 3);
+          setQualificationResults(defaultResults);
+          
+          const qualifiedCompanies = defaultResults
+            .filter(result => result.qualified)
+            .map(result => ({
+              companyId: result.companyId,
+              companyName: result.companyName,
+              industry: result.industry,
+              employeeCount: result.employeeCount,
+              hqCountry: result.hqCountry,
+              hqState: result.hqState,
+              hqCity: result.hqCity || '',
+              website: result.website,
+              totalFunding: result.totalFunding,
+              estimatedAnnualRevenue: result.estimatedAnnualRevenue,
+              yearFounded: result.yearFounded,
+              researchSummary: result.researchSummary,
+              whyQualified: result.whyQualified,
+              evidence: result.evidence,
+              qualified: true,
+              researchResults: {
+                summary: result.researchSummary,
+                sources: result.dataSources
+              },
+              assignedPersonas: [],
+              confidence: result.confidence,
+              confidenceScore: result.confidenceScore,
+              researchDate: result.researchDate,
+              dataSources: result.dataSources,
+              agentId: result.agentId,
+              agentName: result.agentName
+            }));
+
+          setSelectedAgentConfig({
+            agent,
+            testResults: defaultResults,
+            qualifiedCompanies
+          });
+        }
+      }
+
+      // Proceed to Step 3
       setWorkflowStep(3);
       setCurrentStep("find-contacts");
       setActiveTab('qualified');
@@ -426,43 +547,64 @@ export function ChatInterface() {
   };
 
   const handlePersonaBuild = (persona: Persona) => {
+    console.log("🔍 BUILD PERSONA DEBUG:");
+    console.log("Persona to configure:", persona);
+    console.log("Current selectedPersonas:", selectedPersonas);
+    
+    // Set the selected persona for configuration (NOT add to selectedPersonas yet)
     setSelectedPersona(persona);
     setIsPersonaModifyMode(false);
     setShowPersonaTestResults(false);
     setIsTestingPersonas(false);
     setShowMultiPersonaSelection(false);
-    console.log("Build persona:", persona);
   };
 
   const handleAddThisPersona = () => {
+    console.log("🔍 ADD THIS PERSONA DEBUG:");
+    console.log("Selected persona to add:", selectedPersona);
+    console.log("Current selectedPersonas:", selectedPersonas);
+    
     if (selectedPersona) {
+      // Create new selected persona
       const newSelectedPersona: SelectedPersona = {
         id: selectedPersona.id,
         title: selectedPersona.title,
         description: selectedPersona.description
       };
       
-      setSelectedPersonas([...selectedPersonas, newSelectedPersona]);
+      // Update selectedPersonas with new persona
+      const updatedPersonas = [...selectedPersonas, newSelectedPersona];
+      console.log("Updated selectedPersonas:", updatedPersonas);
+      
+      setSelectedPersonas(updatedPersonas);
       setShowMultiPersonaSelection(true);
-      setSelectedPersona(null);
+      setSelectedPersona(null); // Clear selected persona after adding
     }
   };
 
   const handleEditPersona = (persona: SelectedPersona) => {
-    // Convert back to Persona type for editing
-    const personaToEdit: Persona = {
-      id: persona.id,
-      icon: personas.find(p => p.id === persona.id)?.icon || "👔",
-      title: persona.title,
-      description: persona.description
-    };
-    setSelectedPersona(personaToEdit);
-    setIsPersonaModifyMode(true);
-    setShowMultiPersonaSelection(false);
+    console.log("🔍 EDIT PERSONA DEBUG:");
+    console.log("Persona to edit:", persona);
+    console.log("Current selectedPersonas:", selectedPersonas);
+    
+    // Find the full persona data
+    const personaToEdit = personas.find(p => p.id === persona.id);
+    if (personaToEdit) {
+      setSelectedPersona(personaToEdit);
+      setIsPersonaModifyMode(true);
+      setShowMultiPersonaSelection(false);
+    }
   };
 
   const handleRemovePersona = (personaId: string) => {
-    setSelectedPersonas(prev => prev.filter(p => p.id !== personaId));
+    console.log("🔍 REMOVE PERSONA DEBUG:");
+    console.log("Persona ID to remove:", personaId);
+    console.log("Current selectedPersonas:", selectedPersonas);
+    
+    const updatedPersonas = selectedPersonas.filter(p => p.id !== personaId);
+    console.log("Updated selectedPersonas:", updatedPersonas);
+    
+    setSelectedPersonas(updatedPersonas);
   };
 
   const handleTestAllPersonas = () => {
@@ -525,29 +667,143 @@ export function ChatInterface() {
   };
 
   const handlePersonaAction = (action: PersonaAction) => {
-    console.log('handlePersonaAction called with:', action);
-    console.log('Action value:', action.value);
+    console.log('🔍 PERSONA ACTION DEBUG:');
+    console.log('Action:', action);
+    console.log('Current state:', {
+      currentStep,
+      workflowStep,
+      selectedPersonas: selectedPersonas.length,
+      qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies.length,
+      personaTestResults: personaTestResults.length
+    });
     
-    if (action.value === "launch") {
-      console.log('Launch case triggered');
-      alert('Launch action working!');
-    }
-    
-    if (action.value === "modify") {
+    if (action.value === "test") {
+      console.log('🧪 PERSONA TESTING DEBUG:');
+      console.log('Selected personas:', selectedPersonas);
+      console.log('Selected agent config:', selectedAgentConfig);
+      console.log('Qualified companies:', selectedAgentConfig?.qualifiedCompanies);
+      console.log('Contact generator exists:', !!contactGenerator);
+      
+      setIsTestingPersonas(true);
+      setShowPersonaTestResults(false);
+      setShowMultiPersonaSelection(false);
+      
+      // Check if we have qualified companies
+      const qualifiedCompanies = selectedAgentConfig?.qualifiedCompanies || [];
+      console.log('Companies for contact generation:', qualifiedCompanies);
+      
+      if (contactGenerator && qualifiedCompanies.length > 0) {
+        console.log('Generating contacts for companies:', qualifiedCompanies.length);
+        
+        // Convert QualifiedCompanyWithResearch to Company for ContactGenerator
+        const companiesForContacts = qualifiedCompanies.map(qc => {
+          console.log('Converting company:', qc.companyName);
+          return {
+            id: qc.companyId,
+            companyName: qc.companyName,
+            industry: qc.industry,
+            employeeCount: qc.employeeCount,
+            hqCountry: qc.hqCountry,
+            hqState: qc.hqState,
+            website: qc.website,
+            totalFunding: qc.totalFunding,
+            estimatedAnnualRevenue: qc.estimatedAnnualRevenue,
+            employeeCountNumeric: parseInt(qc.employeeCount.replace(/,/g, '')),
+            hqCity: qc.hqCity || '',
+            yearFounded: parseInt(qc.yearFounded.toString()),
+            tags: []
+          };
+        });
+        
+        console.log('Converted companies for contacts:', companiesForContacts);
+        
+        // Use selectedPersonas length or default to 1 if testing single persona
+        const numPersonas = selectedPersonas.length || 1;
+        console.log('Number of personas to generate contacts for:', numPersonas);
+        
+        const contacts = contactGenerator.generateContactsForCompanies(
+          companiesForContacts,
+          numPersonas
+        );
+        
+        console.log('Generated contacts:', contacts);
+        
+        // Convert GeneratedContact to PersonaTestResult
+        const testResults = contacts.map(contact => ({
+          id: contact.id,
+          contactName: contact.name,
+          contactTitle: contact.title,
+          email: contact.email,
+          linkedinProfile: contact.linkedin,
+          personaMatch: contact.personaMatch,
+          matchScore: contact.matchScore,
+          companyId: contact.companyId,
+          companyName: contact.companyName
+        }));
+        
+        console.log('Converted test results:', testResults);
+        setPersonaTestResults(testResults);
+        
+        // Simulate testing for exactly 3.5 seconds
+        setTimeout(() => {
+          console.log('Test complete, showing results');
+          setIsTestingPersonas(false);
+          setShowPersonaTestResults(true);
+        }, 3500);
+      } else {
+        console.log('❌ Missing data for persona testing:', {
+          hasContactGenerator: !!contactGenerator,
+          qualifiedCompaniesCount: qualifiedCompanies.length,
+          selectedPersonasCount: selectedPersonas.length
+        });
+        
+        // Show error state
+        setIsTestingPersonas(false);
+        setShowPersonaTestResults(false);
+      }
+    } else if (action.value === "launch") {
+      console.log('🚀 LAUNCH CAMPAIGN DEBUG:');
+      console.log('Selected Agent Config:', {
+        agent: selectedAgentConfig?.agent,
+        qualifiedCompaniesCount: selectedAgentConfig?.qualifiedCompanies.length,
+        testResultsCount: selectedAgentConfig?.testResults.length
+      });
+      console.log('Selected Personas:', selectedPersonas.map(p => ({
+        id: p.id,
+        title: p.title
+      })));
+      console.log('Persona Test Results:', {
+        count: personaTestResults.length,
+        sample: personaTestResults.slice(0, 2)
+      });
+      console.log('Qualified Companies:', {
+        count: selectedAgentConfig?.qualifiedCompanies.length,
+        sample: selectedAgentConfig?.qualifiedCompanies.slice(0, 2).map(c => ({
+          id: c.companyId,
+          name: c.companyName
+        }))
+      });
+      console.log('Current Step:', currentStep);
+      console.log('Current Workflow Step:', workflowStep);
+      
+      // Store campaign data in localStorage for the inbox page
+      const campaignData = {
+        agent: selectedAgentConfig?.agent,
+        qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies,
+        selectedPersonas,
+        personaTestResults,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('campaignData', JSON.stringify(campaignData));
+      
+      // Navigate to inbox page
+      console.log('Navigating to inbox page...');
+      router.push('/inbox');
+    } else if (action.value === "modify") {
       setIsPersonaModifyMode(true);
       setShowPersonaTestResults(false);
       setIsTestingPersonas(false);
       setShowMultiPersonaSelection(false);
-    } else if (action.value === "test") {
-      setIsTestingPersonas(true);
-      setIsPersonaModifyMode(false);
-      setShowPersonaTestResults(false);
-      setShowMultiPersonaSelection(false);
-      // Simulate testing for exactly 3-4 seconds
-      setTimeout(() => {
-        setIsTestingPersonas(false);
-        setShowPersonaTestResults(true);
-      }, 3500);
     }
   };
 
@@ -703,13 +959,18 @@ export function ChatInterface() {
 
   // Helper function to get available persona actions based on state
   const getPersonaActions = () => {
+    console.log("🔍 GET PERSONA ACTIONS DEBUG:");
+    console.log("showMultiPersonaSelection:", showMultiPersonaSelection);
+    console.log("selectedPersonas length:", selectedPersonas.length);
+    
     const baseActions = [
       { icon: "🧪", label: "Test Personas", value: "test" },
       { icon: "✏️", label: "Modify Personas", value: "modify" }
     ];
 
-    // Add Launch Campaign action when in multi-persona selection mode
+    // Add Launch Campaign action when in multi-persona selection mode and personas are selected
     if (showMultiPersonaSelection && selectedPersonas.length > 0) {
+      console.log("Adding Launch Campaign action");
       baseActions.push({
         icon: "🚀",
         label: "Launch Campaign",
@@ -717,9 +978,7 @@ export function ChatInterface() {
       });
     }
     
-    console.log('Available persona actions:', baseActions);
-    console.log('Each action:', baseActions.map(action => ({ value: action.value, label: action.label })));
-    
+    console.log("Available actions:", baseActions);
     return baseActions;
   };
 
@@ -741,9 +1000,8 @@ export function ChatInterface() {
         key={action.value}
         onClick={() => {
           if (action.value === "launch" && showMultiPersonaSelection) {
-            console.log('Correct Launch Campaign clicked');
-            alert('This is the right Launch Campaign button!');
-            // Eventually: router.push('/inbox');
+            console.log('Launch Campaign clicked');
+            handlePersonaAction(action);
           } else {
             console.log('Chip clicked:', action.value);
             handlePersonaAction(action);
@@ -766,9 +1024,102 @@ export function ChatInterface() {
   const mockQualifiedCompanies = companies.filter(c => c.tags.includes('qualified')) || [];
   const mockQualificationResults = qualificationResults;
 
+  // Update the MultiPersonaSelectionCard to show selected personas
+  const renderMultiPersonaSelection = () => (
+    <MultiPersonaSelectionCard
+      selectedPersonas={selectedPersonas}
+      availablePersonas={personas}
+      onEditPersona={handleEditPersona}
+      onRemovePersona={handleRemovePersona}
+      onBuildPersona={handlePersonaBuild}
+      onContinueToCampaign={handleContinueToCampaign}
+    />
+  );
+
+  // Update the persona testing view to include action buttons
+  const renderPersonaTestingView = () => {
+    if (isTestingPersonas) {
+      return (
+        <div className="h-full flex items-center justify-center p-8">
+          <div className="text-center space-y-6">
+            <KoalaLoadingIndicator />
+            <div className="space-y-2">
+              <p className="text-lg font-medium text-gray-800 max-w-md">
+                Testing {selectedPersonas.length || 1} persona{selectedPersonas.length !== 1 ? 's' : ''} on your qualified companies...
+              </p>
+              <p className="text-sm text-gray-600 max-w-md">
+                Finding contacts that match your persona criteria
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (showPersonaTestResults) {
+      if (personaTestResults.length === 0) {
+        return (
+          <div className="h-full flex items-center justify-center p-8">
+            <div className="text-center space-y-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>No contacts found</AlertTitle>
+                <AlertDescription>
+                  We couldn't find any contacts matching your persona criteria. Try modifying your persona or selecting different companies.
+                </AlertDescription>
+              </Alert>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowPersonaTestResults(false);
+                  setIsPersonaModifyMode(true);
+                }}
+              >
+                Modify Persona
+              </Button>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="p-8">
+          <div className="space-y-6">
+            <PersonaTestResultsTable 
+              results={personaTestResults}
+              onAddThisPersona={() => {
+                console.log('🔍 ADD TESTED PERSONA DEBUG:');
+                console.log('Selected persona:', selectedPersona);
+                console.log('Current selectedPersonas:', selectedPersonas);
+                
+                if (selectedPersona) {
+                  const newSelectedPersona: SelectedPersona = {
+                    id: selectedPersona.id,
+                    title: selectedPersona.title,
+                    description: selectedPersona.description
+                  };
+                  
+                  setSelectedPersonas([...selectedPersonas, newSelectedPersona]);
+                  setShowMultiPersonaSelection(true);
+                  setShowPersonaTestResults(false);
+                  setSelectedPersona(null);
+                }
+              }}
+              onBackToConfiguration={() => {
+                setShowPersonaTestResults(false);
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (currentStep === "find-contacts") {
-    const qualifiedCount = qualifiedCompanies.length;
-    const totalCount = qualificationResults.length;
+    const qualifiedCount = selectedAgentConfig?.qualifiedCompanies.length || 0;
+    const totalCount = selectedAgentConfig?.testResults.length || 0;
     
     return (
       <div className="flex flex-col w-full h-screen">
@@ -781,7 +1132,6 @@ export function ChatInterface() {
               className="space-y-6"
             >
               {showMultiPersonaSelection ? (
-                // Show multi-persona selection controls
                 <>
                   <div className="space-y-3">
                     <h2 className="text-lg font-medium text-primary">
@@ -793,24 +1143,7 @@ export function ChatInterface() {
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() => {
-                        // Scroll to the "Add another persona type" section
-                        const addPersonaSection = document.querySelector('[data-section="add-persona"]');
-                        if (addPersonaSection) {
-                          addPersonaSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                      className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      ➕ Add More Personas
-                    </button>
-                    <button
-                      onClick={handleContinueToCampaign}
-                      className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
-                    >
-                      🚀 Launch Campaign
-                    </button>
+                    {getPersonaActions().map(renderPersonaActionChip)}
                   </div>
 
                   <div className="pt-4">
@@ -821,14 +1154,13 @@ export function ChatInterface() {
                   </div>
                 </>
               ) : selectedPersona ? (
-                // Show persona action buttons after a persona is built
                 <>
                   <div className="space-y-3">
                     <h2 className="text-lg font-medium text-primary">
-                      Great! Now let's configure your selected personas for targeted outreach at qualified companies.
+                      Configure your persona for targeted outreach at {qualifiedCount} qualified companies.
                     </h2>
                     <p className="text-muted-foreground">
-                      Step 3 of 3: Configure personas and targeting
+                      Step 3 of 3: Configure persona and targeting
                     </p>
                   </div>
 
@@ -844,7 +1176,6 @@ export function ChatInterface() {
                   </div>
                 </>
               ) : selectedPersonaCategoryId ? (
-                // Show initial persona selection message after category is selected
                 <>
                   <div className="space-y-3">
                     <p className="text-lg font-medium text-primary">
@@ -863,11 +1194,10 @@ export function ChatInterface() {
                   </div>
                 </>
               ) : (
-                // Show persona category selection
                 <>
                   <div className="space-y-3">
                     <p className="text-lg font-medium text-primary">
-                      Let's identify the right personas to target at these companies.
+                      Let's identify the right personas to target at these {qualifiedCount} qualified companies.
                     </p>
                     <p className="text-muted-foreground">
                       Choose the marketing roles most likely to have budget and pain points that Segment addresses.
@@ -896,24 +1226,8 @@ export function ChatInterface() {
             </motion.div>
           </div>
           <div className="w-[65%] bg-muted/10 overflow-y-auto">
-            {isTestingPersonas ? (
-              <div className="h-full flex items-center justify-center p-8">
-                <div className="text-center space-y-6">
-                  <KoalaLoadingIndicator />
-                  <div className="space-y-2">
-                    <p className="text-lg font-medium text-gray-800 max-w-md">
-                      Testing {selectedPersonas.length} personas on your qualified companies...
-                    </p>
-                    <p className="text-sm text-gray-600 max-w-md">
-                      Finding contacts that match your persona criteria
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : showPersonaTestResults ? (
-              <div className="p-8">
-                <PersonaTestResultsTable results={personaTestResults} />
-              </div>
+            {isTestingPersonas || showPersonaTestResults ? (
+              renderPersonaTestingView()
             ) : isPersonaModifyMode && selectedPersona ? (
               <PersonaModificationCard 
                 persona={selectedPersona}
@@ -921,14 +1235,7 @@ export function ChatInterface() {
                 onCancel={handlePersonaModificationCancel}
               />
             ) : showMultiPersonaSelection ? (
-              <MultiPersonaSelectionCard
-                selectedPersonas={selectedPersonas}
-                availablePersonas={personas}
-                onEditPersona={handleEditPersona}
-                onRemovePersona={handleRemovePersona}
-                onBuildPersona={handlePersonaBuild}
-                onContinueToCampaign={handleContinueToCampaign}
-              />
+              renderMultiPersonaSelection()
             ) : selectedPersona ? (
               <PersonaConfigurationCard 
                 persona={selectedPersona}
@@ -1000,7 +1307,7 @@ export function ChatInterface() {
                     <div>
                       {activeTab === 'qualified' ? (
                         <QualifiedCompaniesTable
-                          companies={qualifiedCompanies}
+                          companies={selectedAgentConfig?.qualifiedCompanies || []}
                           enrichmentOptions={enrichmentOptions}
                         />
                       ) : (
@@ -1188,6 +1495,114 @@ export function ChatInterface() {
               accounts={uploadedAccounts}
               enrichmentOptions={enrichmentOptions}
             />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentStep === "inbox") {
+    console.log('📥 INBOX STEP DEBUG:');
+    console.log('Rendering inbox step with data:', {
+      workflowStep,
+      selectedAgentConfig: {
+        agent: selectedAgentConfig?.agent,
+        qualifiedCompaniesCount: selectedAgentConfig?.qualifiedCompanies.length
+      },
+      selectedPersonas: {
+        count: selectedPersonas.length,
+        personas: selectedPersonas.map(p => p.title)
+      },
+      personaTestResults: {
+        count: personaTestResults.length,
+        sample: personaTestResults.slice(0, 2)
+      }
+    });
+
+    return (
+      <div className="flex flex-col w-full h-screen">
+        {renderWorkflowProgress()}
+        <div className="flex flex-1 h-[calc(100vh-76px)]">
+          <div className="w-full p-8 bg-muted/10 overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <div className="space-y-6">
+                  {/* Header */}
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-semibold">Campaign Ready to Launch</h2>
+                    <p className="text-muted-foreground">
+                      Your campaign is ready with {selectedAgentConfig?.qualifiedCompanies.length} qualified companies and {personaTestResults.length} targeted contacts
+                    </p>
+                  </div>
+
+                  {/* Campaign Summary */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm font-medium">Research Agent</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-lg font-semibold">{selectedAgentConfig?.agent.title}</p>
+                        <p className="text-sm text-muted-foreground">{selectedAgentConfig?.qualifiedCompanies.length} qualified companies</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm font-medium">Target Personas</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-lg font-semibold">{selectedPersonas.length} personas</p>
+                        <p className="text-sm text-muted-foreground">{personaTestResults.length} contacts found</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-sm font-medium">Campaign Status</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-lg font-semibold text-green-600">Ready to Launch</p>
+                        <p className="text-sm text-muted-foreground">All data prepared</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 pt-4">
+                    <Button
+                      onClick={() => {
+                        console.log('🎯 LAUNCH BUTTON CLICKED:');
+                        console.log('Launching campaign with data:', {
+                          agent: selectedAgentConfig?.agent,
+                          qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies.length,
+                          personas: selectedPersonas.length,
+                          contacts: personaTestResults.length
+                        });
+                        // Handle campaign launch
+                      }}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      Launch Campaign
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        console.log('Back to personas clicked');
+                        setWorkflowStep(3);
+                        setCurrentStep("find-contacts");
+                      }}
+                    >
+                      Back to Personas
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
