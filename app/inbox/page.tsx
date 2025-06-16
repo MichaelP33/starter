@@ -40,6 +40,7 @@ import companiesData from "@/data/companies.json";
 import { useDataConfig } from "@/hooks/useDataConfig";
 import { CompanyAnalysisPanel } from "@/components/chat/CompanyAnalysisPanel";
 import { Agent } from "@/components/chat/types";
+import { ContactGenerator } from '@/utils/ContactGenerator';
 
 interface Contact {
   name: string;
@@ -111,9 +112,10 @@ export default function CampaignInbox() {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [showResearchQuestion, setShowResearchQuestion] = useState(false);
   const [showCampaignDetails, setShowCampaignDetails] = useState(false);
   const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
+  const [contactGenerator, setContactGenerator] = useState<ContactGenerator | null>(null);
+  const [generatedContacts, setGeneratedContacts] = useState<PersonaTestResult[]>([]);
 
   const { agents, isLoadingAgents } = useDataConfig();
 
@@ -126,6 +128,69 @@ export default function CampaignInbox() {
       setCampaignData(data);
     }
   }, []);
+
+  // Initialize ContactGenerator when campaign data is loaded
+  useEffect(() => {
+    if (campaignData?.qualifiedCompanies && campaignData?.selectedPersonas) {
+      const generator = new ContactGenerator(
+        campaignData.qualifiedCompanies.map(qc => ({
+          id: qc.companyId,
+          companyName: qc.companyName,
+          industry: qc.industry,
+          employeeCount: qc.employeeCount,
+          hqCountry: qc.hqCountry,
+          hqState: qc.hqState,
+          website: qc.website,
+          totalFunding: qc.totalFunding,
+          estimatedAnnualRevenue: qc.estimatedAnnualRevenue,
+          employeeCountNumeric: parseInt(qc.employeeCount.replace(/,/g, '')),
+          hqCity: qc.hqCity || '',
+          yearFounded: parseInt(qc.yearFounded.toString()),
+          tags: []
+        })),
+        campaignData.selectedPersonas.map(p => ({
+          ...p,
+          icon: '👤' // Add default icon for persona
+        }))
+      );
+      setContactGenerator(generator);
+
+      // Generate contacts for all qualified companies
+      const contacts = generator.generateContactsForCompanies(
+        campaignData.qualifiedCompanies.map(qc => ({
+          id: qc.companyId,
+          companyName: qc.companyName,
+          industry: qc.industry,
+          employeeCount: qc.employeeCount,
+          hqCountry: qc.hqCountry,
+          hqState: qc.hqState,
+          website: qc.website,
+          totalFunding: qc.totalFunding,
+          estimatedAnnualRevenue: qc.estimatedAnnualRevenue,
+          employeeCountNumeric: parseInt(qc.employeeCount.replace(/,/g, '')),
+          hqCity: qc.hqCity || '',
+          yearFounded: parseInt(qc.yearFounded.toString()),
+          tags: []
+        })),
+        campaignData.selectedPersonas.length
+      );
+
+      // Convert to PersonaTestResult format
+      const testResults = contacts.map(contact => ({
+        id: contact.id,
+        contactName: contact.name,
+        contactTitle: contact.title,
+        email: contact.email,
+        linkedinProfile: contact.linkedin,
+        personaMatch: contact.personaMatch,
+        matchScore: contact.matchScore,
+        companyId: contact.companyId,
+        companyName: contact.companyName
+      }));
+
+      setGeneratedContacts(testResults);
+    }
+  }, [campaignData]);
 
   if (isLoadingAgents) {
     return <div>Loading...</div>;
@@ -167,7 +232,7 @@ export default function CampaignInbox() {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  const renderContactCard = (contact: Contact) => (
+  const renderContactCard = (contact: PersonaTestResult) => (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -176,19 +241,19 @@ export default function CampaignInbox() {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div>
-            <h4 className="font-medium text-gray-900">{contact.name}</h4>
-            <p className="text-sm text-gray-600">{contact.title}</p>
+            <h4 className="font-medium text-gray-900">{contact.contactName}</h4>
+            <p className="text-sm text-gray-600">{contact.contactTitle}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              {contact.matchScore}% Match
+              {Math.round(contact.matchScore)}% Match
             </span>
           </div>
         </div>
         <div className="text-sm text-gray-600">
           <p>Persona: {contact.personaMatch}</p>
           <a 
-            href={`https://${contact.linkedin}`}
+            href={`https://${contact.linkedinProfile}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800"
@@ -201,12 +266,14 @@ export default function CampaignInbox() {
             variant="outline"
             size="sm"
             className="text-sm font-medium"
+            onClick={() => console.log('View profile for:', contact.contactName)}
           >
             View Profile
           </Button>
           <Button
             size="sm"
             className="bg-[#6366f1] hover:bg-[#6366f1]/90 text-white text-sm font-medium"
+            onClick={() => console.log('Coach contact:', contact.contactName)}
           >
             Coach ✨
           </Button>
@@ -286,157 +353,118 @@ export default function CampaignInbox() {
           </div>
         </div>
 
-        <div className="container mx-auto py-8 px-4">
+        <div className="container mx-auto py-4 px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-8"
+            className="space-y-4"
           >
-            {/* Campaign Overview */}
-            <div className="grid grid-cols-1 gap-4">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                {/* Campaign Header */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h1 className="text-2xl font-semibold text-gray-900">
-                        {agent?.title}
-                      </h1>
-                      <div className="flex items-center gap-4 mt-2">
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Calendar className="w-4 h-4" />
-                          Started {formatDate(campaignData?.createdAt)}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Clock className="w-4 h-4" />
-                          Last updated {formatDate(new Date().toISOString())}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg">
-                        <Users className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm font-medium text-gray-900">{totalPersonas} Personas</span>
-                      </div>
-                      <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-lg">
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                        <span className="text-sm font-medium text-green-700">
-                          {qualifiedCount}/{totalCount} Qualified
-                        </span>
-                      </div>
+            {/* Compact Campaign Header */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h1 className="text-2xl font-semibold text-gray-900">
+                      {agent?.title}
+                    </h1>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <span>{totalPersonas} Personas</span>
+                      <span>•</span>
+                      <span>{qualifiedCount}/{totalCount} Qualified</span>
+                      <span>•</span>
+                      <span>{Math.round((qualifiedCount / totalCount) * 100)}% Rate</span>
                     </div>
                   </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowCampaignDetails(!showCampaignDetails)}
+                    className="gap-2"
+                  >
+                    {showCampaignDetails ? (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        Hide Details
+                      </>
+                    ) : (
+                      <>
+                        <ChevronRight className="w-4 h-4" />
+                        Show Details
+                      </>
+                    )}
+                  </Button>
                 </div>
 
-                {/* Research Context */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="grid grid-cols-2 divide-x divide-gray-100">
-                    {/* Left Column */}
-                    <div className="pr-6">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="flex items-center gap-2">
-                          <Search className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm font-medium text-gray-900">Research Agent</span>
-                        </div>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                          {agent?.questionType}
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {agent?.title}
-                          </h3>
-                          <p className="text-sm text-gray-500 line-clamp-2">
-                            {agent?.description}
-                          </p>
-                        </div>
-
-                        <div className="pt-4 border-t border-gray-100">
-                          <button
-                            onClick={() => setShowResearchQuestion(!showResearchQuestion)}
-                            className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-                          >
-                            <Info className="w-4 h-4" />
-                            {showResearchQuestion ? 'Hide' : 'Show'} Research Question
-                          </button>
-                          {showResearchQuestion && (
-                            <p className="mt-2 text-sm text-gray-600">
-                              {agent?.researchQuestion}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right Column */}
-                    <div className="pl-6">
-                      <div className="space-y-6">
-                        <div>
-                          <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
-                            <Target className="w-4 h-4" />
-                            Outbound Strategy
+                {/* Collapsible Campaign Details */}
+                <AnimatePresence>
+                  {showCampaignDetails && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-4 pt-4 border-t border-gray-100"
+                    >
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Left Column */}
+                        <div className="space-y-4">
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900 mb-2">Research Agent</h3>
+                            <p className="text-sm text-gray-600">{agent?.description}</p>
                           </div>
-                          <p className="text-sm text-gray-600">
-                            {agent?.description}
-                          </p>
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900 mb-2">Research Question</h3>
+                            <p className="text-sm text-gray-600">{agent?.researchQuestion}</p>
+                          </div>
                         </div>
 
-                        <div className="pt-4 border-t border-gray-100">
-                          <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-3">
-                            <Users className="w-4 h-4" />
-                            Enrolled Personas
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900 mb-2">Outbound Strategy</h3>
+                            <p className="text-sm text-gray-600">{agent?.description}</p>
                           </div>
-                          <div className="space-y-1">
-                            {selectedPersonas.map(persona => (
-                              <div key={persona.id} className="text-sm text-gray-900">
-                                {persona.title}
-                              </div>
-                            ))}
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900 mb-2">Enrolled Personas</h3>
+                            <div className="space-y-1">
+                              {selectedPersonas.map(persona => (
+                                <div key={persona.id} className="text-sm text-gray-600">
+                                  {persona.title}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Campaign Progress */}
-                <div className="p-6 bg-gray-50/50 border-b border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-900">Campaign Progress</h3>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                        style={{ width: `${(qualifiedCount / totalCount) * 100}%` }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="p-4 bg-white rounded-lg border border-gray-100">
-                        <div className="text-sm text-gray-500 mb-1">Qualification Rate</div>
-                        <div className="text-2xl font-semibold text-gray-900">
-                          {Math.round((qualifiedCount / totalCount) * 100)}%
+                      {/* Campaign Progress */}
+                      <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="p-3 bg-gray-50 rounded-lg">
+                            <div className="text-sm text-gray-500">Qualification Rate</div>
+                            <div className="text-lg font-semibold text-gray-900">
+                              {Math.round((qualifiedCount / totalCount) * 100)}%
+                            </div>
+                          </div>
+                          <div className="p-3 bg-gray-50 rounded-lg">
+                            <div className="text-sm text-green-600">Messages Sent</div>
+                            <div className="text-lg font-semibold text-green-700">0</div>
+                          </div>
+                          <div className="p-3 bg-gray-50 rounded-lg">
+                            <div className="text-sm text-blue-600">Response Rate</div>
+                            <div className="text-lg font-semibold text-blue-700">0%</div>
+                          </div>
                         </div>
                       </div>
-                      <div className="p-4 bg-white rounded-lg border border-gray-100">
-                        <div className="text-sm text-green-600 mb-1">Messages Sent</div>
-                        <div className="text-2xl font-semibold text-green-700">0</div>
-                      </div>
-                      <div className="p-4 bg-white rounded-lg border border-gray-100">
-                        <div className="text-sm text-blue-600 mb-1">Response Rate</div>
-                        <div className="text-2xl font-semibold text-blue-700">0%</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
             {/* Results Section */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-              <div className="p-6 border-b border-gray-100">
+              <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">Company Results</h2>
                   <div className="flex gap-1 bg-gray-50 p-1 rounded-lg">
@@ -548,65 +576,84 @@ export default function CampaignInbox() {
                                   transition={{ duration: 0.2 }}
                                   className="bg-gray-50 border-t border-muted/20"
                                 >
-                                  <div className="p-6 space-y-6">
-                                    {/* Research Results */}
-                                    <div className="space-y-2">
-                                      <h3 className="text-sm font-medium text-gray-900">Research Results</h3>
-                                      <p className="text-sm text-gray-600">{company.researchResults.summary}</p>
-                                      <div className="mt-2">
-                                        <h4 className="text-xs font-medium text-gray-500">Sources:</h4>
-                                        <ul className="mt-1 space-y-1">
-                                          {company.researchResults.sources.map((source, index) => (
-                                            <li key={index} className="text-xs text-gray-600">{source}</li>
-                                          ))}
-                                        </ul>
+                                  <div className="p-4">
+                                    <div className="space-y-3">
+                                      <div className="flex items-center justify-between">
+                                        <h3 className="text-sm font-medium text-gray-900">Target Contacts</h3>
+                                        <span className="text-sm text-gray-500">
+                                          {generatedContacts.filter(c => c.companyName === company.companyName).length} contacts identified
+                                        </span>
+                                      </div>
+
+                                      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
+                                        <table className="w-full">
+                                          <thead>
+                                            <tr className="bg-gray-50 border-b border-gray-100">
+                                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Contact
+                                              </th>
+                                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Title
+                                              </th>
+                                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Persona Match
+                                              </th>
+                                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Match Score
+                                              </th>
+                                              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Actions
+                                              </th>
+                                            </tr>
+                                          </thead>
+                                          <tbody className="divide-y divide-gray-100">
+                                            {generatedContacts
+                                              .filter(c => c.companyName === company.companyName)
+                                              .map(contact => (
+                                                <tr key={contact.id} className="hover:bg-gray-50">
+                                                  <td className="px-4 py-3 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2">
+                                                      <span className="text-sm font-medium text-gray-900">
+                                                        {contact.contactName}
+                                                      </span>
+                                                      <Button
+                                                        size="sm"
+                                                        className="bg-[#6366f1] hover:bg-[#6366f1]/90 text-white text-xs font-medium px-2 py-1 h-6"
+                                                        onClick={() => console.log('Coach contact:', contact.contactName)}
+                                                      >
+                                                        Coach ✨
+                                                      </Button>
+                                                    </div>
+                                                  </td>
+                                                  <td className="px-4 py-3 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{contact.contactTitle}</div>
+                                                  </td>
+                                                  <td className="px-4 py-3 whitespace-nowrap">
+                                                    <div className="text-sm text-gray-900">{contact.personaMatch}</div>
+                                                  </td>
+                                                  <td className="px-4 py-3 whitespace-nowrap">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                      {Math.round(contact.matchScore)}% Match
+                                                    </span>
+                                                  </td>
+                                                  <td className="px-4 py-3 whitespace-nowrap">
+                                                    <div className="flex items-center gap-2">
+                                                      <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="text-xs h-7"
+                                                        onClick={() => window.open(`https://${contact.linkedinProfile}`, '_blank')}
+                                                      >
+                                                        LinkedIn
+                                                      </Button>
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                          </tbody>
+                                        </table>
                                       </div>
                                     </div>
-
-                                    {/* Company Details */}
-                                    <div className="space-y-2">
-                                      <h3 className="text-sm font-medium text-gray-900">Company Details</h3>
-                                      <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                          <span className="text-muted-foreground">HQ Location:</span>{" "}
-                                          {company.hqCity}, {company.hqCountry}
-                                        </div>
-                                        <div>
-                                          <span className="text-muted-foreground">Employee Count:</span>{" "}
-                                          {company.employeeCount}
-                                        </div>
-                                        <div>
-                                          <span className="text-muted-foreground">Founded:</span>{" "}
-                                          {company.yearFounded}
-                                        </div>
-                                        <div>
-                                          <span className="text-muted-foreground">Total Funding:</span>{" "}
-                                          {company.totalFunding}
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    {/* Sample Contacts */}
-                                    {personaTestResults.filter(c => c.companyName === company.companyName).length > 0 && (
-                                      <div className="space-y-3">
-                                        <h3 className="text-sm font-medium text-gray-900">Sample Contacts</h3>
-                                        <div className="grid gap-4">
-                                          {personaTestResults
-                                            .filter(c => c.companyName === company.companyName)
-                                            .map(contact => (
-                                              <div key={contact.id}>
-                                                {renderContactCard({
-                                                  name: contact.contactName,
-                                                  title: contact.contactTitle,
-                                                  linkedin: contact.linkedinProfile,
-                                                  personaMatch: contact.personaMatch,
-                                                  matchScore: contact.matchScore
-                                                })}
-                                              </div>
-                                            ))}
-                                        </div>
-                                      </div>
-                                    )}
                                   </div>
                                 </motion.div>
                               </TableCell>
