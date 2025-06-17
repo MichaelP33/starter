@@ -23,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ChatInput } from "./ChatInput";
 import { SuggestionChip } from "./SuggestionChip";
 import { CsvUploadArea } from "./CsvUploadArea";
@@ -126,7 +126,7 @@ const personaOptions: ResearchStrategy[] = [
   },
   {
     id: "growth-marketing",
-    icon: "🚀",
+    icon: "��",
     title: "Growth Marketing",
     description: "Focus on growth marketers driving acquisition, conversion, and retention through data-driven experiments",
     agents: []
@@ -180,6 +180,7 @@ export function ChatInterface() {
   const [isTestingAgent, setIsTestingAgent] = useState(false);
   const [showTestResults, setShowTestResults] = useState(false);
   const [showFullResults, setShowFullResults] = useState(false);
+  const [showAgentConfirmation, setShowAgentConfirmation] = useState(false);
   const [activeTab, setActiveTab] = useState<'qualified' | 'full'>('qualified');
   const [isPersonaModalOpen, setIsPersonaModalOpen] = useState(false);
   const [isTestingPersonas, setIsTestingPersonas] = useState(false);
@@ -440,10 +441,14 @@ export function ChatInterface() {
       setShowTestResults(false);
       setShowFullResults(false);
     } else if (action === 'add') {
-      // Check if we have test results
-      if (qualificationResults && qualificationResults.length > 0) {
-        // Use actual test results
-        const qualifiedCompanies = qualificationResults
+      // Generate results for the agent
+      const results = resultsGenerator?.generateResults(agent.id);
+      if (results) {
+        // Set qualification results
+        setQualificationResults(results);
+        
+        // Convert AgentResult[] to QualifiedCompanyWithResearch[]
+        const qualifiedCompanies = results
           .filter(result => result.qualified)
           .map(result => ({
             companyId: result.companyId,
@@ -474,64 +479,33 @@ export function ChatInterface() {
             agentName: result.agentName
           }));
 
+        // Update selectedAgentConfig with results
         setSelectedAgentConfig({
           agent,
-          testResults: qualificationResults,
+          testResults: results,
           qualifiedCompanies
         });
-      } else {
-        // Generate default results using a subset of companies
-        if (resultsGenerator && agent) {
-          const defaultResults = resultsGenerator.generateDefaultResults(agent.id, 3);
-          setQualificationResults(defaultResults);
-          
-          const qualifiedCompanies = defaultResults
-            .filter(result => result.qualified)
-            .map(result => ({
-              companyId: result.companyId,
-              companyName: result.companyName,
-              industry: result.industry,
-              employeeCount: result.employeeCount,
-              hqCountry: result.hqCountry,
-              hqState: result.hqState,
-              hqCity: result.hqCity || '',
-              website: result.website,
-              totalFunding: result.totalFunding,
-              estimatedAnnualRevenue: result.estimatedAnnualRevenue,
-              yearFounded: result.yearFounded,
-              researchSummary: result.researchSummary,
-              whyQualified: result.whyQualified,
-              evidence: result.evidence,
-              qualified: true,
-              researchResults: {
-                summary: result.researchSummary,
-                sources: result.dataSources
-              },
-              assignedPersonas: [],
-              confidence: result.confidence,
-              confidenceScore: result.confidenceScore,
-              researchDate: result.researchDate,
-              dataSources: result.dataSources,
-              agentId: result.agentId,
-              agentName: result.agentName
-            }));
 
-          setSelectedAgentConfig({
-            agent,
-            testResults: defaultResults,
-            qualifiedCompanies
-          });
-        }
+        // Show confirmation in left panel and results in right panel
+        setShowAgentConfirmation(true);
+        setShowTestResults(true);
       }
-
-      // Proceed to Step 3
-      setWorkflowStep(3);
-      setCurrentStep("find-contacts");
-      setActiveTab('qualified');
-      setSelectedPersona(null);
-      setSelectedPersonaCategoryId(null);
-      setShowMultiPersonaSelection(false);
     }
+  };
+
+  const handleStartFindingContacts = () => {
+    // Proceed to Step 3
+    setWorkflowStep(3);
+    setCurrentStep("find-contacts");
+    setActiveTab('qualified');
+    setSelectedPersona(null);
+    setSelectedPersonaCategoryId(null);
+    setShowMultiPersonaSelection(false);
+  };
+
+  const handleTestAgentFirst = () => {
+    setShowAgentConfirmation(false);
+    handleAgentAction('test', selectedAgent);
   };
 
   const handlePersonaCategorySelect = (categoryId: string) => {
@@ -873,6 +847,10 @@ export function ChatInterface() {
             transition={{ delay: 0.3 }}
             className="p-8 border-t border-muted/20"
           >
+            {/* Company count indicator */}
+            <div className="mb-2 text-xs text-muted-foreground">
+              Showing {uploadedAccounts.length} of {companies.length} companies in your target list
+            </div>
             <Button
               onClick={() => setCustomizationStage('confirm')}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 text-base font-medium"
@@ -894,10 +872,10 @@ export function ChatInterface() {
         <div className="bg-white rounded-lg shadow-sm border border-muted/20 p-6 space-y-6">
           <div className="space-y-2">
             <p className="text-lg font-medium">
-              Excellent! Your target account list is ready with {uploadedAccounts.length} companies.
+              Excellent! Your target account list is ready with {companies.length} companies.
             </p>
             <p className="text-muted-foreground">
-              Ready for step 2 of 3?
+              Ready for step 2 of 3 with {companies.length} companies?
             </p>
           </div>
           <div className="flex flex-col gap-3">
@@ -1344,22 +1322,52 @@ export function ChatInterface() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="space-y-3">
-                <p className="text-lg font-medium text-primary">
-                  Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
-                </p>
-              </div>
+              {showAgentConfirmation ? (
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <p className="text-lg font-medium">
+                      Perfect! Your {selectedAgent?.title} research agent is ready for deployment.
+                    </p>
+                    <p className="text-muted-foreground">
+                      Ready for step 3 of 3?
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={handleStartFindingContacts}
+                      className="bg-accent text-accent-foreground hover:bg-accent/90 h-12 text-base font-medium"
+                    >
+                      Find contacts at qualified companies
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleTestAgentFirst}
+                      className="h-11"
+                    >
+                      Test this agent first
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-3">
+                    <p className="text-lg font-medium text-primary">
+                      Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
+                    </p>
+                  </div>
 
-              <div className="flex flex-wrap gap-3">
-                {agentActions.map(renderActionChip)}
-              </div>
+                  <div className="flex flex-wrap gap-3">
+                    {agentActions.map(renderActionChip)}
+                  </div>
 
-              <div className="pt-4">
-                <ChatInput
-                  onSend={handleSend}
-                  placeholder="Choose above or ask about the agent..."
-                />
-              </div>
+                  <div className="pt-4">
+                    <ChatInput
+                      onSend={handleSend}
+                      placeholder="Choose above or ask about the agent..."
+                    />
+                  </div>
+                </>
+              )}
             </motion.div>
           </div>
           <div className="w-[60%] bg-muted/10 overflow-y-auto">
@@ -1491,6 +1499,29 @@ export function ChatInterface() {
             {renderCustomizationContent()}
           </div>
           <div className="w-[65%] p-8 bg-muted/10">
+            {/* Table header with company count and pagination */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm text-muted-foreground">
+                Showing {uploadedAccounts.length} of {companies.length} companies in your target list
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-muted/50"
+                >
+                  <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                </Button>
+                <span className="text-sm text-muted-foreground">1 of 6</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 w-8 p-0 hover:bg-muted/50"
+                >
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </div>
+            </div>
             <AccountTable
               accounts={uploadedAccounts}
               enrichmentOptions={enrichmentOptions}

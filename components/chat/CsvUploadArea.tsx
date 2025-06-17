@@ -5,105 +5,29 @@ import { UploadCloud } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Account } from "./types";
+import { useDataConfig } from '@/hooks/useDataConfig';
 
 interface CsvUploadAreaProps {
   onUploadSuccess: (accounts: Account[]) => void;
 }
 
-const mockAccounts: Account[] = [
-  {
-    companyName: "Stripe",
-    website: "stripe.com",
-    industry: "FinTech",
-    hqCountry: "United States",
-    employeeCount: "5000+",
-    totalFunding: "$600M",
-    estimatedAnnualRevenue: "$1B+",
-    hqCity: "San Francisco",
-    yearFounded: "2010",
-  },
-  {
-    companyName: "Notion",
-    website: "notion.so",
-    industry: "Productivity Software",
-    hqCountry: "United States",
-    employeeCount: "1000+",
-    totalFunding: "$275M",
-    estimatedAnnualRevenue: "$500M",
-    hqCity: "San Francisco",
-    yearFounded: "2013",
-  },
-  {
-    companyName: "Figma",
-    website: "figma.com",
-    industry: "Design Software",
-    hqCountry: "United States",
-    employeeCount: "1000+",
-    totalFunding: "$330M",
-    estimatedAnnualRevenue: "$400M",
-    hqCity: "San Francisco",
-    yearFounded: "2012",
-  },
-  {
-    companyName: "Vercel",
-    website: "vercel.com",
-    industry: "Developer Tools",
-    hqCountry: "United States",
-    employeeCount: "500+",
-    totalFunding: "$313M",
-    estimatedAnnualRevenue: "$100M",
-    hqCity: "San Francisco",
-    yearFounded: "2015",
-  },
-  {
-    companyName: "Linear",
-    website: "linear.app",
-    industry: "Project Management",
-    hqCountry: "United States",
-    employeeCount: "100+",
-    totalFunding: "$62M",
-    estimatedAnnualRevenue: "$50M",
-    hqCity: "San Francisco",
-    yearFounded: "2019",
-  },
-  {
-    companyName: "Supabase",
-    website: "supabase.com",
-    industry: "Database",
-    hqCountry: "United States",
-    employeeCount: "100+",
-    totalFunding: "$116M",
-    estimatedAnnualRevenue: "$50M",
-    hqCity: "San Francisco",
-    yearFounded: "2020",
-  },
-  {
-    companyName: "Loom",
-    website: "loom.com",
-    industry: "Video Software",
-    hqCountry: "United States",
-    employeeCount: "500+",
-    totalFunding: "$203M",
-    estimatedAnnualRevenue: "$100M",
-    hqCity: "San Francisco",
-    yearFounded: "2015",
-  },
-  {
-    companyName: "Retool",
-    website: "retool.com",
-    industry: "Low-Code Platform",
-    hqCountry: "United States",
-    employeeCount: "500+",
-    totalFunding: "$445M",
-    estimatedAnnualRevenue: "$100M",
-    hqCity: "San Francisco",
-    yearFounded: "2017",
-  },
-];
-
 export function CsvUploadArea({ onUploadSuccess }: CsvUploadAreaProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const { companies } = useDataConfig();
+
+  // Convert Company type to Account type
+  const realAccounts: Account[] = companies.slice(0, 10).map((company) => ({
+    companyName: company.companyName,
+    website: company.website,
+    industry: company.industry,
+    hqCountry: company.hqCountry,
+    employeeCount: company.employeeCount,
+    totalFunding: company.totalFunding,
+    estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+    hqCity: company.hqCity,
+    yearFounded: company.yearFounded?.toString() || '',
+  }));
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -119,7 +43,7 @@ export function CsvUploadArea({ onUploadSuccess }: CsvUploadAreaProps) {
     // Simulate upload delay
     setTimeout(() => {
       setIsUploading(false);
-      onUploadSuccess(mockAccounts);
+      onUploadSuccess(realAccounts);
     }, 1500);
   };
 
