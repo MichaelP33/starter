@@ -194,6 +194,11 @@ export function ChatInterface() {
   const [personaTestResults, setPersonaTestResults] = useState<PersonaTestResult[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedAgentConfig, setSelectedAgentConfig] = useState<SelectedAgentConfig | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [loadingMessage, setLoadingMessage] = useState("");
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [sampleCompanies, setSampleCompanies] = useState<string[]>([]);
 
   // Group agents by category
   const agentsByCategory = agents?.reduce((acc, agent) => {
@@ -344,8 +349,9 @@ export function ChatInterface() {
     }
   };
 
-  const handleUploadSuccess = (accounts: Account[]) => {
+  const handleUploadSuccess = (accounts: Account[], size: number) => {
     setUploadedAccounts(accounts);
+    setPageSize(size);
     setCurrentStep("customizing");
     setCustomizationStage('customize');
   };
@@ -388,6 +394,25 @@ export function ChatInterface() {
       });
       
       setIsTestingAgent(true);
+      setLoadingStep(0);
+      setLoadingMessage("Selecting representative sample from your target list...");
+
+      // Simulate progressive loading steps with longer duration
+      setTimeout(() => {
+        setLoadingStep(1);
+        setLoadingMessage(`Running ${agent.title} analysis on sample companies...`);
+      }, 2000);
+
+      setTimeout(() => {
+        setLoadingStep(2);
+        setLoadingMessage("Evaluating qualification criteria and confidence scores...");
+      }, 4000);
+
+      setTimeout(() => {
+        setLoadingStep(3);
+        setLoadingMessage("Preparing sample results...");
+      }, 6000);
+
       const results = resultsGenerator?.generateResults(agent.id);
       if (results) {
         setQualificationResults(results);
@@ -431,10 +456,12 @@ export function ChatInterface() {
           qualifiedCompanies
         });
 
+        // Show results after all loading steps
         setTimeout(() => {
           setIsTestingAgent(false);
           setShowTestResults(true);
-        }, 4000);
+          setLoadingStep(0);
+        }, 7500);
       }
     } else if (action === 'modify') {
       setIsAgentEditMode(true);
@@ -1373,17 +1400,66 @@ export function ChatInterface() {
           <div className="w-[60%] bg-muted/10 overflow-y-auto">
             {isTestingAgent ? (
               <div className="h-full flex items-center justify-center p-8">
-                <div className="text-center space-y-6">
-                  <KoalaLoadingIndicator />
-                  <p className="text-lg font-medium text-gray-800 max-w-md">
-                    Testing the {selectedAgent?.title} agent across a sample of companies from your target list...
-                  </p>
+                <div className="w-full max-w-2xl">
+                  <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 space-y-8">
+                    {/* Agent Title Section */}
+                    <div className="text-center space-y-2">
+                      <h2 className="text-2xl font-semibold text-gray-900">
+                        {selectedAgent?.title}
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        Sample Testing in Progress
+                      </p>
+                    </div>
+
+                    {/* Loading Animation */}
+                    <div className="flex justify-center">
+                      <KoalaLoadingIndicator />
+                    </div>
+
+                    {/* Progress Steps */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progress</span>
+                        <span className="font-medium">Step {loadingStep + 1} of 4</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary transition-all duration-500 ease-in-out"
+                          style={{ width: `${((loadingStep + 1) / 4) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Current Status */}
+                    <div className="space-y-4">
+                      <div className="text-center space-y-2">
+                        <p className="text-lg font-medium text-gray-900">
+                          {loadingMessage}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Testing on 10 of {uploadedAccounts.length} companies
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Educational Content */}
+                    <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+                      <h3 className="text-sm font-medium text-blue-900">
+                        Why Sample Testing?
+                      </h3>
+                      <p className="text-sm text-blue-700">
+                        We test on a representative sample first to ensure the agent's criteria are relevant before analyzing your full target list. This saves time and helps optimize your campaign strategy.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : showTestResults ? (
               <div className="p-8">
                 <QualificationResultsTable 
                   results={showFullResults ? qualificationResults : qualificationResults.filter((r: AgentResult) => r.qualified)} 
+                  companies={uploadedAccounts.slice(0, 10)}
                   onViewAllResults={!showFullResults ? handleViewAllResults : undefined}
                 />
               </div>
@@ -1491,6 +1567,11 @@ export function ChatInterface() {
   }
 
   if (currentStep === "customizing") {
+    const totalPages = Math.ceil(uploadedAccounts.length / pageSize);
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentPageAccounts = uploadedAccounts.slice(startIndex, endIndex);
+
     return (
       <div className="flex flex-col w-full h-screen">
         {renderWorkflowProgress()}
@@ -1502,28 +1583,32 @@ export function ChatInterface() {
             {/* Table header with company count and pagination */}
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm text-muted-foreground">
-                Showing {uploadedAccounts.length} of {companies.length} companies in your target list
+                Showing {pageSize} of {uploadedAccounts.length} companies in your target list
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 hover:bg-muted/50"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
                   <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                 </Button>
-                <span className="text-sm text-muted-foreground">1 of 6</span>
+                <span className="text-sm text-muted-foreground">{currentPage} of {totalPages}</span>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="h-8 w-8 p-0 hover:bg-muted/50"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                 >
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </div>
             </div>
             <AccountTable
-              accounts={uploadedAccounts}
+              accounts={currentPageAccounts}
               enrichmentOptions={enrichmentOptions}
             />
           </div>

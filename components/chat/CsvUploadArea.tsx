@@ -8,7 +8,7 @@ import { Account } from "./types";
 import { useDataConfig } from '@/hooks/useDataConfig';
 
 interface CsvUploadAreaProps {
-  onUploadSuccess: (accounts: Account[]) => void;
+  onUploadSuccess: (accounts: Account[], pageSize: number) => void;
 }
 
 export function CsvUploadArea({ onUploadSuccess }: CsvUploadAreaProps) {
@@ -16,8 +16,8 @@ export function CsvUploadArea({ onUploadSuccess }: CsvUploadAreaProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { companies } = useDataConfig();
 
-  // Convert Company type to Account type
-  const realAccounts: Account[] = companies.slice(0, 10).map((company) => ({
+  // Convert Company type to Account type for all companies
+  const realAccounts: Account[] = companies.map((company) => ({
     companyName: company.companyName,
     website: company.website,
     industry: company.industry,
@@ -43,7 +43,7 @@ export function CsvUploadArea({ onUploadSuccess }: CsvUploadAreaProps) {
     // Simulate upload delay
     setTimeout(() => {
       setIsUploading(false);
-      onUploadSuccess(realAccounts);
+      onUploadSuccess(realAccounts, 10); // Pass pageSize of 10
     }, 1500);
   };
 
