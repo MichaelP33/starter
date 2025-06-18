@@ -223,7 +223,28 @@ export class ResultsGenerator {
     'tech-stack': 'Modern tech stack indicates readiness for advanced data integration'
   };
 
-  generateResults(agentId: string): AgentResult[] {
+  // 1. Define generic templates for qualified/unqualified results
+  private MARKETING_HIRING_QUALIFIED_TEMPLATE = {
+    whyQualified: "Yes, multiple senior marketing roles including Marketing Operations Manager and Director of Growth Marketing",
+    researchSummary: "[COMPANY] currently has 3 open marketing leadership positions focused on data-driven marketing. Key roles include Marketing Operations Manager responsible for martech stack optimization and lead routing, Director of Growth Marketing overseeing acquisition channels and conversion optimization, and Senior Marketing Technology Manager managing CDP implementation and data integration. All roles require experience with marketing automation platforms and customer data management.",
+    evidenceTemplates: [
+      "Marketing Operations Manager focusing on martech stack and lead routing optimization",
+      "Director of Growth Marketing position managing acquisition channels and conversion funnels",
+      "Senior Marketing Technology Manager role for CDP implementation and data integration"
+    ]
+  };
+
+  private MARKETING_HIRING_UNQUALIFIED_TEMPLATE = {
+    whyQualified: "No, only brand and creative roles currently posted",
+    researchSummary: "[COMPANY]'s current marketing openings focus primarily on brand and creative functions rather than operations or data-driven roles. Available positions include Brand Designer for visual identity work, Content Marketing Specialist for blog content creation, and Creative Marketing Coordinator for campaign asset development. None of these roles indicate investment in marketing operations, data infrastructure, or growth marketing capabilities.",
+    evidenceTemplates: [
+      "Brand Designer role focused on visual identity and creative assets",
+      "Content Marketing Specialist for blog and content creation",
+      "Creative Marketing Coordinator position for campaign asset development"
+    ]
+  };
+
+  generateResults(agentId: string, companySample?: Company[]): AgentResult[] {
     console.log('🔍 AGENT TEST DEBUG:');
     console.log('Agent ID requested:', agentId);
     console.log('Available mockResults keys:', Object.keys(this.mockResults || {}));
@@ -236,6 +257,94 @@ export class ResultsGenerator {
     
     console.log('Number of companies found:', targetCompanies.length);
     console.log('Found companies:', targetCompanies.map(c => ({ id: c.id, name: c.companyName })));
+
+    // Special logic for marketing-hiring agent: use generic templates and random assignment
+    if (agentId === 'marketing-hiring') {
+      // Debug: confirm marketing-hiring template logic is being used
+      console.log('🔍 [DEBUG] Using ONLY marketing-hiring template logic for all 10 results');
+      // Use provided sample or default to all companies
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      // Shuffle and pick 10 companies for this test
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      // Pick 3 for qualified
+      const qualifiedCompanies = sample.slice(0, 3);
+      // Pick 7 for unqualified (no overlap)
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const unqualifiedCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 7);
+      // Build qualified results
+      const qualifiedResults = qualifiedCompanies.map(company => {
+        const template = this.MARKETING_HIRING_QUALIFIED_TEMPLATE;
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.92,
+          source: 'LinkedIn Jobs'
+        }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: true,
+          evidence,
+          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          whyQualified: template.whyQualified,
+          confidence: 0.92,
+          confidenceScore: 92,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: this.agents.find(a => a.id === agentId)?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['LinkedIn Jobs', 'Company Website']
+        };
+      });
+      // Build unqualified results
+      const unqualifiedResults = unqualifiedCompanies.map(company => {
+        const template = this.MARKETING_HIRING_UNQUALIFIED_TEMPLATE;
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.7,
+          source: 'Company Careers Page'
+        }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: false,
+          evidence,
+          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          whyQualified: template.whyQualified,
+          confidence: 0.7,
+          confidenceScore: 70,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: this.agents.find(a => a.id === agentId)?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['Company Website']
+        };
+      });
+      // Debug: log all results
+      console.log('🔍 [DEBUG] Final marketing-hiring results:', [...qualifiedResults, ...unqualifiedResults].map(r => ({ id: r.companyId, qualified: r.qualified, whyQualified: r.whyQualified })));
+      // Return all results (3 qualified + 7 unqualified)
+      return [...qualifiedResults, ...unqualifiedResults];
+    }
 
     return targetCompanies.map(company => {
       const evidence = this.mockResults?.[agentId]?.evidenceTemplates?.map(template => ({

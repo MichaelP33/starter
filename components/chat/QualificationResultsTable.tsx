@@ -17,6 +17,8 @@ import { useState } from "react";
 interface QualificationResultsTableProps {
   results: AgentResult[];
   companies: any[];
+  activeTab: 'qualified' | 'all';
+  setActiveTab: (tab: 'qualified' | 'all') => void;
   onViewAllResults?: () => void;
 }
 
@@ -26,7 +28,7 @@ const qualificationInsights: Record<string, string> = {
   "Supabase": "Actively recruiting Marketing Operations and Digital Marketing specialists"
 };
 
-export function QualificationResultsTable({ results, companies = [], onViewAllResults }: QualificationResultsTableProps) {
+export function QualificationResultsTable({ results, companies = [], activeTab, setActiveTab, onViewAllResults }: QualificationResultsTableProps) {
   console.log('📊 Results received by UI:', results.map(r => ({
     companyName: r.companyName,
     whyQualified: r.whyQualified,
@@ -36,7 +38,6 @@ export function QualificationResultsTable({ results, companies = [], onViewAllRe
 
   const [selectedCompany, setSelectedCompany] = useState<string | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'qualified' | 'all'>('qualified');
 
   const handleViewDetails = (companyName: string) => {
     setSelectedCompany(companyName);
@@ -53,41 +54,9 @@ export function QualificationResultsTable({ results, companies = [], onViewAllRe
     : undefined;
 
   const qualifiedResults = results.filter(result => result.qualified);
-  const qualifiedCompanyIds = new Set(qualifiedResults.map(r => r.companyId));
-
-  const additionalUnqualified = companies
-    .filter(c => !qualifiedCompanyIds.has(c.id))
-    .slice(0, 7)
-    .map(c => ({
-      companyId: c.id,
-      companyName: c.companyName,
-      industry: c.industry,
-      employeeCount: c.employeeCount,
-      hqCountry: c.hqCountry,
-      hqState: c.hqState || '',
-      hqCity: c.hqCity || '',
-      website: c.website,
-      totalFunding: c.totalFunding,
-      estimatedAnnualRevenue: c.estimatedAnnualRevenue,
-      yearFounded: c.yearFounded,
-      researchSummary: '',
-      whyQualified: 'No recent M&A activity detected for this company. No qualifying research signals found.',
-      evidence: [],
-      qualified: false,
-      confidence: 0.3,
-      confidenceScore: 30,
-      researchDate: new Date().toISOString(),
-      agentId: results[0]?.agentId || '',
-      agentName: results[0]?.agentName || '',
-      dataSources: [],
-    }));
-
-  const allTestedResults = [...qualifiedResults, ...additionalUnqualified].filter((item, idx, arr) =>
-    arr.findIndex(i => i.companyId === item.companyId) === idx
-  );
 
   const qualifiedCount = qualifiedResults.length;
-  const totalCount = allTestedResults.length;
+  const totalCount = results.length;
 
   const truncateText = (text: string, maxLength: number = 50) => {
     console.log('Truncating text:', {
@@ -154,7 +123,7 @@ export function QualificationResultsTable({ results, companies = [], onViewAllRe
     );
   };
 
-  const filteredResults = activeTab === 'qualified' ? qualifiedResults : allTestedResults;
+  const filteredResults = activeTab === 'qualified' ? qualifiedResults : results;
 
   return (
     <div className="space-y-6">

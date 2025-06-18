@@ -199,6 +199,8 @@ export function ChatInterface() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
   const [sampleCompanies, setSampleCompanies] = useState<string[]>([]);
+  const [lastTestedCompanies, setLastTestedCompanies] = useState<Account[]>([]);
+  const [activeResultsTab, setActiveResultsTab] = useState<'qualified' | 'all'>('qualified');
 
   // Group agents by category
   const agentsByCategory = agents?.reduce((acc, agent) => {
@@ -392,6 +394,105 @@ export function ChatInterface() {
         questionType: agent.questionType,
         researchQuestion: agent.researchQuestion
       });
+      
+      setIsTestingAgent(true);
+      setLoadingStep(0);
+      setLoadingMessage("Selecting representative sample from your target list...");
+
+      // Simulate progressive loading steps with longer duration
+      setTimeout(() => {
+        setLoadingStep(1);
+        setLoadingMessage(`Running ${agent.title} analysis on sample companies...`);
+      }, 2000);
+
+      setTimeout(() => {
+        setLoadingStep(2);
+        setLoadingMessage("Evaluating qualification criteria and confidence scores...");
+      }, 4000);
+
+      setTimeout(() => {
+        setLoadingStep(3);
+        setLoadingMessage("Preparing sample results...");
+      }, 6000);
+
+      if (agent.id === 'marketing-hiring') {
+        // Shuffle and pick 10 companies for this test
+        const shuffled = [...uploadedAccounts].sort(() => 0.5 - Math.random());
+        const sample = shuffled.slice(0, 10);
+        setLastTestedCompanies(sample);
+        // Convert Account[] to Company[]
+        const sampleCompanies = sample.map(acc => ({
+          id: acc.companyName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+          companyName: acc.companyName,
+          website: acc.website,
+          industry: acc.industry,
+          employeeCount: acc.employeeCount,
+          employeeCountNumeric: parseInt(acc.employeeCount.replace(/,/g, '')) || 0,
+          hqCountry: acc.hqCountry,
+          hqCity: acc.hqCity || '',
+          hqState: null,
+          totalFunding: acc.totalFunding || '',
+          estimatedAnnualRevenue: acc.estimatedAnnualRevenue || '',
+          yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
+          tags: []
+        }));
+        // Debug logging for sample companies
+        console.log('🔍 [DEBUG] Sampled companies for marketing-hiring:', sampleCompanies.map(c => ({ id: c.id, name: c.companyName })));
+        // Generate results using ResultsGenerator with this sample
+        const results = resultsGenerator?.generateResults(agent.id, sampleCompanies);
+        // Debug logging for results
+        if (results) {
+          console.log('🔍 [DEBUG] Results returned by ResultsGenerator:', results.map(r => ({ id: r.companyId, name: r.companyName, qualified: r.qualified, whyQualified: r.whyQualified })));
+          setQualificationResults(results);
+          
+          // Convert AgentResult[] to QualifiedCompanyWithResearch[]
+          const qualifiedCompanies = results
+            .filter(result => result.qualified)
+            .map(result => ({
+              companyId: result.companyId,
+              companyName: result.companyName,
+              industry: result.industry,
+              employeeCount: result.employeeCount,
+              hqCountry: result.hqCountry,
+              hqState: result.hqState,
+              hqCity: result.hqCity || '',
+              website: result.website,
+              totalFunding: result.totalFunding,
+              estimatedAnnualRevenue: result.estimatedAnnualRevenue,
+              yearFounded: result.yearFounded,
+              researchSummary: result.researchSummary,
+              whyQualified: result.whyQualified,
+              evidence: result.evidence,
+              qualified: true,
+              researchResults: {
+                summary: result.researchSummary,
+                sources: result.dataSources
+              },
+              assignedPersonas: [],
+              confidence: result.confidence,
+              confidenceScore: result.confidenceScore,
+              researchDate: result.researchDate,
+              dataSources: result.dataSources,
+              agentId: result.agentId,
+              agentName: result.agentName
+            }));
+
+          // Update selectedAgentConfig with test results
+          setSelectedAgentConfig({
+            agent,
+            testResults: results,
+            qualifiedCompanies
+          });
+
+          // Show results after all loading steps
+          setTimeout(() => {
+            setIsTestingAgent(false);
+            setShowTestResults(true);
+            setLoadingStep(0);
+          }, 7500);
+        }
+        return;
+      }
       
       setIsTestingAgent(true);
       setLoadingStep(0);
@@ -1287,9 +1388,9 @@ export function ChatInterface() {
                     {/* Tab Navigation */}
                     <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
                       <button
-                        onClick={() => setActiveTab('qualified')}
+                        onClick={() => setActiveResultsTab('qualified')}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                          activeTab === 'qualified'
+                          activeResultsTab === 'qualified'
                             ? 'bg-white text-gray-900 shadow-sm'
                             : 'text-gray-600 hover:text-gray-900'
                         }`}
@@ -1297,28 +1398,31 @@ export function ChatInterface() {
                         Qualified ({qualifiedCount})
                       </button>
                       <button
-                        onClick={() => setActiveTab('full')}
+                        onClick={() => setActiveResultsTab('all')}
                         className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                          activeTab === 'full'
+                          activeResultsTab === 'all'
                             ? 'bg-white text-gray-900 shadow-sm'
                             : 'text-gray-600 hover:text-gray-900'
                         }`}
                       >
-                        Full List ({totalCount})
+                        All Tested ({totalCount})
                       </button>
                     </div>
 
                     {/* Results Table */}
                     <div>
-                      {activeTab === 'qualified' ? (
+                      {activeResultsTab === 'qualified' ? (
                         <QualifiedCompaniesTable
                           companies={selectedAgentConfig?.qualifiedCompanies || []}
                           enrichmentOptions={enrichmentOptions}
                         />
                       ) : (
-                        <AccountTable
-                          accounts={uploadedAccounts}
-                          enrichmentOptions={enrichmentOptions}
+                        <QualificationResultsTable
+                          results={selectedAgentConfig?.testResults || []}
+                          companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
+                          activeTab={activeResultsTab}
+                          setActiveTab={setActiveResultsTab}
+                          onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
                         />
                       )}
                     </div>
@@ -1456,13 +1560,23 @@ export function ChatInterface() {
                 </div>
               </div>
             ) : showTestResults ? (
-              <div className="p-8">
-                <QualificationResultsTable 
-                  results={showFullResults ? qualificationResults : qualificationResults.filter((r: AgentResult) => r.qualified)} 
-                  companies={uploadedAccounts.slice(0, 10)}
-                  onViewAllResults={!showFullResults ? handleViewAllResults : undefined}
-                />
-              </div>
+              (() => {
+                const resultsToShow = activeResultsTab === 'all'
+                  ? qualificationResults
+                  : qualificationResults.filter(r => r.qualified);
+                console.log('🔍 [DEBUG] Passing to QualificationResultsTable:', resultsToShow.map(r => ({ id: r.companyId, qualified: r.qualified, whyQualified: r.whyQualified })));
+                return (
+                  <div className="p-8">
+                    <QualificationResultsTable 
+                      results={selectedAgentConfig?.testResults || []}
+                      companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
+                      activeTab={activeResultsTab}
+                      setActiveTab={setActiveResultsTab}
+                      onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
+                    />
+                  </div>
+                );
+              })()
             ) : (
               selectedAgent && (
                 <AgentDetails 
