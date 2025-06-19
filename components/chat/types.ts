@@ -114,6 +114,8 @@ export interface AgentResult {
   researchSummary: string;
   dataSources: string[];
   yearFounded: number;
+  selectedOptions?: string[];
+  questionType?: string;
 }
 
 export interface QualifiedCompanyWithResearch extends AgentResult {
@@ -124,6 +126,8 @@ export interface QualifiedCompanyWithResearch extends AgentResult {
   assignedPersonas: string[];
   hqCity: string;
   yearFounded: number;
+  selectedOptions?: string[];
+  questionType?: string;
 }
 
 export interface PersonaTestResult {

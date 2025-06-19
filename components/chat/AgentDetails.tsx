@@ -1,16 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Agent, QuestionType } from "./types";
 import { motion, AnimatePresence } from "framer-motion";
 import { Pencil, FileText, Briefcase, Globe, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import PicklistChips from "./PicklistChips";
 
 interface AgentDetailsProps {
   agent: Agent;
   isEditMode: boolean;
   icon?: string;
+  onSave?: (updates: { questionType: QuestionType; researchQuestion: string; selectedSources: string[]; responseOptions?: string[] }) => void;
+  onSourcesChange?: (sources: string[]) => void;
 }
 
 const questionTemplates: Record<QuestionType, string> = {
@@ -42,19 +45,28 @@ const sourceIcons = {
   "Conference Presentations": FileText
 };
 
-export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: AgentDetailsProps) {
+export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave, onSourcesChange }: AgentDetailsProps) {
   const [editMode, setEditMode] = useState(isEditMode);
   const [researchQuestion, setResearchQuestion] = useState(agent.researchQuestion);
   const [questionType, setQuestionType] = useState<QuestionType>(agent.questionType);
-  const [selectedSources, setSelectedSources] = useState<string[]>(agent.sources);
   const [isRewritingAgent, setIsRewritingAgent] = useState(false);
+  const [responseOptions, setResponseOptions] = useState<string[]>(
+    agent.questionType === 'Picklist'
+      ? ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]
+      : []
+  );
+  const [newOption, setNewOption] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Update sources when question type changes
   useEffect(() => {
     const newSources = agent.sourcesByQuestionType?.[questionType] || agent.sources || [];
     console.log('Updating sources for', questionType, ':', newSources);
-    setSelectedSources(newSources);
   }, [questionType, agent]);
+
+  // Sync selectedSources with agent.sources whenever agent.sources changes
+  useEffect(() => {
+  }, [agent.sources]);
 
   // Log agent data on mount and when it changes
   useEffect(() => {
@@ -65,9 +77,8 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: Agent
       currentQuestionType: questionType,
       currentResearchQuestion: researchQuestion,
       editMode,
-      selectedSources
     });
-  }, [agent, questionType, researchQuestion, editMode, selectedSources]);
+  }, [agent, questionType, researchQuestion, editMode]);
 
   // Update edit mode when prop changes
   useEffect(() => {
@@ -75,9 +86,27 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: Agent
     setEditMode(isEditMode);
   }, [isEditMode]);
 
+  useEffect(() => {
+    // Reset response options if question type changes
+    if (questionType === 'Picklist' && responseOptions.length === 0) {
+      setResponseOptions(["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+    }
+    if (questionType !== 'Picklist') {
+      setResponseOptions([]);
+    }
+  }, [questionType]);
+
   const handleSaveChanges = () => {
     console.log('AgentDetails: Saving changes');
     setEditMode(false);
+    if (typeof onSave === 'function') {
+      onSave({
+        questionType,
+        researchQuestion,
+        selectedSources: agent.sources,
+        responseOptions: questionType === 'Picklist' ? responseOptions : undefined
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -85,7 +114,6 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: Agent
     setEditMode(false);
     setResearchQuestion(agent.researchQuestion);
     setQuestionType(agent.questionType);
-    setSelectedSources(agent.sources);
   };
 
   const handleQuestionTypeChange = (newType: QuestionType) => {
@@ -128,26 +156,39 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: Agent
       }
 
       // Update data sources based on question type
-      const newSources = newType === 'Number' 
-        ? ['LinkedIn Jobs', 'Company Website']
-        : ['LinkedIn Jobs', 'Company Website', 'Job Boards'];
-      setSelectedSources(newSources);
+      const newSources = agent.sourcesByQuestionType?.[newType] || agent.sources || [];
+      if (typeof onSourcesChange === 'function') {
+        onSourcesChange(newSources);
+      }
 
-      // End loading state
       setIsRewritingAgent(false);
     }, 2500); // 2.5 second delay for AI rewriting
   };
 
   const handleSourceToggle = (source: string) => {
     if (isRewritingAgent) return;
-    
-    setSelectedSources(prev => {
-      if (prev.includes(source)) {
-        return prev.filter(s => s !== source);
-      } else {
-        return [...prev, source];
-      }
-    });
+    let updated;
+    if (agent.sources.includes(source)) {
+      updated = agent.sources.filter(s => s !== source);
+    } else {
+      updated = [...agent.sources, source];
+    }
+    if (typeof onSourcesChange === 'function') {
+      onSourcesChange(updated);
+    }
+  };
+
+  const handleAddOption = (option: string) => {
+    const trimmed = option.trim();
+    if (trimmed && !responseOptions.includes(trimmed)) {
+      setResponseOptions([...responseOptions, trimmed]);
+    }
+    setNewOption("");
+    if (inputRef.current) inputRef.current.focus();
+  };
+
+  const handleRemoveOption = (optionToRemove: string) => {
+    setResponseOptions(responseOptions.filter(option => option !== optionToRemove));
   };
 
   const renderQuestionTypeChip = (type: QuestionType) => {
@@ -179,139 +220,171 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖" }: Agent
   // Get available sources for current question type
   const availableSources = agent.sourcesByQuestionType?.[questionType] || agent.sources || [];
 
+  const showPicklistOptions = editMode && questionType === 'Picklist' && !isRewritingAgent;
+
   return (
     <div className="p-8">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">{icon}</span>
-              <h2 className="text-2xl font-semibold">{agent.title}</h2>
-            </div>
-            <p className="text-muted-foreground">
-              {agent.description}
-            </p>
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
+        {/* Header */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{icon}</span>
+            <h2 className="text-2xl font-semibold">{agent.title}</h2>
           </div>
-
-          {/* Question Type Selection */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-700">Question Type</h3>
-            <div className="flex flex-wrap gap-2">
-              {(['Boolean', 'Number', 'Picklist'] as QuestionType[]).map(renderQuestionTypeChip)}
-            </div>
-          </div>
-
-          {/* Research Question */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-700">Research Question</h3>
-            <AnimatePresence mode="wait">
-              {isRewritingAgent ? (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-3"
-                >
-                  <div className="flex items-center gap-2 text-sm text-purple-600">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>🤖 AI is rewriting the research question...</span>
-                  </div>
-                  <div className="h-24 bg-gray-100 rounded-lg animate-pulse" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  {editMode ? (
-                    <textarea
-                      value={researchQuestion}
-                      onChange={(e) => setResearchQuestion(e.target.value)}
-                      className="w-full h-24 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      placeholder="Enter your research question..."
-                    />
-                  ) : (
-                    <p className="text-gray-600">{researchQuestion}</p>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Data Sources */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-medium text-gray-700">Data Sources</h3>
-            <div className="flex flex-wrap gap-2">
-              {editMode ? (
-                // Edit Mode: Show all available sources with selection states
-                availableSources.map((source) => {
-                  const IconComponent = sourceIcons[source as keyof typeof sourceIcons] || FileText;
-                  const isSelected = selectedSources.includes(source);
-                  return (
-                    <button
-                      key={source}
-                      onClick={() => handleSourceToggle(source)}
-                      disabled={isRewritingAgent}
-                      className={cn(
-                        "inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                        isRewritingAgent ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105',
-                        isSelected 
-                          ? 'bg-purple-600 text-white shadow-sm' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      )}
-                    >
-                      <IconComponent className="w-4 h-4 mr-2" />
-                      {source}
-                    </button>
-                  );
-                })
-              ) : (
-                // View Mode: Show only selected sources as indicators
-                selectedSources.map((source) => {
-                  const IconComponent = sourceIcons[source as keyof typeof sourceIcons] || FileText;
-                  return (
-                    <span
-                      key={source}
-                      className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-purple-600/30 text-purple-800 shadow-sm"
-                    >
-                      <IconComponent className="w-4 h-4 mr-2" />
-                      {source}
-                    </span>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          {editMode && (
-            <div className="flex gap-3 pt-4">
-              <Button
-                onClick={handleSaveChanges}
-                disabled={isRewritingAgent}
-                className={cn(
-                  "bg-purple-600 text-white hover:bg-purple-700",
-                  isRewritingAgent && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                Save Changes
-              </Button>
-              <Button
-                onClick={handleCancel}
-                disabled={isRewritingAgent}
-                variant="outline"
-                className={cn(
-                  "bg-gray-100 text-gray-700 hover:bg-gray-200",
-                  isRewritingAgent && "opacity-50 cursor-not-allowed"
-                )}
-              >
-                Cancel
-              </Button>
-            </div>
-          )}
+          <p className="text-muted-foreground">{agent.description}</p>
         </div>
+
+        {/* Question Type Selection */}
+        <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+          <h3 className="text-sm font-medium text-gray-600 mb-1">Question Type</h3>
+          <div className="flex flex-wrap gap-2">
+            {(['Boolean', 'Number', 'Picklist'] as QuestionType[]).map(type => {
+              const isSelected = questionType === type;
+              return (
+                <button
+                  key={type}
+                  onClick={() => handleQuestionTypeChange(type)}
+                  disabled={!editMode || isRewritingAgent}
+                  className={cn(
+                    "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200",
+                    isSelected
+                      ? 'bg-blue-100 text-blue-800 border border-blue-200 shadow-sm'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-blue-50',
+                    (!editMode || isRewritingAgent) && 'opacity-50 cursor-not-allowed',
+                    isRewritingAgent && type === questionType && 'animate-pulse'
+                  )}
+                >
+                  {type}
+                  {(type === 'Number' || type === 'Picklist') && (
+                    <Sparkles className="w-3 h-3 inline ml-1" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Research Question */}
+        <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+          <h3 className="text-sm font-medium text-gray-600 mb-1">Research Question</h3>
+          <AnimatePresence mode="wait">
+            {isRewritingAgent ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-3"
+              >
+                <div className="flex items-center gap-2 text-sm text-blue-600">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>🤖 AI is rewriting the research question...</span>
+                </div>
+                <div className="h-24 bg-gray-100 rounded-lg animate-pulse" />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {editMode ? (
+                  <textarea
+                    value={researchQuestion}
+                    onChange={(e) => setResearchQuestion(e.target.value)}
+                    className="w-full h-24 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
+                    placeholder="Enter your research question..."
+                  />
+                ) : (
+                  <p className="text-gray-700 text-base leading-relaxed">{researchQuestion}</p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Picklist Response Options (no add/remove, muted chips) */}
+        {(showPicklistOptions || (!editMode && questionType === 'Picklist')) && (
+          <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Picklist Response Options</h3>
+            <PicklistChips options={responseOptions} />
+          </div>
+        )}
+
+        {/* Data Sources */}
+        <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+          <h3 className="text-sm font-medium text-gray-600 mb-1">Data Sources</h3>
+          <div className="flex flex-wrap gap-2">
+            {editMode ? (
+              availableSources.map((source) => {
+                const isSelected = agent.sources.includes(source);
+                return (
+                  <button
+                    key={source}
+                    type="button"
+                    onClick={() => handleSourceToggle(source)}
+                    className={cn(
+                      "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm transition-colors duration-150 group relative cursor-pointer",
+                      isSelected
+                        ? 'bg-gray-100 text-gray-800 border border-gray-200'
+                        : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50',
+                      'focus:outline-none focus:ring-2 focus:ring-purple-400'
+                    )}
+                  >
+                    {source}
+                    <span
+                      className={cn(
+                        "ml-2 w-3 h-3 flex items-center justify-center rounded-full transition-opacity duration-150",
+                        isSelected ? 'opacity-0 group-hover:opacity-100' : 'opacity-100',
+                        'text-gray-400 hover:text-gray-600'
+                      )}
+                      aria-label={`Remove ${source}`}
+                    >
+                      <svg className="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </span>
+                  </button>
+                );
+              })
+            ) : (
+              agent.sources.map((source) => (
+                <span
+                  key={source}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm"
+                >
+                  {source}
+                </span>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        {editMode && (
+          <div className="flex gap-3 pt-4">
+            <Button
+              onClick={handleSaveChanges}
+              disabled={isRewritingAgent}
+              className={cn(
+                "bg-purple-600 hover:bg-purple-700 text-white",
+                isRewritingAgent && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              Save Changes
+            </Button>
+            <Button
+              onClick={handleCancel}
+              disabled={isRewritingAgent}
+              variant="outline"
+              className={cn(
+                "bg-gray-100 text-gray-700 hover:bg-gray-200",
+                isRewritingAgent && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              Cancel
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

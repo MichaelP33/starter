@@ -5,6 +5,7 @@ import { X, ChevronDown, ChevronRight, ExternalLink, CheckCircle } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AgentResult } from "./types";
+import PicklistChips from "./PicklistChips";
 
 interface CompanyAnalysisPanelProps {
   isOpen: boolean;
@@ -47,10 +48,13 @@ export function CompanyAnalysisPanel({
             className="fixed left-0 top-0 h-full w-[40%] bg-white shadow-xl z-50 overflow-y-auto"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white sticky top-0">
-              <h2 className="text-xl font-semibold text-gray-900">
-                {companyName} Analysis
-              </h2>
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-slate-50 to-blue-50 sticky top-0">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {companyName} Analysis
+                </h2>
+                {/* Removed picklist chips from header for cleaner look */}
+              </div>
               <Button
                 variant="ghost"
                 size="sm"
@@ -63,24 +67,52 @@ export function CompanyAnalysisPanel({
             </div>
 
             {/* Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-8 border-l-4 border-blue-500 bg-white">
               {/* Answer */}
               <div className="space-y-2">
                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                   ANSWER
                 </div>
-                <div className="text-lg font-medium text-green-600">
-                  {result.qualified ? "Yes" : "No"}
-                </div>
+                {/* Show chips for Picklist, Yes/No for Boolean, number for Number */}
+                {result.questionType === 'Picklist' && Array.isArray(result.selectedOptions) && result.selectedOptions.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {result.selectedOptions.map(option => {
+                      const CATEGORY_COLORS: Record<string, string> = {
+                        "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
+                        "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
+                        "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
+                        "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200"
+                      };
+                      return (
+                        <span
+                          key={option}
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200"}`}
+                        >
+                          {option}
+                        </span>
+                      );
+                    })}
+                  </div>
+                ) : result.questionType === 'Number' && result.researchSummary ? (
+                  <div className="text-lg font-medium text-blue-700">
+                    {result.researchSummary}
+                  </div>
+                ) : (
+                  <div className={`text-lg font-medium ${result.qualified ? 'text-green-600' : 'text-red-500'}`}> 
+                    {result.qualified ? 'Yes' : 'No'}
+                  </div>
+                )}
               </div>
 
-              {/* Short Answer */}
+              {/* Research Summary */}
               <div className="space-y-2">
                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  WHY QUALIFIED
+                  RESEARCH SUMMARY
                 </div>
-                <div className="text-gray-800 leading-relaxed">
-                  {result.whyQualified}
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="text-gray-800 leading-relaxed">
+                    {result.researchSummary}
+                  </div>
                 </div>
               </div>
 
@@ -99,18 +131,6 @@ export function CompanyAnalysisPanel({
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Research Summary */}
-              <div className="space-y-2">
-                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                  RESEARCH SUMMARY
-                </div>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="text-gray-800 leading-relaxed">
-                    {result.researchSummary}
-                  </div>
                 </div>
               </div>
 

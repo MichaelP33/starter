@@ -19,6 +19,7 @@ import { CompanyAnalysisPanel } from "./CompanyAnalysisPanel";
 import { motion } from "framer-motion";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import PicklistChips from "./PicklistChips";
 
 interface QualifiedCompaniesTableProps {
   companies: QualifiedCompanyWithResearch[];
@@ -69,10 +70,15 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   };
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
+    // If picklist, render chips
+    if (Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0 && company.questionType === 'Picklist') {
+      console.log('🟢 [DEBUG] Rendering PicklistChips for:', company.companyName, company.selectedOptions, company.questionType);
+      return <PicklistChips options={company.selectedOptions} />;
+    }
+    // Otherwise, render summary as before
     const fullText = company.researchResults.summary;
     const truncatedText = truncateText(fullText);
     const needsTruncation = fullText.length > 50;
-
     return (
       <div className="group relative">
         <div className="text-sm">

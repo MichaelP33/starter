@@ -385,15 +385,33 @@ export function ChatInterface() {
   const handleAgentAction = async (action: string, agent: Agent | null) => {
     if (!agent) return;
     
+    // Debug: Log the agent state before test
+    console.log('🔍 [DEBUG] handleAgentAction called with:', {
+      action,
+      agentId: agent.id,
+      agentTitle: agent.title,
+      agentQuestionType: agent.questionType,
+      selectedAgentQuestionType: selectedAgent?.questionType,
+      isAgentEditMode
+    });
+    
+    // Get the current question type from the agent config modal or agent state
+    // Use selectedAgent if it exists (updated from modal), otherwise use passed agent
+    const currentQuestionType = selectedAgent?.questionType || agent.questionType || 'Boolean';
+    
+    // Clone the agent and update the questionType
+    const agentForTest = { ...agent, questionType: currentQuestionType };
+    
+    console.log('🟣 [DEBUG] Agent for test (final):', {
+      id: agentForTest.id,
+      title: agentForTest.title,
+      questionType: agentForTest.questionType,
+      researchQuestion: agentForTest.researchQuestion
+    });
+    
     if (action === 'test') {
-      console.log('🧪 TESTING AGENT DEBUG:');
-      console.log('Selected agent:', {
-        id: agent.id,
-        title: agent.title,
-        categoryId: agent.categoryId,
-        questionType: agent.questionType,
-        researchQuestion: agent.researchQuestion
-      });
+      // Debug log: agent object used for test
+      console.log('🟣 [DEBUG] Agent for test:', agentForTest);
       
       setIsTestingAgent(true);
       setLoadingStep(0);
@@ -402,7 +420,7 @@ export function ChatInterface() {
       // Simulate progressive loading steps with longer duration
       setTimeout(() => {
         setLoadingStep(1);
-        setLoadingMessage(`Running ${agent.title} analysis on sample companies...`);
+        setLoadingMessage(`Running ${agentForTest.title} analysis on sample companies...`);
       }, 2000);
 
       setTimeout(() => {
@@ -415,7 +433,7 @@ export function ChatInterface() {
         setLoadingMessage("Preparing sample results...");
       }, 6000);
 
-      if (agent.id === 'marketing-hiring') {
+      if (agentForTest.id === 'marketing-hiring') {
         // Shuffle and pick 10 companies for this test
         const shuffled = [...uploadedAccounts].sort(() => 0.5 - Math.random());
         const sample = shuffled.slice(0, 10);
@@ -439,8 +457,9 @@ export function ChatInterface() {
         // Debug logging for sample companies
         console.log('🔍 [DEBUG] Sampled companies for marketing-hiring:', sampleCompanies.map(c => ({ id: c.id, name: c.companyName })));
         // Generate results using ResultsGenerator with this sample
-        const results = resultsGenerator?.generateResults(agent.id, sampleCompanies);
-        // Debug logging for results
+        const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
+        // Debug log: results array
+        console.log('🟢 [DEBUG] Results returned by ResultsGenerator:', results);
         if (results) {
           console.log('🔍 [DEBUG] Results returned by ResultsGenerator:', results.map(r => ({ id: r.companyId, name: r.companyName, qualified: r.qualified, whyQualified: r.whyQualified })));
           setQualificationResults(results);
@@ -479,7 +498,7 @@ export function ChatInterface() {
 
           // Update selectedAgentConfig with test results
           setSelectedAgentConfig({
-            agent,
+            agent: agentForTest,
             testResults: results,
             qualifiedCompanies
           });
@@ -501,7 +520,7 @@ export function ChatInterface() {
       // Simulate progressive loading steps with longer duration
       setTimeout(() => {
         setLoadingStep(1);
-        setLoadingMessage(`Running ${agent.title} analysis on sample companies...`);
+        setLoadingMessage(`Running ${agentForTest.title} analysis on sample companies...`);
       }, 2000);
 
       setTimeout(() => {
@@ -514,7 +533,9 @@ export function ChatInterface() {
         setLoadingMessage("Preparing sample results...");
       }, 6000);
 
-      const results = resultsGenerator?.generateResults(agent.id);
+      const results = resultsGenerator?.generateResults(agentForTest.id);
+      // Debug log: results array
+      console.log('🟢 [DEBUG] Results returned by ResultsGenerator:', results);
       if (results) {
         setQualificationResults(results);
         
@@ -552,7 +573,7 @@ export function ChatInterface() {
 
         // Update selectedAgentConfig with test results
         setSelectedAgentConfig({
-          agent,
+          agent: agentForTest,
           testResults: results,
           qualifiedCompanies
         });
@@ -570,7 +591,7 @@ export function ChatInterface() {
       setShowFullResults(false);
     } else if (action === 'add') {
       // Generate results for the agent
-      const results = resultsGenerator?.generateResults(agent.id);
+      const results = resultsGenerator?.generateResults(agentForTest.id);
       if (results) {
         // Set qualification results
         setQualificationResults(results);
@@ -609,7 +630,7 @@ export function ChatInterface() {
 
         // Update selectedAgentConfig with results
         setSelectedAgentConfig({
-          agent,
+          agent: agentForTest,
           testResults: results,
           qualifiedCompanies
         });
@@ -1562,13 +1583,14 @@ export function ChatInterface() {
             ) : showTestResults ? (
               (() => {
                 const resultsToShow = activeResultsTab === 'all'
-                  ? qualificationResults
-                  : qualificationResults.filter(r => r.qualified);
+                  ? selectedAgentConfig?.testResults || []
+                  : (selectedAgentConfig?.testResults || []).filter(r => r.qualified);
+                console.log('🟠 [DEBUG] Results passed to QualificationResultsTable:', resultsToShow);
                 console.log('🔍 [DEBUG] Passing to QualificationResultsTable:', resultsToShow.map(r => ({ id: r.companyId, qualified: r.qualified, whyQualified: r.whyQualified })));
                 return (
                   <div className="p-8">
                     <QualificationResultsTable 
-                      results={selectedAgentConfig?.testResults || []}
+                      results={resultsToShow}
                       companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
                       activeTab={activeResultsTab}
                       setActiveTab={setActiveResultsTab}
@@ -1583,6 +1605,43 @@ export function ChatInterface() {
                   agent={selectedAgent} 
                   isEditMode={isAgentEditMode}
                   icon={categories.find(c => c.id === selectedCategoryId)?.icon || "🤖"}
+                  onSave={({ questionType, researchQuestion, selectedSources }) => {
+                    const updatedAgent = selectedAgent ? {
+                      ...selectedAgent,
+                      questionType,
+                      researchQuestion,
+                      sources: selectedSources
+                    } : null;
+                    
+                    setSelectedAgent(updatedAgent);
+                    
+                    // Update the ResultsGenerator with the modified agent
+                    if (updatedAgent && resultsGenerator) {
+                      // Find and update the agent in the agents array
+                      const updatedAgents = agents.map(agent => 
+                        agent.id === updatedAgent.id ? updatedAgent : agent
+                      );
+                      setResultsGenerator(new ResultsGenerator(companies, updatedAgents));
+                    }
+                    
+                    setIsAgentEditMode(false);
+                  }}
+                  onSourcesChange={(sources) => {
+                    console.log('[DEBUG] onSourcesChange fired with:', sources);
+                    if (selectedAgent) {
+                      const updatedAgent = { ...selectedAgent, sources };
+                      console.log('[DEBUG] Updating selectedAgent:', updatedAgent);
+                      setSelectedAgent(updatedAgent);
+                      // Update ResultsGenerator with new sources immediately
+                      if (resultsGenerator) {
+                        const updatedAgents = agents.map(agent =>
+                          agent.id === updatedAgent.id ? updatedAgent : agent
+                        );
+                        setResultsGenerator(new ResultsGenerator(companies, updatedAgents));
+                        console.log('[DEBUG] ResultsGenerator updated with new agents:', updatedAgents);
+                      }
+                    }
+                  }}
                 />
               )
             )}
