@@ -20,6 +20,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import PicklistChips from "./PicklistChips";
+import CompactPicklistChips from "./CompactPicklistChips";
 
 interface QualifiedCompaniesTableProps {
   companies: QualifiedCompanyWithResearch[];
@@ -70,10 +71,18 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   };
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
-    // If picklist, render chips
-    if (Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0 && company.questionType === 'Picklist') {
-      console.log('🟢 [DEBUG] Rendering PicklistChips for:', company.companyName, company.selectedOptions, company.questionType);
-      return <PicklistChips options={company.selectedOptions} />;
+    // Always use CompactPicklistChips for Picklist results
+    if (company.questionType === 'Picklist') {
+      if (Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0) {
+        console.log("Rendering CompactPicklistChips for:", company.companyName, company.selectedOptions, company.questionType);
+        return <CompactPicklistChips options={company.selectedOptions} />;
+      } else {
+        return (
+          <span className="inline-block px-2 py-0.5 rounded-full text-xs font-normal bg-gray-100 text-gray-500 border border-gray-200">
+            No Relevant Hiring
+          </span>
+        );
+      }
     }
     // Otherwise, render summary as before
     const fullText = company.researchResults.summary;

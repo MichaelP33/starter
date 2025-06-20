@@ -26,6 +26,7 @@ interface PicklistChipsProps {
 }
 
 const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions, onToggle, className, variant = 'default' }) => {
+  console.log('[PicklistChips] Rendering with options:', options, 'selectedOptions:', selectedOptions, 'variant:', variant);
   const isToggleable = typeof selectedOptions !== 'undefined' && typeof onToggle === 'function';
   const [internalSelected, setInternalSelected] = useState<string[]>(selectedOptions || []);
   const isControlled = typeof selectedOptions !== 'undefined';
