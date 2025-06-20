@@ -1432,18 +1432,17 @@ export function ChatInterface() {
 
                     {/* Results Table */}
                     <div>
-                      {activeResultsTab === 'qualified' ? (
-                        <QualifiedCompaniesTable
-                          companies={selectedAgentConfig?.qualifiedCompanies || []}
-                          enrichmentOptions={enrichmentOptions}
-                        />
-                      ) : (
+                      {selectedAgentConfig?.agent && (
                         <QualificationResultsTable
                           results={selectedAgentConfig?.testResults || []}
+                          allTestedCount={totalCount}
+                          qualifiedCount={qualifiedCount}
                           companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
                           activeTab={activeResultsTab}
                           setActiveTab={setActiveResultsTab}
                           onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
+                          agent={selectedAgentConfig.agent}
+                          icon={categories.find(c => c.id === selectedCategoryId)?.icon || '🤖'}
                         />
                       )}
                     </div>
@@ -1582,20 +1581,55 @@ export function ChatInterface() {
               </div>
             ) : showTestResults ? (
               (() => {
-                const resultsToShow = activeResultsTab === 'all'
+                const allTestedCount = selectedAgentConfig?.testResults?.length || 0;
+                const qualifiedCount = (selectedAgentConfig?.testResults || []).filter(r => r.qualified).length;
+                let resultsToShow = activeResultsTab === 'all'
                   ? selectedAgentConfig?.testResults || []
                   : (selectedAgentConfig?.testResults || []).filter(r => r.qualified);
-                console.log('🟠 [DEBUG] Results passed to QualificationResultsTable:', resultsToShow);
-                console.log('🔍 [DEBUG] Passing to QualificationResultsTable:', resultsToShow.map(r => ({ id: r.companyId, qualified: r.qualified, whyQualified: r.whyQualified })));
+                if (activeResultsTab === 'all' && resultsToShow.length < 10) {
+                  const missing = 10 - resultsToShow.length;
+                  const pad = Array.from({ length: missing }, (_, i) => ({
+                    companyId: `placeholder-${i}`,
+                    companyName: '—',
+                    qualified: false,
+                    website: '',
+                    industry: '',
+                    employeeCount: '',
+                    hqCountry: '',
+                    hqState: '',
+                    hqCity: '',
+                    totalFunding: '',
+                    estimatedAnnualRevenue: '',
+                    yearFounded: 0,
+                    researchSummary: '',
+                    whyQualified: '',
+                    evidence: [],
+                    selectedOptions: [],
+                    questionType: '',
+                    confidence: 0,
+                    confidenceScore: 0,
+                    researchDate: '',
+                    dataSources: [],
+                    agentId: '',
+                    agentName: ''
+                  }));
+                  resultsToShow = [...resultsToShow, ...pad];
+                }
                 return (
                   <div className="p-8">
-                    <QualificationResultsTable 
-                      results={resultsToShow}
-                      companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
-                      activeTab={activeResultsTab}
-                      setActiveTab={setActiveResultsTab}
-                      onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
-                    />
+                    {selectedAgentConfig?.agent && (
+                      <QualificationResultsTable
+                        results={resultsToShow}
+                        allTestedCount={allTestedCount}
+                        qualifiedCount={qualifiedCount}
+                        companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
+                        activeTab={activeResultsTab}
+                        setActiveTab={setActiveResultsTab}
+                        onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
+                        agent={selectedAgentConfig.agent}
+                        icon={categories.find(c => c.id === selectedCategoryId)?.icon || '🤖'}
+                      />
+                    )}
                   </div>
                 );
               })()

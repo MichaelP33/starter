@@ -503,7 +503,13 @@ export class ResultsGenerator {
           totalFunding: company.totalFunding,
           estimatedAnnualRevenue: company.estimatedAnnualRevenue,
           yearFounded: company.yearFounded,
-          dataSources: ['LinkedIn Jobs', 'Company Website']
+          dataSources: ['LinkedIn Jobs', 'Company Website'],
+          questionType: agent?.questionType || 'Boolean',
+          researchResults: {
+            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            sources: ['LinkedIn Jobs', 'Company Website']
+          },
+          assignedPersonas: []
         };
       });
       // Build unqualified results
@@ -537,7 +543,13 @@ export class ResultsGenerator {
           totalFunding: company.totalFunding,
           estimatedAnnualRevenue: company.estimatedAnnualRevenue,
           yearFounded: company.yearFounded,
-          dataSources: ['Company Website']
+          dataSources: ['Company Website'],
+          questionType: agent?.questionType || 'Boolean',
+          researchResults: {
+            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            sources: ['Company Website']
+          },
+          assignedPersonas: []
         };
       });
       // Debug: log all results

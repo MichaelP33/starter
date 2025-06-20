@@ -315,38 +315,13 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
           <h3 className="text-sm font-medium text-gray-600 mb-1">Data Sources</h3>
           <div className="flex flex-wrap gap-2">
             {editMode ? (
-              availableSources.map((source) => {
-                const isSelected = agent.sources.includes(source);
-                return (
-                  <button
-                    key={source}
-                    type="button"
-                    onClick={() => handleSourceToggle(source)}
-                    className={cn(
-                      "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm transition-colors duration-150 group relative cursor-pointer",
-                      isSelected
-                        ? 'bg-gray-100 text-gray-800 border border-gray-200'
-                        : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50',
-                      'focus:outline-none focus:ring-2 focus:ring-purple-400'
-                    )}
-                  >
-                    {source}
-                    <span
-                      className={cn(
-                        "ml-2 w-3 h-3 flex items-center justify-center rounded-full transition-opacity duration-150",
-                        isSelected ? 'opacity-0 group-hover:opacity-100' : 'opacity-100',
-                        'text-gray-400 hover:text-gray-600'
-                      )}
-                      aria-label={`Remove ${source}`}
-                    >
-                      <svg className="w-3 h-3 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </span>
-                  </button>
-                );
-              })
-            ) : (
+              <PicklistChips
+                options={availableSources}
+                selectedOptions={agent.sources}
+                onToggle={(source, selected) => handleSourceToggle(source)}
+                variant="source"
+              />
+            ) :
               agent.sources.map((source) => (
                 <span
                   key={source}
@@ -355,7 +330,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
                   {source}
                 </span>
               ))
-            )}
+            }
           </div>
         </div>
 
