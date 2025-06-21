@@ -17,7 +17,7 @@ import {
 import { QualifiedCompanyWithResearch, EnrichmentOption, Contact } from "./types";
 import { CompanyAnalysisPanel } from "./CompanyAnalysisPanel";
 import { motion } from "framer-motion";
-import { CheckCircle2, ExternalLink, XCircle, ArrowUpRight, ChevronRight } from "lucide-react";
+import { CheckCircle2, ExternalLink, XCircle, ArrowUpRight, ChevronRight, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import PicklistChips from "./PicklistChips";
 import CompactPicklistChips from "./CompactPicklistChips";
@@ -77,14 +77,28 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
     const isExpanded = expandedCompanyIds.includes(company.companyId);
 
     return (
-      <div 
-        className={cn(
-          "flex items-center gap-2 group",
-          hasPersonas && "cursor-pointer hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors duration-150"
-        )}
-        onClick={hasPersonas ? () => handleToggleExpansion(company.companyId, company) : undefined}
-      >
-        <div className="flex-1 min-w-0">
+      <div className="flex items-start gap-3">
+        <div className="mt-1 flex-shrink-0">
+          {company.needsReview ? (
+            <AlertTriangle className="w-4 h-4 text-yellow-500" />
+          ) : company.qualified ? (
+            <CheckCircle2 className="w-4 h-4 text-green-600" />
+          ) : (
+            <XCircle className="w-4 h-4 text-red-600" />
+          )}
+        </div>
+        <div
+          className={cn(
+            "flex-1 min-w-0 group",
+            hasPersonas &&
+              "cursor-pointer hover:bg-gray-50 rounded-lg -m-2 p-2 transition-colors duration-150"
+          )}
+          onClick={
+            hasPersonas
+              ? () => handleToggleExpansion(company.companyId, company)
+              : undefined
+          }
+        >
           <div className="flex items-center gap-1.5">
             <p className="text-sm font-medium text-gray-900 truncate">
               {company.companyName}
@@ -98,20 +112,20 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
           <p className="text-sm text-gray-500 truncate">
             {company.website}
           </p>
+          {hasPersonas && (
+            <div className="flex items-center gap-2 mt-1">
+              <ChevronRight
+                className={cn(
+                  "w-3 h-3 text-gray-400 hover:text-purple-500 transition-colors cursor-pointer flex-shrink-0",
+                  isExpanded && "transform rotate-90"
+                )}
+              />
+              <span className="text-gray-400 opacity-75 text-sm opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap hover:text-purple-600 hover:opacity-100 hover:scale-105 cursor-pointer">
+                Start Prospecting ✨
+              </span>
+            </div>
+          )}
         </div>
-        {hasPersonas && (
-          <div className="flex items-center gap-2">
-            <ChevronRight
-              className={cn(
-                "w-3 h-3 text-gray-400 hover:text-purple-500 transition-colors cursor-pointer flex-shrink-0",
-                isExpanded && "transform rotate-90"
-              )}
-            />
-            <span className="text-gray-600 text-sm opacity-0 group-hover:opacity-100 transition-colors duration-200 whitespace-nowrap hover:text-purple-600 cursor-pointer">
-              Start Prospecting ↓
-            </span>
-          </div>
-        )}
       </div>
     );
   };
@@ -190,7 +204,16 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
 
               return (
                 <React.Fragment key={company.companyId}>
-                  <TableRow className="hover:bg-gray-50/50 transition-colors duration-200">
+                  <TableRow
+                    className={cn(
+                      "hover:bg-gray-50/50 transition-colors duration-200",
+                      company.needsReview
+                        ? "bg-yellow-50/40"
+                        : company.qualified
+                        ? ""
+                        : "bg-red-50/20"
+                    )}
+                  >
                     <TableCell className="p-1.5 align-top">
                       {renderCompanyNameCell(company)}
                     </TableCell>

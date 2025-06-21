@@ -284,6 +284,27 @@ export class ResultsGenerator {
     }
   ];
 
+  private MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS = [
+    {
+      whyQualified: "Needs Review: Junior marketing roles found, seniority unclear",
+      researchSummary: "As of June 18, 2025, [COMPANY] has entry-level marketing roles including Marketing Intern, Junior Marketing Associate, and Marketing Coordinator, which don't indicate senior operations or leadership investment.",
+      evidenceTemplates: [
+        "Marketing Intern - campaign support",
+        "Junior Marketing Associate - administrative tasks",
+        "Marketing Coordinator - basic coordination"
+      ]
+    },
+    {
+      whyQualified: "Needs Review: Marketing roles found, but may not be senior enough",
+      researchSummary: "As of June 18, 2025, [COMPANY] is hiring for Marketing Specialist and Digital Marketing roles, but the seniority level and scope of responsibilities need review to determine if they match senior operations criteria.",
+      evidenceTemplates: [
+        "Marketing Specialist - general marketing support",
+        "Digital Marketing - entry to mid-level role",
+        "Marketing Associate - junior position"
+      ]
+    }
+  ];
+
   generateResults(agentId: string, companySample?: Company[]): AgentResult[] {
     console.log('🔍 AGENT TEST DEBUG:');
     console.log('Agent ID requested:', agentId);
@@ -317,7 +338,9 @@ export class ResultsGenerator {
       const sample = shuffled.slice(0, 10);
       const qualifiedCompanies = sample.slice(0, 3);
       const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
-      const unqualifiedCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 7);
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
       if (isPicklist) {
         // Picklist qualified variations
         const picklistQualifiedVariations = [
@@ -373,15 +396,28 @@ export class ResultsGenerator {
               "Content Creator - content development",
               "Social Media Coordinator - social media management"
             ]
+          }
+        ];
+        // Picklist needsReview variations (junior roles that need review)
+        const picklistNeedsReviewVariations = [
+          {
+            selectedOptions: ["Marketing Operations"],
+            whyQualified: "Junior marketing roles available but need seniority review",
+            researchSummary: "As of June 18, 2025, [COMPANY] has marketing roles including Marketing Coordinator and Junior Marketing Associate, but these are entry-level positions that may not indicate senior operations investment.",
+            evidenceTemplates: [
+              "Marketing Coordinator - entry-level coordination",
+              "Junior Marketing Associate - basic administrative tasks",
+              "Marketing Assistant - support role"
+            ]
           },
           {
-            selectedOptions: [],
-            whyQualified: "Only junior-level marketing positions available",
-            researchSummary: "As of June 18, 2025, [COMPANY] has entry-level marketing roles including Marketing Intern, Junior Marketing Associate, and Marketing Coordinator, which don't indicate senior operations or leadership investment.",
+            selectedOptions: ["Growth Marketing"],
+            whyQualified: "Marketing roles found but seniority level unclear",
+            researchSummary: "As of June 18, 2025, [COMPANY] is hiring for Marketing Specialist and Digital Marketing roles, but the seniority level and scope of responsibilities need review to determine if they match senior operations criteria.",
             evidenceTemplates: [
-              "Marketing Intern - campaign support",
-              "Junior Marketing Associate - administrative tasks",
-              "Marketing Coordinator - basic coordination"
+              "Marketing Specialist - general marketing support",
+              "Digital Marketing - entry to mid-level role",
+              "Marketing Associate - junior position"
             ]
           }
         ];
@@ -404,6 +440,48 @@ export class ResultsGenerator {
             whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
             confidence: 0.92,
             confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['LinkedIn Jobs', 'Company Website'],
+            selectedOptions: template.selectedOptions,
+            questionType: 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['LinkedIn Jobs', 'Company Website']
+            },
+            assignedPersonas: []
+          };
+        });
+        // Assign needsReview variations in order, cycling if needed
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = picklistNeedsReviewVariations[idx % picklistNeedsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'job_posting',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'LinkedIn Jobs'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
             researchDate: new Date().toISOString(),
             agentId,
             agentName: agent?.title || '',
@@ -467,27 +545,22 @@ export class ResultsGenerator {
             assignedPersonas: []
           };
         });
-        return [...qualifiedResults, ...unqualifiedResults];
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
       }
-      // Boolean logic (no redeclarations, just use the variables above)
-      // Debug: confirm marketing-hiring template logic is being used
-      console.log('🔍 [DEBUG] Using ONLY marketing-hiring template logic for all 10 results');
+      // Boolean logic for marketing-hiring
+      console.log('🔍 [DEBUG] Using marketing-hiring BOOLEAN template logic');
+      
       // Build qualified results
       const qualifiedResults = qualifiedCompanies.map(company => {
         const template = this.MARKETING_HIRING_QUALIFIED_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_QUALIFIED_VARIATIONS.length)];
-        const evidence = template.evidenceTemplates.map(et => ({
-          type: 'job_posting',
-          title: et,
-          description: et,
-          confidence: 0.92,
-          source: 'LinkedIn Jobs'
-        }));
+        const evidence = template.evidenceTemplates.map(et => ({ type: 'job_posting', title: et, description: et, confidence: 0.92, source: 'LinkedIn Jobs' }));
         return {
           companyId: company.id,
           companyName: company.companyName,
           qualified: true,
+          needsReview: false,
           evidence,
-          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
           whyQualified: template.whyQualified,
           confidence: 0.92,
           confidenceScore: 92,
@@ -505,29 +578,55 @@ export class ResultsGenerator {
           yearFounded: company.yearFounded,
           dataSources: ['LinkedIn Jobs', 'Company Website'],
           questionType: agent?.questionType || 'Boolean',
-          researchResults: {
-            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
-            sources: ['LinkedIn Jobs', 'Company Website']
-          },
+          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['LinkedIn Jobs', 'Company Website'] },
           assignedPersonas: []
         };
       });
-      // Build unqualified results
-      const unqualifiedResults = unqualifiedCompanies.map(company => {
-        const template = this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS.length)];
-        const evidence = template.evidenceTemplates.map(et => ({
-          type: 'job_posting',
-          title: et,
-          description: et,
-          confidence: 0.7,
-          source: 'Company Careers Page'
-        }));
+
+      // Build needsReview results
+      const needsReviewResults = needsReviewCompanies.map(company => {
+        const template = this.MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS.length)];
+        const evidence = template.evidenceTemplates.map(et => ({ type: 'job_posting', title: et, description: et, confidence: 0.8, source: 'LinkedIn Jobs' }));
         return {
           companyId: company.id,
           companyName: company.companyName,
           qualified: false,
+          needsReview: true,
           evidence,
-          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
+          whyQualified: template.whyQualified,
+          confidence: 0.8,
+          confidenceScore: 80,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: this.agents.find(a => a.id === agentId)?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['LinkedIn Jobs', 'Company Website'],
+          questionType: agent?.questionType || 'Boolean',
+          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['LinkedIn Jobs', 'Company Website'] },
+          assignedPersonas: []
+        };
+      });
+
+      // Build unqualified results
+      const unqualifiedResults = unqualifiedCompanies.map(company => {
+        const template = this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS.length)];
+        const evidence = template.evidenceTemplates.map(et => ({ type: 'job_posting', title: et, description: et, confidence: 0.7, source: 'Company Careers Page' }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: false,
+          needsReview: false,
+          evidence,
+          researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
           whyQualified: template.whyQualified,
           confidence: 0.7,
           confidenceScore: 70,
@@ -545,17 +644,16 @@ export class ResultsGenerator {
           yearFounded: company.yearFounded,
           dataSources: ['Company Website'],
           questionType: agent?.questionType || 'Boolean',
-          researchResults: {
-            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
-            sources: ['Company Website']
-          },
+          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['Company Website'] },
           assignedPersonas: []
         };
       });
+
       // Debug: log all results
-      console.log('🔍 [DEBUG] Final marketing-hiring results:', [...qualifiedResults, ...unqualifiedResults].map(r => ({ id: r.companyId, qualified: r.qualified, whyQualified: r.whyQualified })));
-      // Return all results (3 qualified + 7 unqualified)
-      return [...qualifiedResults, ...unqualifiedResults];
+      console.log('🔍 [DEBUG] Final marketing-hiring results:', [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults].map(r => ({ id: r.companyId, qualified: r.qualified, needsReview: r.needsReview, whyQualified: r.whyQualified })));
+      
+      // Return all results (3 qualified + 2 needsReview + 5 unqualified)
+      return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
     }
 
     return targetCompanies.map(company => {

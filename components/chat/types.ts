@@ -99,6 +99,7 @@ export interface AgentResult {
   totalFunding: string;
   estimatedAnnualRevenue: string;
   qualified: boolean;
+  needsReview?: boolean;
   confidence: number;
   confidenceScore: number;
   whyQualified: string;

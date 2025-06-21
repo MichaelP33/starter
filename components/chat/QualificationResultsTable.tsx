@@ -22,9 +22,10 @@ interface QualificationResultsTableProps {
   results: AgentResult[];
   allTestedCount: number;
   qualifiedCount: number;
+  needsReviewCount?: number;
   companies: any[];
-  activeTab: 'qualified' | 'all';
-  setActiveTab: (tab: 'qualified' | 'all') => void;
+  activeTab: 'qualified' | 'needsReview' | 'all';
+  setActiveTab: (tab: 'qualified' | 'needsReview' | 'all') => void;
   onViewAllResults?: () => void;
   agent: Agent;
   icon?: string;
@@ -101,7 +102,7 @@ const ResearchResultCell = ({ result, onViewDetails, compact = false }: { result
   );
 };
 
-export function QualificationResultsTable({ results, allTestedCount, qualifiedCount, companies = [], activeTab, setActiveTab, onViewAllResults, agent, icon }: QualificationResultsTableProps) {
+export function QualificationResultsTable({ results, allTestedCount, qualifiedCount, needsReviewCount, companies = [], activeTab, setActiveTab, onViewAllResults, agent, icon }: QualificationResultsTableProps) {
   console.log('📊 Results received by UI:', results.map(r => ({
     companyName: r.companyName,
     whyQualified: r.whyQualified,
@@ -174,7 +175,11 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
   const renderCompanyNameCell = (result: AgentResult) => {
     return (
       <div className="flex items-center gap-3">
-        {result.qualified ? (
+        {result.needsReview ? (
+          <div className="w-4 h-4 bg-yellow-500 rounded-full flex-shrink-0 flex items-center justify-center">
+            <span className="text-white text-xs font-bold">!</span>
+          </div>
+        ) : result.qualified ? (
           <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
         ) : (
           <XCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
@@ -191,7 +196,11 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
     );
   };
 
-  const filteredResults = activeTab === 'qualified' ? results.filter(r => r.qualified) : results;
+  const filteredResults = activeTab === 'qualified' 
+    ? results.filter(r => r.qualified && !r.needsReview) 
+    : activeTab === 'needsReview' 
+    ? results.filter(r => r.needsReview) 
+    : results;
 
   // Default response options for Picklist agents
   const defaultResponseOptions = [
@@ -231,6 +240,17 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
             )}
           >
             Qualified ({qualifiedCount})
+          </button>
+          <button
+            onClick={() => setActiveTab('needsReview')}
+            className={cn(
+              'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200',
+              activeTab === 'needsReview' 
+                ? 'bg-primary text-white shadow-sm' 
+                : 'text-gray-600 hover:text-gray-900'
+            )}
+          >
+            Needs Review ({needsReviewCount})
           </button>
           <button
             onClick={() => setActiveTab('all')}
@@ -276,9 +296,14 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
             {filteredResults.map((result, index) => (
               <TableRow
                 key={result.companyId}
-                className={`hover:bg-green-50/30 transition-colors duration-200 ${
-                  result.qualified ? "bg-green-50/10" : "bg-red-50/10"
-                }`}
+                className={cn(
+                  "hover:bg-green-50/30 transition-colors duration-200",
+                  result.needsReview 
+                    ? "bg-yellow-50/10 hover:bg-yellow-50/30" 
+                    : result.qualified 
+                    ? "bg-green-50/10" 
+                    : "bg-red-50/10"
+                )}
               >
                 {columns.map((column, colIndex) => (
                   <TableCell

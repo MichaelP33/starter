@@ -32,7 +32,7 @@ interface CampaignData {
 
 export default function CampaignInbox() {
   const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
-  const [activeTab, setActiveTab] = useState<'qualified' | 'all'>('qualified');
+  const [activeTab, setActiveTab] = useState<'qualified' | 'needsReview' | 'all'>('qualified');
   const { agents, isLoadingAgents } = useDataConfig();
 
   useEffect(() => {
@@ -77,11 +77,14 @@ export default function CampaignInbox() {
   }
 
   const { agent, qualifiedCompanies, selectedPersonas } = campaignData;
-  const qualifiedCount = qualifiedCompanies.filter(c => c.qualified).length;
+  const qualifiedCount = qualifiedCompanies.filter(c => c.qualified && !c.needsReview).length;
+  const needsReviewCount = qualifiedCompanies.filter(c => c.needsReview).length;
   const totalCount = qualifiedCompanies.length;
 
   const companiesToShow = activeTab === 'qualified'
-    ? qualifiedCompanies.filter(c => c.qualified)
+    ? qualifiedCompanies.filter(c => c.qualified && !c.needsReview)
+    : activeTab === 'needsReview'
+    ? qualifiedCompanies.filter(c => c.needsReview)
     : qualifiedCompanies;
 
   return (
@@ -124,6 +127,16 @@ export default function CampaignInbox() {
                   })}
                 >
                   Qualified ({qualifiedCount})
+                </Button>
+                <Button
+                  variant={activeTab === 'needsReview' ? 'default' : 'ghost'}
+                  onClick={() => setActiveTab('needsReview')}
+                  className={cn('h-auto px-4 py-1.5 rounded-lg text-sm', {
+                    'bg-primary text-primary-foreground': activeTab === 'needsReview',
+                    'bg-gray-100 text-gray-700': activeTab !== 'needsReview',
+                  })}
+                >
+                  Needs Review ({needsReviewCount})
                 </Button>
                 <Button
                   variant={activeTab === 'all' ? 'default' : 'ghost'}

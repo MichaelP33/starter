@@ -219,7 +219,7 @@ export function ChatInterface() {
   const [loadingStep, setLoadingStep] = useState(0);
   const [sampleCompanies, setSampleCompanies] = useState<string[]>([]);
   const [lastTestedCompanies, setLastTestedCompanies] = useState<Account[]>([]);
-  const [activeResultsTab, setActiveResultsTab] = useState<'qualified' | 'all'>('qualified');
+  const [activeResultsTab, setActiveResultsTab] = useState<'qualified' | 'needsReview' | 'all'>('qualified');
   const [personas, setPersonas] = useState<Persona[]>([]);
 
   useEffect(() => {
@@ -1523,10 +1523,13 @@ export function ChatInterface() {
             ) : showTestResults ? (
               (() => {
                 const allTestedCount = selectedAgentConfig?.testResults?.length || 0;
-                const qualifiedCount = (selectedAgentConfig?.testResults || []).filter(r => r.qualified).length;
+                const qualifiedCount = (selectedAgentConfig?.testResults || []).filter(r => r.qualified && !r.needsReview).length;
+                const needsReviewCount = (selectedAgentConfig?.testResults || []).filter(r => r.needsReview).length;
                 let resultsToShow = activeResultsTab === 'all'
                   ? selectedAgentConfig?.testResults || []
-                  : (selectedAgentConfig?.testResults || []).filter(r => r.qualified);
+                  : activeResultsTab === 'qualified'
+                  ? (selectedAgentConfig?.testResults || []).filter(r => r.qualified && !r.needsReview)
+                  : (selectedAgentConfig?.testResults || []).filter(r => r.needsReview);
                 if (activeResultsTab === 'all' && resultsToShow.length < 10) {
                   const missing = 10 - resultsToShow.length;
                   const pad = Array.from({ length: missing }, (_, i) => ({
@@ -1563,6 +1566,7 @@ export function ChatInterface() {
                         results={resultsToShow}
                         allTestedCount={allTestedCount}
                         qualifiedCount={qualifiedCount}
+                        needsReviewCount={needsReviewCount}
                         companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
                         activeTab={activeResultsTab}
                         setActiveTab={setActiveResultsTab}
