@@ -478,8 +478,18 @@ export function ChatInterface() {
       const results = resultsGenerator?.generateResults(agentForTest.id);
       if (results) {
         setQualificationResults(results);
-        const allCompanies: QualifiedCompanyWithResearch[] = results
-          .map(r => ({ ...r, assignedPersonas: [], researchResults: { summary: r.researchSummary, sources: r.dataSources } }));
+        // Connect selected personas to qualified companies
+        const personaNames = selectedPersonas.map(p => p.name);
+        console.log('---CONNECTING PERSONAS---');
+        console.log('Selected personas:', personaNames);
+        
+        const allCompanies: QualifiedCompanyWithResearch[] = results.map(r => ({
+          ...r,
+          assignedPersonas: r.qualified ? personaNames : [],
+          researchResults: { summary: r.researchSummary, sources: r.dataSources },
+        }));
+
+        console.log('Companies with assigned personas:', allCompanies.filter(c => c.assignedPersonas.length > 0));
         
         setSelectedAgentConfig({
           agent: agentForTest,
@@ -508,6 +518,22 @@ export function ChatInterface() {
     setSelectedPersona(null);
     setSelectedPersonaCategoryId(null);
     setShowMultiPersonaSelection(false);
+
+    // Update qualified companies with selected personas before proceeding
+    if (selectedAgentConfig) {
+      const personaNames = selectedPersonas.map(p => p.name);
+      const updatedCompanies = selectedAgentConfig.qualifiedCompanies.map(c => ({
+        ...c,
+        assignedPersonas: c.qualified ? personaNames : [],
+      }));
+      
+      setSelectedAgentConfig(prev => prev ? { ...prev, qualifiedCompanies: updatedCompanies } : null);
+      setQualifiedCompanies(updatedCompanies);
+
+      console.log('---UPDATING QUALIFIED COs WITH PERSONAS---');
+      console.log('Personas to assign:', personaNames);
+      console.log('Updated companies:', updatedCompanies.filter(c => c.assignedPersonas.length > 0));
+    }
   };
 
   const handleTestAgentFirst = () => {
@@ -655,9 +681,22 @@ export function ChatInterface() {
     console.log("Current selectedPersonas count:", selectedPersonas.length);
     console.log("Data being saved to localStorage:", { qualifiedCompanies });
 
+    // Final check to ensure personas are assigned before saving
+    const personaNames = selectedPersonas.map(p => p.name);
+    const finalQualifiedCompanies = qualifiedCompanies.map(c => ({
+      ...c,
+      assignedPersonas: c.qualified ? personaNames : [],
+    }));
+
+    console.log("Data being saved to localStorage:", { 
+      agent: selectedAgent,
+      qualifiedCompanies: finalQualifiedCompanies.filter(c => c.assignedPersonas.length > 0),
+      selectedPersonas
+    });
+
     const campaignData = {
       agent: selectedAgent,
-      qualifiedCompanies,
+      qualifiedCompanies: finalQualifiedCompanies,
       selectedPersonas,
       createdAt: new Date().toISOString(),
     };

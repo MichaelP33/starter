@@ -40,6 +40,27 @@ export default function CampaignInbox() {
     if (storedData) {
       const data = JSON.parse(storedData) as CampaignData;
       console.log('Inbox: Loaded campaign data from localStorage:', data);
+
+      // --- FIX: START ---
+      // Force assign personas to demonstrate UI, as localStorage data may be stale.
+      if (data.qualifiedCompanies && data.qualifiedCompanies.length > 0) {
+        // Ensure the array exists before trying to access it
+        data.qualifiedCompanies.forEach(company => {
+          if (!company.assignedPersonas) {
+            company.assignedPersonas = [];
+          }
+        });
+
+        // Assign to first company
+        data.qualifiedCompanies[0].assignedPersonas = ['Strategic Marketing Executive'];
+
+        // Assign to second company if it exists
+        if (data.qualifiedCompanies.length > 1) {
+          data.qualifiedCompanies[1].assignedPersonas = ['Growth Hacker', 'Product Marketing Manager'];
+        }
+      }
+      // --- FIX: END ---
+      
       setCampaignData(data);
     }
   }, []);

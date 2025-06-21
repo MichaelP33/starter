@@ -131,6 +131,18 @@ export interface QualifiedCompanyWithResearch extends AgentResult {
   questionType?: string;
 }
 
+export interface Contact {
+  id: string;
+  name: string;
+  title: string;
+  email: string;
+  linkedin: string;
+  matchScore: number;
+  status: 'Not Contacted' | 'Send Message' | 'Awaiting Reply' | 'Replied' | 'Interested' | 'Demo Booked';
+  statusDays?: number; // e.g., "Awaiting Reply" for 2 days
+  companyName: string;
+}
+
 export interface PersonaTestResult {
   id: string;
   contactName: string;

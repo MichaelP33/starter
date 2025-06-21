@@ -14,13 +14,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { QualifiedCompanyWithResearch, EnrichmentOption } from "./types";
+import { QualifiedCompanyWithResearch, EnrichmentOption, Contact } from "./types";
 import { CompanyAnalysisPanel } from "./CompanyAnalysisPanel";
 import { motion } from "framer-motion";
-import { CheckCircle2, ExternalLink } from "lucide-react";
+import { CheckCircle2, ExternalLink, XCircle, ArrowUpRight, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import PicklistChips from "./PicklistChips";
 import CompactPicklistChips from "./CompactPicklistChips";
+import { cn } from "@/lib/utils";
+import { PersonaContactRow, ExpandedContactHeader } from "./PersonaContactRow";
+import { useDataConfig } from "@/hooks/useDataConfig";
+import { ContactGenerator } from "@/utils/ContactGenerator";
+import React from "react";
 
 interface QualifiedCompaniesTableProps {
   companies: QualifiedCompanyWithResearch[];
@@ -31,32 +36,9 @@ interface QualifiedCompaniesTableProps {
 export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPersonas }: QualifiedCompaniesTableProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState("");
-
-  // Get selected options and reorder to put Company Name first, then Research Results, then others
-  const selectedOptions = enrichmentOptions.filter((option) => option.isSelected);
-  
-  // Create the research results column
-  const researchResultsColumn = { 
-    id: "researchResults", 
-    label: "Research Results", 
-    icon: "🔍", 
-    isSelected: true, 
-    field: "researchResults" as keyof QualifiedCompanyWithResearch 
-  };
-
-  // Find the company name column
-  const companyNameColumn = selectedOptions.find(option => option.field === "companyName");
-  
-  // Get all other columns (excluding company name)
-  const otherColumns = selectedOptions.filter(option => option.field !== "companyName");
-
-  // Reorder: Company Name first, then Research Results, then all others
-  const allColumns = [
-    ...(companyNameColumn ? [companyNameColumn] : []),
-    researchResultsColumn,
-    ...otherColumns,
-    { id: "personas", label: "Personas", icon: "👤", isSelected: true, field: "companyName" as keyof QualifiedCompanyWithResearch },
-  ];
+  const [expandedCompanyIds, setExpandedCompanyIds] = useState<string[]>([]);
+  const [generatedContacts, setGeneratedContacts] = useState<Record<string, Contact[]>>({});
+  const { companies: allCompanies, personas } = useDataConfig();
 
   const handleViewDetails = (companyName: string) => {
     setSelectedCompany(companyName);
@@ -67,145 +49,180 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
     setIsPanelOpen(false);
   };
 
-  const truncateText = (text: string, maxLength: number = 50) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-  };
+  const handleToggleExpansion = (companyId: string, company: QualifiedCompanyWithResearch) => {
+    const isCurrentlyExpanded = expandedCompanyIds.includes(companyId);
 
-  const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
-    if (company.questionType === 'Picklist') {
-      if (Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0) {
-        return (
-          <div className="flex flex-col items-start gap-2">
-            <CompactPicklistChips options={company.selectedOptions} />
-            <button
-              onClick={() => handleViewDetails(company.companyName)}
-              className="text-xs text-primary hover:underline flex items-center gap-1"
-            >
-              View Details <ExternalLink className="w-3 h-3" />
-            </button>
-          </div>
+    if (!isCurrentlyExpanded && !generatedContacts[companyId]) {
+      const companyData = allCompanies.find(c => c.id === companyId);
+      if (companyData && company.assignedPersonas.length > 0) {
+        const contactGenerator = new ContactGenerator(allCompanies, personas);
+        const newContacts = contactGenerator.generateContactsForCompany(
+          companyData,
+          company.assignedPersonas,
+          2
         );
-      } else {
-        return (
-          <div className="flex flex-col items-start gap-2">
-            <span className="inline-block px-2 py-0.5 rounded-full text-xs font-normal bg-gray-100 text-gray-500 border border-gray-200">
-              No Relevant Hiring
-            </span>
-            <button
-              onClick={() => handleViewDetails(company.companyName)}
-              className="text-xs text-primary hover:underline flex items-center gap-1"
-            >
-              View Details <ExternalLink className="w-3 h-3" />
-            </button>
-          </div>
-        );
+        setGeneratedContacts(prev => ({ ...prev, [companyId]: newContacts }));
       }
     }
-    // Otherwise, render summary as before
-    const fullText = company.researchResults.summary;
-    const truncatedText = truncateText(fullText);
-    const needsTruncation = fullText.length > 50;
-    return (
-      <div className="group relative">
-        <div className="text-sm">
-          {truncatedText}
-          {needsTruncation && (
-            <button
-              onClick={() => handleViewDetails(company.companyName)}
-              className="ml-1 text-gray-500 hover:text-gray-800 text-xs inline-flex items-center"
-            >
-              See More
-              <ExternalLink className="w-3 h-3 ml-1" />
-            </button>
-          )}
-        </div>
-      </div>
+
+    setExpandedCompanyIds(prev =>
+      isCurrentlyExpanded
+        ? prev.filter(id => id !== companyId)
+        : [...prev, companyId]
     );
   };
 
   const renderCompanyNameCell = (company: QualifiedCompanyWithResearch) => {
+    const hasPersonas = company.assignedPersonas && company.assignedPersonas.length > 0;
+    const isExpanded = expandedCompanyIds.includes(company.companyId);
+
     return (
-      <div className="flex items-center gap-3">
+      <div 
+        className={cn(
+          "flex items-center gap-2 group",
+          hasPersonas && "cursor-pointer hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors duration-150"
+        )}
+        onClick={hasPersonas ? () => handleToggleExpansion(company.companyId, company) : undefined}
+      >
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900 truncate">
-            {company.companyName}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {company.companyName}
+            </p>
+            {hasPersonas && (
+              <span className="text-sm text-gray-500 font-normal">
+                ({company.assignedPersonas.length})
+              </span>
+            )}
+          </div>
           <p className="text-sm text-gray-500 truncate">
             {company.website}
           </p>
         </div>
+        {hasPersonas && (
+          <div className="flex items-center gap-2">
+            <ChevronRight
+              className={cn(
+                "w-3 h-3 text-gray-400 hover:text-purple-500 transition-colors cursor-pointer flex-shrink-0",
+                isExpanded && "transform rotate-90"
+              )}
+            />
+            <span className="text-gray-600 text-sm opacity-0 group-hover:opacity-100 transition-colors duration-200 whitespace-nowrap hover:text-purple-600 cursor-pointer">
+              Start Prospecting ↓
+            </span>
+          </div>
+        )}
       </div>
     );
   };
 
+  const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
+    if (company.questionType === 'Boolean') {
+      return (
+        <div className="flex flex-col items-start gap-1">
+          <span className={cn("text-sm font-semibold", company.qualified ? "text-green-700" : "text-red-600")}>
+            {company.qualified ? 'Yes' : 'No'}
+          </span>
+          <button
+            onClick={() => handleViewDetails(company.companyName)}
+            className="inline-flex items-center gap-0.5 text-xs text-blue-700 hover:text-blue-900 transition-colors"
+          >
+            View Details <ArrowUpRight className="w-3 h-3" />
+          </button>
+        </div>
+      );
+    }
+    if (company.questionType === 'Picklist') {
+      return (
+        <div className="flex flex-col items-start gap-2">
+          {Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0 ? (
+            <CompactPicklistChips options={company.selectedOptions} />
+          ) : (
+            <span className="text-xs text-gray-500">No matching roles found</span>
+          )}
+          <button
+            onClick={() => handleViewDetails(company.companyName)}
+            className="inline-flex items-center gap-0.5 text-xs text-blue-700 hover:text-blue-900 transition-colors"
+          >
+            View Details <ArrowUpRight className="w-3 h-3" />
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="text-sm text-gray-700">
+        {company.researchResults.summary}
+      </div>
+    );
+  };
+
+  // Reorder columns to have a fixed structure
+  const allColumns = [
+    { id: "companyName", label: "Company Name", icon: "🏢" },
+    { id: "researchResults", label: "Research Results", icon: "🔍" },
+    { id: "website", label: "Website", icon: "🌐", field: "website" },
+    { id: "industry", label: "Industry", icon: "🏭", field: "industry" },
+    { id: "hqCountry", label: "HQ Country", icon: "🌍", field: "hqCountry" },
+    { id: "employeeCount", label: "Employee Count", icon: "👥", field: "employeeCount" },
+    { id: "personas", label: "Personas", icon: "👤" },
+  ];
+
   return (
     <>
-      <div className="rounded-lg border border-muted/20 bg-white overflow-x-auto">
+      <div className="rounded-b-lg border-t border-muted/20 bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow className="border-b border-muted/20">
-              {allColumns.map((column, index) => (
-                <TableHead
-                  key={column.id}
-                  className={`bg-muted/5 py-4 ${
-                    index < allColumns.length - 1 ? "border-r border-muted/20" : ""
-                  }`}
-                >
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex items-center gap-2"
-                  >
+              {allColumns.map((column) => (
+                <TableHead key={column.id} className="bg-muted/5 py-4 px-3 whitespace-nowrap">
+                  <div className="flex items-center gap-2">
                     <span>{column.icon}</span>
                     <span className="font-medium">{column.label}</span>
-                    {column.id === "researchResults" && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200 ml-2">
-                        Qualified
-                      </span>
-                    )}
-                  </motion.div>
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {companies.map((company, index) => (
-              <TableRow
-                key={index}
-                className="hover:bg-green-50/30 transition-colors duration-200 bg-green-50/10"
-              >
-                {allColumns.map((column, colIndex) => (
-                  <TableCell
-                    key={column.id}
-                    className={`py-3 ${
-                      colIndex < allColumns.length - 1 ? "border-r border-muted/20" : ""
-                    } ${column.id === "researchResults" ? "align-top" : ""}`}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {column.id === "companyName" ? (
-                        renderCompanyNameCell(company)
-                      ) : column.id === "researchResults" ? (
-                        renderResearchResultsCell(company)
-                      ) : column.id === "personas" ? (
-                        <div className="text-sm text-gray-900">
-                          {totalPersonas} Personas
+            {companies.map((company) => {
+              const isExpanded = expandedCompanyIds.includes(company.companyId);
+              const contacts = generatedContacts[company.companyId] || [];
+
+              return (
+                <React.Fragment key={company.companyId}>
+                  <TableRow className="hover:bg-gray-50/50 transition-colors duration-200">
+                    <TableCell className="p-1.5 align-top">
+                      {renderCompanyNameCell(company)}
+                    </TableCell>
+                    <TableCell className="p-3 align-top">
+                      {renderResearchResultsCell(company)}
+                    </TableCell>
+                    {allColumns.slice(2, 6).map(column => (
+                      <TableCell key={column.id} className="p-3 align-top text-sm text-gray-800">
+                        {String(company[column.field as keyof QualifiedCompanyWithResearch])}
+                      </TableCell>
+                    ))}
+                    <TableCell className="p-3 align-top text-sm text-gray-800">
+                      {totalPersonas} Personas
+                    </TableCell>
+                  </TableRow>
+                  {isExpanded && (
+                    <TableRow>
+                      <TableCell colSpan={allColumns.length} className="p-0 !border-0">
+                        <div className="bg-gray-50/60 p-4 pl-12 shadow-sm border-t border-gray-100">
+                          <ExpandedContactHeader />
+                          <div className="divide-y divide-gray-100">
+                            {contacts.map((contact) => (
+                              <PersonaContactRow key={contact.id} contact={contact} />
+                            ))}
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-sm text-gray-900">
-                          {String(company[column.field as keyof QualifiedCompanyWithResearch])}
-                        </div>
-                      )}
-                    </motion.div>
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

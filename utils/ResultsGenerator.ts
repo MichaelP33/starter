@@ -598,7 +598,8 @@ export class ResultsGenerator {
         totalFunding: company.totalFunding,
         estimatedAnnualRevenue: company.estimatedAnnualRevenue,
         yearFounded: company.yearFounded,
-        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News']
+        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News'],
+        questionType: this.agents.find(a => a.id === agentId)?.questionType || 'Boolean'
       };
     });
   }
@@ -663,7 +664,8 @@ export class ResultsGenerator {
         totalFunding: company.totalFunding,
         estimatedAnnualRevenue: company.estimatedAnnualRevenue,
         yearFounded: company.yearFounded,
-        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News']
+        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News'],
+        questionType: this.agents.find(a => a.id === agentId)?.questionType || 'Boolean'
       };
     });
   }

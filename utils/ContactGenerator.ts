@@ -1,5 +1,5 @@
 import { Company } from '@/hooks/useDataConfig';
-import { Persona } from '@/components/chat/types';
+import { Persona, Contact } from '@/components/chat/types';
 
 interface GeneratedContact {
   id: string;
@@ -12,6 +12,13 @@ interface GeneratedContact {
   companyId: string;
   companyName: string;
 }
+
+const contactStatuses: Contact['status'][] = [
+  'Not Contacted', 'Not Contacted', 'Not Contacted', 'Not Contacted', 'Not Contacted', // 50% chance
+  'Send Message', 'Send Message', // 20% chance
+  'Awaiting Reply', 'Awaiting Reply', // 20% chance
+  'Replied', 'Interested', 'Demo Booked' // 10% chance total
+];
 
 export class ContactGenerator {
   private companies: Company[];
@@ -83,6 +90,23 @@ export class ContactGenerator {
         'Senior Data Scientist',
         'Data Science Lead',
         'Machine Learning Manager'
+      ],
+      'Strategic Marketing Executive': [
+        'VP of Growth Marketing',
+        'Head of Growth',
+        'Director of Demand Generation',
+        'Senior Marketing Director'
+      ],
+      'Growth Hacker': [
+        'Growth Marketing Manager',
+        'Growth Hacker',
+        'Digital Marketing Manager',
+        'Senior Growth Specialist'
+      ],
+      'Product Marketing Manager': [
+        'Product Marketing Manager',
+        'Senior PMM',
+        'Head of Product Marketing'
       ]
     };
   }
@@ -121,41 +145,58 @@ export class ContactGenerator {
   }
 
   private calculateMatchScore(): number {
-    // Generate a match score between 85-95
-    return Math.floor(Math.random() * 11) + 85;
+    // Generate a match score between 75-98 for more variety
+    return Math.floor(Math.random() * (98 - 75 + 1)) + 75;
   }
 
-  public generateContactsForCompany(company: Company, count: number = 1): GeneratedContact[] {
-    const contacts: GeneratedContact[] = [];
-    
-    // Select random personas for this company
-    const selectedPersonas = this.personas
-      .sort(() => Math.random() - 0.5)
-      .slice(0, count);
+  private generateStatus(): { status: Contact['status'], days: number } {
+    const status = contactStatuses[Math.floor(Math.random() * contactStatuses.length)];
+    let days = 0;
+    if (status === 'Awaiting Reply') {
+      days = Math.floor(Math.random() * 7) + 1; // 1-7 days ago
+    }
+    return { status, days };
+  }
 
-    for (const persona of selectedPersonas) {
-      const name = this.generateName();
-      const contact: GeneratedContact = {
-        id: `contact-${Math.random().toString(36).substring(2, 9)}`,
-        name,
-        title: this.generateTitle(persona.name),
-        email: this.generateEmail(name, company.companyName),
-        linkedin: this.generateLinkedIn(name),
-        personaMatch: persona.name,
-        matchScore: this.calculateMatchScore(),
-        companyId: company.id,
-        companyName: company.companyName
-      };
-      
-      contacts.push(contact);
+  public generateContactsForCompany(
+    company: Company, 
+    assignedPersonas: string[],
+    countPerPersona: number = 1
+  ): Contact[] {
+    const contacts: Contact[] = [];
+    
+    for (const personaName of assignedPersonas) {
+      for (let i = 0; i < countPerPersona; i++) {
+        const name = this.generateName();
+        const { status, days } = this.generateStatus();
+        const contact: Contact = {
+          id: `contact-${Math.random().toString(36).substring(2, 9)}`,
+          name,
+          title: this.generateTitle(personaName),
+          email: this.generateEmail(name, company.companyName),
+          linkedin: this.generateLinkedIn(name),
+          matchScore: this.calculateMatchScore(),
+          status: status,
+          statusDays: days,
+          companyName: company.companyName
+        };
+        contacts.push(contact);
+      }
     }
 
     return contacts;
   }
 
-  public generateContactsForCompanies(companies: Company[], contactsPerCompany: number = 1): GeneratedContact[] {
-    return companies.flatMap(company => 
-      this.generateContactsForCompany(company, contactsPerCompany)
-    );
+  public generateContactsForCompanies(companies: Company[], contactsPerCompany: number = 1): Contact[] {
+    return companies.flatMap(company => {
+      // For this generic method, we can't know the assigned personas.
+      // We'll select a few random personas from the available list to generate contacts.
+      const randomPersonaNames = this.personas
+        .sort(() => 0.5 - Math.random())
+        .slice(0, contactsPerCompany)
+        .map(p => p.name);
+        
+      return this.generateContactsForCompany(company, randomPersonaNames, 1);
+    });
   }
 } 
