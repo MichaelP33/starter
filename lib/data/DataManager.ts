@@ -13,19 +13,13 @@ interface Persona {
   id: string;
   categoryId: string;
   icon: string;
-  title: string;
+  name: string;
+  expandedName: string;
+  seniorName: string;
   description: string;
-  seniority: string;
-  departmentFocus: string;
-  segmentFit: string;
-  keyResponsibilities: string[];
-  painPoints: string[];
-  segmentUseCases: string[];
-  commonTitles: string[];
-  reportingStructure: string;
-  budgetAuthority: string;
-  technicalProficiency: string;
-  decisionMakingRole: string;
+  expandedDescription: string;
+  titles: string[];
+  expandedTitles: string[];
 }
 
 interface PersonaData {
@@ -143,7 +137,7 @@ export class DataManager {
     const oldPersonas: OldPersona[] = this.personaData.personas.map(persona => ({
       id: persona.id,
       icon: persona.icon,
-      title: persona.title,
+      title: persona.name,
       description: persona.description
     }));
 

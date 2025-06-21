@@ -21,14 +21,19 @@ export function PersonaCard({ persona, onBuildClick }: PersonaCardProps) {
         <div className="flex items-start gap-3">
           <span className="text-2xl flex-shrink-0">{persona.icon}</span>
           <div className="space-y-2">
-            <h3 className="text-lg font-medium">{persona.title}</h3>
+            <h3 className="text-lg font-medium">{persona.name}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">{persona.description}</p>
           </div>
         </div>
         
         <div className="pt-2">
           <Button 
-            onClick={() => onBuildClick(persona)}
+            onClick={() => {
+              console.log("🔍 PERSONA CARD CLICK DEBUG:");
+              console.log("Persona clicked:", persona.name);
+              console.log("Calling onBuildClick with persona:", persona);
+              onBuildClick(persona);
+            }}
             className="w-full bg-[#6366f1] hover:bg-[#6366f1]/90 text-white text-sm transition-colors duration-200"
           >
             <Sparkles className="w-4 h-4 mr-2" />

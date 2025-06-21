@@ -115,8 +115,8 @@ export class ContactGenerator {
     return `https://linkedin.com/in/${firstName}-${lastName}-${Math.random().toString(36).substring(2, 8)}`;
   }
 
-  private generateTitle(personaTitle: string): string {
-    const templates = this.titleTemplates[personaTitle] || this.titleTemplates['Marketing Leadership'];
+  private generateTitle(personaName: string): string {
+    const templates = this.titleTemplates[personaName] || this.titleTemplates['Marketing Leadership'];
     return templates[Math.floor(Math.random() * templates.length)];
   }
 
@@ -138,10 +138,10 @@ export class ContactGenerator {
       const contact: GeneratedContact = {
         id: `contact-${Math.random().toString(36).substring(2, 9)}`,
         name,
-        title: this.generateTitle(persona.title),
+        title: this.generateTitle(persona.name),
         email: this.generateEmail(name, company.companyName),
         linkedin: this.generateLinkedIn(name),
-        personaMatch: persona.title,
+        personaMatch: persona.name,
         matchScore: this.calculateMatchScore(),
         companyId: company.id,
         companyName: company.companyName

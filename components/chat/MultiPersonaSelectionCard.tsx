@@ -7,7 +7,7 @@ import { Persona } from "./types";
 
 interface SelectedPersona {
   id: string;
-  title: string;
+  name: string;
   description: string;
 }
 
@@ -58,7 +58,7 @@ export function MultiPersonaSelectionCard({
                       <div className="space-y-1 flex-1">
                         <div className="flex items-center gap-2">
                           <User className="w-4 h-4 text-gray-600" />
-                          <h3 className="font-medium text-gray-900">{persona.title}</h3>
+                          <h3 className="font-medium text-gray-900">{persona.name}</h3>
                         </div>
                         <p className="text-sm text-gray-600 leading-relaxed">
                           {persona.description.length > 120 
@@ -115,7 +115,7 @@ export function MultiPersonaSelectionCard({
                       <div className="flex items-start gap-3">
                         <span className="text-2xl flex-shrink-0">{persona.icon}</span>
                         <div className="space-y-2">
-                          <h3 className="text-lg font-medium">{persona.title}</h3>
+                          <h3 className="text-lg font-medium">{persona.name}</h3>
                           <p className="text-muted-foreground text-sm leading-relaxed">
                             {persona.description}
                           </p>
@@ -129,25 +129,12 @@ export function MultiPersonaSelectionCard({
                             Added
                           </div>
                         ) : (
-                          <div className="flex gap-2">
-                            <Button 
-                              variant="outline"
-                              size="sm"
-                              className="flex-1 text-sm"
-                              onClick={() => {
-                                // Preview functionality could be added here
-                                console.log("Preview persona:", persona);
-                              }}
-                            >
-                              Preview Details
-                            </Button>
-                            <Button 
-                              onClick={() => onBuildPersona(persona)}
-                              className="flex-1 bg-[#6366f1] hover:bg-[#6366f1]/90 text-white text-sm transition-colors duration-200"
-                            >
-                              Build Persona
-                            </Button>
-                          </div>
+                          <Button 
+                            onClick={() => onBuildPersona(persona)}
+                            className="w-full bg-[#6366f1] hover:bg-[#6366f1]/90 text-white text-sm transition-colors duration-200"
+                          >
+                            Build Persona
+                          </Button>
                         )}
                       </div>
                     </div>

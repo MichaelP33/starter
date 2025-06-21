@@ -25,9 +25,10 @@ import CompactPicklistChips from "./CompactPicklistChips";
 interface QualifiedCompaniesTableProps {
   companies: QualifiedCompanyWithResearch[];
   enrichmentOptions: EnrichmentOption[];
+  totalPersonas?: number;
 }
 
-export function QualifiedCompaniesTable({ companies, enrichmentOptions }: QualifiedCompaniesTableProps) {
+export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPersonas }: QualifiedCompaniesTableProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState("");
 
@@ -53,7 +54,8 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   const allColumns = [
     ...(companyNameColumn ? [companyNameColumn] : []),
     researchResultsColumn,
-    ...otherColumns
+    ...otherColumns,
+    { id: "personas", label: "Personas", icon: "👤", isSelected: true, field: "companyName" as keyof QualifiedCompanyWithResearch },
   ];
 
   const handleViewDetails = (companyName: string) => {
@@ -71,16 +73,32 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
   };
 
   const renderResearchResultsCell = (company: QualifiedCompanyWithResearch) => {
-    // Always use CompactPicklistChips for Picklist results
     if (company.questionType === 'Picklist') {
       if (Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0) {
-        console.log("Rendering CompactPicklistChips for:", company.companyName, company.selectedOptions, company.questionType);
-        return <CompactPicklistChips options={company.selectedOptions} />;
+        return (
+          <div className="flex flex-col items-start gap-2">
+            <CompactPicklistChips options={company.selectedOptions} />
+            <button
+              onClick={() => handleViewDetails(company.companyName)}
+              className="text-xs text-primary hover:underline flex items-center gap-1"
+            >
+              View Details <ExternalLink className="w-3 h-3" />
+            </button>
+          </div>
+        );
       } else {
         return (
-          <span className="inline-block px-2 py-0.5 rounded-full text-xs font-normal bg-gray-100 text-gray-500 border border-gray-200">
-            No Relevant Hiring
-          </span>
+          <div className="flex flex-col items-start gap-2">
+            <span className="inline-block px-2 py-0.5 rounded-full text-xs font-normal bg-gray-100 text-gray-500 border border-gray-200">
+              No Relevant Hiring
+            </span>
+            <button
+              onClick={() => handleViewDetails(company.companyName)}
+              className="text-xs text-primary hover:underline flex items-center gap-1"
+            >
+              View Details <ExternalLink className="w-3 h-3" />
+            </button>
+          </div>
         );
       }
     }
@@ -174,6 +192,10 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions }: Qualif
                         renderCompanyNameCell(company)
                       ) : column.id === "researchResults" ? (
                         renderResearchResultsCell(company)
+                      ) : column.id === "personas" ? (
+                        <div className="text-sm text-gray-900">
+                          {totalPersonas} Personas
+                        </div>
                       ) : (
                         <div className="text-sm text-gray-900">
                           {String(company[column.field as keyof QualifiedCompanyWithResearch])}

@@ -40,7 +40,7 @@ import { PersonaConfigurationCard } from "./PersonaConfigurationCard";
 import { PersonaModificationCard } from "./PersonaModificationCard";
 import { PersonaTestResultsTable } from "./PersonaTestResultsTable";
 import { MultiPersonaSelectionCard } from "./MultiPersonaSelectionCard";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import AgentDetails from "./AgentDetails";
 
 interface Suggestion {
@@ -115,27 +115,34 @@ const workflowSteps = [
   { label: "Find contacts", icon: "👥" },
 ];
 
-// Persona options for contact finding
+// Persona options for contact finding - updated to match actual persona categories
 const personaOptions: ResearchStrategy[] = [
   {
-    id: "marketing-ops",
-    icon: "📈",
-    title: "Marketing Operations",
-    description: "Target ops professionals managing martech stacks, data integration, and campaign automation",
+    id: "data-driven-marketers",
+    icon: "📊",
+    title: "Data-Driven Marketers",
+    description: "Marketing professionals who rely on data and analytics to drive campaign performance and customer insights",
     agents: []
   },
   {
-    id: "growth-marketing",
-    icon: "��",
-    title: "Growth Marketing",
-    description: "Focus on growth marketers driving acquisition, conversion, and retention through data-driven experiments",
+    id: "data-team",
+    icon: "🔬",
+    title: "Data Team",
+    description: "Data engineers, analysts, and scientists responsible for data infrastructure and analytics",
     agents: []
   },
   {
-    id: "marketing-leadership",
+    id: "engineering-leadership",
+    icon: "⚙️",
+    title: "Engineering Leadership",
+    description: "Technical leaders overseeing product development, infrastructure, and engineering teams",
+    agents: []
+  },
+  {
+    id: "executive-leadership",
     icon: "👔",
-    title: "Marketing Leadership",
-    description: "Reach VPs and Directors making strategic decisions about marketing technology investments",
+    title: "Executive Leadership",
+    description: "C-level executives and senior leadership making strategic technology and budget decisions",
     agents: []
   }
 ];
@@ -161,7 +168,19 @@ const AgentDetailsTest = ({ agent }: { agent: any }) => (
 
 export function ChatInterface() {
   const router = useRouter();
-  const { companies, agents, personas, isLoadingCompanies, isLoadingAgents, isLoadingPersonas, hasError, errors } = useDataConfig();
+  const { 
+    companies, 
+    agents, 
+    personas: initialPersonas, 
+    personaCategories,
+    isLoadingCompanies, 
+    isLoadingAgents, 
+    isLoadingPersonas, 
+    hasError, 
+    errors,
+    getPersonasByCategory: getPersonasByCategoryFromHook,
+    getPersonaCategory
+  } = useDataConfig();
   
   // State hooks
   const [resultsGenerator, setResultsGenerator] = useState<ResultsGenerator | null>(null);
@@ -201,6 +220,18 @@ export function ChatInterface() {
   const [sampleCompanies, setSampleCompanies] = useState<string[]>([]);
   const [lastTestedCompanies, setLastTestedCompanies] = useState<Account[]>([]);
   const [activeResultsTab, setActiveResultsTab] = useState<'qualified' | 'all'>('qualified');
+  const [personas, setPersonas] = useState<Persona[]>([]);
+
+  useEffect(() => {
+    if (initialPersonas.length > 0) {
+      setPersonas(initialPersonas);
+    }
+  }, [initialPersonas]);
+
+  const getPersonasByCategory = (categoryId: string | null) => {
+    if (!categoryId) return [];
+    return personas.filter(p => p.categoryId === categoryId);
+  };
 
   // Group agents by category
   const agentsByCategory = agents?.reduce((acc, agent) => {
@@ -383,259 +414,80 @@ export function ChatInterface() {
   };
 
   const handleAgentAction = async (action: string, agent: Agent | null) => {
-    if (!agent) return;
-    
-    // Debug: Log the agent state before test
-    console.log('🔍 [DEBUG] handleAgentAction called with:', {
-      action,
-      agentId: agent.id,
-      agentTitle: agent.title,
-      agentQuestionType: agent.questionType,
-      selectedAgentQuestionType: selectedAgent?.questionType,
-      isAgentEditMode
-    });
-    
-    // Get the current question type from the agent config modal or agent state
-    // Use selectedAgent if it exists (updated from modal), otherwise use passed agent
-    const currentQuestionType = selectedAgent?.questionType || agent.questionType || 'Boolean';
-    
-    // Clone the agent and update the questionType
-    const agentForTest = { ...agent, questionType: currentQuestionType };
-    
-    console.log('🟣 [DEBUG] Agent for test (final):', {
-      id: agentForTest.id,
-      title: agentForTest.title,
-      questionType: agentForTest.questionType,
-      researchQuestion: agentForTest.researchQuestion
-    });
-    
+    if (!agent) {
+      console.error("handleAgentAction called with null agent");
+      return;
+    }
+
+    console.log(`[DEBUG] handleAgentAction: action=${action}, agentId=${agent.id}`);
+
+    const agentForTest = {
+      ...agent,
+      questionType: selectedAgent?.questionType || agent.questionType || 'Boolean',
+    };
+
     if (action === 'test') {
-      // Debug log: agent object used for test
-      console.log('🟣 [DEBUG] Agent for test:', agentForTest);
-      
       setIsTestingAgent(true);
       setLoadingStep(0);
       setLoadingMessage("Selecting representative sample from your target list...");
 
-      // Simulate progressive loading steps with longer duration
-      setTimeout(() => {
-        setLoadingStep(1);
-        setLoadingMessage(`Running ${agentForTest.title} analysis on sample companies...`);
-      }, 2000);
+      // Simulate loading steps
+      setTimeout(() => setLoadingMessage("Running analysis on sample companies..."), 2000);
+      setTimeout(() => setLoadingMessage("Evaluating qualification criteria..."), 4000);
+      setTimeout(() => setLoadingMessage("Preparing sample results..."), 6000);
 
-      setTimeout(() => {
-        setLoadingStep(2);
-        setLoadingMessage("Evaluating qualification criteria and confidence scores...");
-      }, 4000);
-
-      setTimeout(() => {
-        setLoadingStep(3);
-        setLoadingMessage("Preparing sample results...");
-      }, 6000);
-
-      if (agentForTest.id === 'marketing-hiring') {
-        // Shuffle and pick 10 companies for this test
-        const shuffled = [...uploadedAccounts].sort(() => 0.5 - Math.random());
-        const sample = shuffled.slice(0, 10);
-        setLastTestedCompanies(sample);
-        // Convert Account[] to Company[]
-        const sampleCompanies = sample.map(acc => ({
-          id: acc.companyName.toLowerCase().replace(/[^a-z0-9]/g, ''),
-          companyName: acc.companyName,
-          website: acc.website,
-          industry: acc.industry,
-          employeeCount: acc.employeeCount,
-          employeeCountNumeric: parseInt(acc.employeeCount.replace(/,/g, '')) || 0,
-          hqCountry: acc.hqCountry,
-          hqCity: acc.hqCity || '',
-          hqState: null,
-          totalFunding: acc.totalFunding || '',
-          estimatedAnnualRevenue: acc.estimatedAnnualRevenue || '',
-          yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
-          tags: []
-        }));
-        // Debug logging for sample companies
-        console.log('🔍 [DEBUG] Sampled companies for marketing-hiring:', sampleCompanies.map(c => ({ id: c.id, name: c.companyName })));
-        // Generate results using ResultsGenerator with this sample
-        const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
-        // Debug log: results array
-        console.log('🟢 [DEBUG] Results returned by ResultsGenerator:', results);
-        if (results) {
-          console.log('🔍 [DEBUG] Results returned by ResultsGenerator:', results.map(r => ({ id: r.companyId, name: r.companyName, qualified: r.qualified, whyQualified: r.whyQualified })));
-          setQualificationResults(results);
-          
-          // Convert AgentResult[] to QualifiedCompanyWithResearch[]
-          const qualifiedCompanies = results
-            .filter(result => result.qualified)
-            .map(result => ({
-              companyId: result.companyId,
-              companyName: result.companyName,
-              industry: result.industry,
-              employeeCount: result.employeeCount,
-              hqCountry: result.hqCountry,
-              hqState: result.hqState,
-              hqCity: result.hqCity || '',
-              website: result.website,
-              totalFunding: result.totalFunding,
-              estimatedAnnualRevenue: result.estimatedAnnualRevenue,
-              yearFounded: result.yearFounded,
-              researchSummary: result.researchSummary,
-              whyQualified: result.whyQualified,
-              evidence: result.evidence,
-              qualified: true,
-              researchResults: {
-                summary: result.researchSummary,
-                sources: result.dataSources
-              },
-              assignedPersonas: [],
-              confidence: result.confidence,
-              confidenceScore: result.confidenceScore,
-              researchDate: result.researchDate,
-              dataSources: result.dataSources,
-              agentId: result.agentId,
-              agentName: result.agentName
-            }));
-
-          // Update selectedAgentConfig with test results
-          setSelectedAgentConfig({
-            agent: agentForTest,
-            testResults: results,
-            qualifiedCompanies
-          });
-
-          // Show results after all loading steps
-          setTimeout(() => {
-            setIsTestingAgent(false);
-            setShowTestResults(true);
-            setLoadingStep(0);
-          }, 7500);
-        }
-        return;
-      }
+      // Generate results
+      const sample = [...uploadedAccounts].sort(() => 0.5 - Math.random()).slice(0, 10);
+      const sampleCompanies = sample.map(acc => ({
+        id: acc.companyName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        companyName: acc.companyName,
+        website: acc.website,
+        industry: acc.industry,
+        employeeCount: acc.employeeCount,
+        employeeCountNumeric: parseInt(acc.employeeCount.replace(/,/g, '')) || 0,
+        hqCountry: acc.hqCountry,
+        hqCity: acc.hqCity || '',
+        hqState: null,
+        totalFunding: acc.totalFunding || '',
+        estimatedAnnualRevenue: acc.estimatedAnnualRevenue || '',
+        yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
+        tags: []
+      }));
       
-      setIsTestingAgent(true);
-      setLoadingStep(0);
-      setLoadingMessage("Selecting representative sample from your target list...");
-
-      // Simulate progressive loading steps with longer duration
-      setTimeout(() => {
-        setLoadingStep(1);
-        setLoadingMessage(`Running ${agentForTest.title} analysis on sample companies...`);
-      }, 2000);
-
-      setTimeout(() => {
-        setLoadingStep(2);
-        setLoadingMessage("Evaluating qualification criteria and confidence scores...");
-      }, 4000);
-
-      setTimeout(() => {
-        setLoadingStep(3);
-        setLoadingMessage("Preparing sample results...");
-      }, 6000);
-
-      const results = resultsGenerator?.generateResults(agentForTest.id);
-      // Debug log: results array
-      console.log('🟢 [DEBUG] Results returned by ResultsGenerator:', results);
+      const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
       if (results) {
         setQualificationResults(results);
-        
-        // Convert AgentResult[] to QualifiedCompanyWithResearch[]
-        const qualifiedCompanies = results
-          .filter(result => result.qualified)
-          .map(result => ({
-            companyId: result.companyId,
-            companyName: result.companyName,
-            industry: result.industry,
-            employeeCount: result.employeeCount,
-            hqCountry: result.hqCountry,
-            hqState: result.hqState,
-            hqCity: result.hqCity || '',
-            website: result.website,
-            totalFunding: result.totalFunding,
-            estimatedAnnualRevenue: result.estimatedAnnualRevenue,
-            yearFounded: result.yearFounded,
-            researchSummary: result.researchSummary,
-            whyQualified: result.whyQualified,
-            evidence: result.evidence,
-            qualified: true,
-            researchResults: {
-              summary: result.researchSummary,
-              sources: result.dataSources
-            },
-            assignedPersonas: [],
-            confidence: result.confidence,
-            confidenceScore: result.confidenceScore,
-            researchDate: result.researchDate,
-            dataSources: result.dataSources,
-            agentId: result.agentId,
-            agentName: result.agentName
-          }));
-
-        // Update selectedAgentConfig with test results
-        setSelectedAgentConfig({
-          agent: agentForTest,
-          testResults: results,
-          qualifiedCompanies
-        });
-
-        // Show results after all loading steps
-        setTimeout(() => {
-          setIsTestingAgent(false);
-          setShowTestResults(true);
-          setLoadingStep(0);
-        }, 7500);
+        const allCompanies: QualifiedCompanyWithResearch[] = results
+          .map(r => ({ ...r, assignedPersonas: [], researchResults: { summary: r.researchSummary, sources: r.dataSources } }));
+        setSelectedAgentConfig({ agent: agentForTest, testResults: results, qualifiedCompanies: allCompanies });
+        setQualifiedCompanies(allCompanies);
       }
+
+      setTimeout(() => {
+        setIsTestingAgent(false);
+        setShowTestResults(true);
+        setLoadingStep(0);
+      }, 7500);
+
     } else if (action === 'modify') {
       setIsAgentEditMode(true);
       setShowTestResults(false);
       setShowFullResults(false);
+
     } else if (action === 'add') {
-      // Generate results for the agent
       const results = resultsGenerator?.generateResults(agentForTest.id);
       if (results) {
-        // Set qualification results
         setQualificationResults(results);
+        const allCompanies: QualifiedCompanyWithResearch[] = results
+          .map(r => ({ ...r, assignedPersonas: [], researchResults: { summary: r.researchSummary, sources: r.dataSources } }));
         
-        // Convert AgentResult[] to QualifiedCompanyWithResearch[]
-        const qualifiedCompanies = results
-          .filter(result => result.qualified)
-          .map(result => ({
-            companyId: result.companyId,
-            companyName: result.companyName,
-            industry: result.industry,
-            employeeCount: result.employeeCount,
-            hqCountry: result.hqCountry,
-            hqState: result.hqState,
-            hqCity: result.hqCity || '',
-            website: result.website,
-            totalFunding: result.totalFunding,
-            estimatedAnnualRevenue: result.estimatedAnnualRevenue,
-            yearFounded: result.yearFounded,
-            researchSummary: result.researchSummary,
-            whyQualified: result.whyQualified,
-            evidence: result.evidence,
-            qualified: true,
-            researchResults: {
-              summary: result.researchSummary,
-              sources: result.dataSources
-            },
-            assignedPersonas: [],
-            confidence: result.confidence,
-            confidenceScore: result.confidenceScore,
-            researchDate: result.researchDate,
-            dataSources: result.dataSources,
-            agentId: result.agentId,
-            agentName: result.agentName
-          }));
-
-        // Update selectedAgentConfig with results
         setSelectedAgentConfig({
           agent: agentForTest,
           testResults: results,
-          qualifiedCompanies
+          qualifiedCompanies: allCompanies,
         });
+        setQualifiedCompanies(allCompanies);
 
-        // Show confirmation in left panel and results in right panel
         setShowAgentConfirmation(true);
         setShowTestResults(true);
       }
@@ -643,6 +495,12 @@ export function ChatInterface() {
   };
 
   const handleStartFindingContacts = () => {
+    // Clear all agent-related displays
+    setShowTestResults(false);
+    setShowAgentConfirmation(false);
+    setShowFullResults(false);
+    setIsTestingAgent(false);
+    
     // Proceed to Step 3
     setWorkflowStep(3);
     setCurrentStep("find-contacts");
@@ -673,6 +531,7 @@ export function ChatInterface() {
     console.log("🔍 BUILD PERSONA DEBUG:");
     console.log("Persona to configure:", persona);
     console.log("Current selectedPersonas:", selectedPersonas);
+    console.log("Current selectedPersona before:", selectedPersona);
     
     // Set the selected persona for configuration (NOT add to selectedPersonas yet)
     setSelectedPersona(persona);
@@ -680,6 +539,13 @@ export function ChatInterface() {
     setShowPersonaTestResults(false);
     setIsTestingPersonas(false);
     setShowMultiPersonaSelection(false);
+    
+    console.log("🔍 BUILD PERSONA DEBUG - State updated:");
+    console.log("selectedPersona should now be:", persona);
+    console.log("isPersonaModifyMode:", false);
+    console.log("showPersonaTestResults:", false);
+    console.log("isTestingPersonas:", false);
+    console.log("showMultiPersonaSelection:", false);
   };
 
   const handleAddThisPersona = () => {
@@ -691,7 +557,7 @@ export function ChatInterface() {
       // Create new selected persona
       const newSelectedPersona: SelectedPersona = {
         id: selectedPersona.id,
-        title: selectedPersona.title,
+        name: selectedPersona.name,
         description: selectedPersona.description
       };
       
@@ -783,10 +649,22 @@ export function ChatInterface() {
   };
 
   const handleContinueToCampaign = () => {
-    // Transition to campaign step
-    setWorkflowStep(4);
-    setCurrentStep("campaign");
-    setShowMultiPersonaSelection(false);
+    console.log("Finalizing campaign setup...");
+    console.log("Current selectedAgent:", selectedAgent?.title);
+    console.log("Current qualifiedCompanies count:", qualifiedCompanies.length);
+    console.log("Current selectedPersonas count:", selectedPersonas.length);
+    console.log("Data being saved to localStorage:", { qualifiedCompanies });
+
+    const campaignData = {
+      agent: selectedAgent,
+      qualifiedCompanies,
+      selectedPersonas,
+      createdAt: new Date().toISOString(),
+    };
+    
+    localStorage.setItem('campaignData', JSON.stringify(campaignData));
+    
+    router.push('/inbox');
   };
 
   const handlePersonaAction = (action: PersonaAction) => {
@@ -893,7 +771,7 @@ export function ChatInterface() {
       });
       console.log('Selected Personas:', selectedPersonas.map(p => ({
         id: p.id,
-        title: p.title
+        name: p.name
       })));
       console.log('Persona Test Results:', {
         count: personaTestResults.length,
@@ -930,12 +808,44 @@ export function ChatInterface() {
     }
   };
 
-  const handlePersonaModificationSave = () => {
-    setIsPersonaModifyMode(false);
-    if (selectedPersonas.length > 0) {
+  const handlePersonaModificationSave = (modifiedData: { name: string; description: string; titles: string[] }) => {
+    if (selectedPersona) {
+      const { name, description, titles } = modifiedData;
+
+      // Update the main persona list in the `personas` state
+      setPersonas(prevPersonas =>
+        prevPersonas.map(p =>
+          p.id === selectedPersona.id
+            ? { ...p, name, description, titles, expandedTitles: titles, expandedName: name, seniorName: name }
+            : p
+        )
+      );
+
+      const modifiedSelectedPersona: SelectedPersona = {
+        id: selectedPersona.id,
+        name,
+        description
+      };
+
+      // Update or add the persona to the selected list
+      setSelectedPersonas(prevSelected => {
+        const existingIndex = prevSelected.findIndex(p => p.id === selectedPersona.id);
+
+        if (existingIndex > -1) {
+          // If it exists, update it
+          const newSelected = [...prevSelected];
+          newSelected[existingIndex] = modifiedSelectedPersona;
+          return newSelected;
+        } else {
+          // If it doesn't exist, add it
+          return [...prevSelected, modifiedSelectedPersona];
+        }
+      });
+
+      setSelectedPersona(null);
+      setIsPersonaModifyMode(false);
       setShowMultiPersonaSelection(true);
     }
-    console.log("Persona modifications saved");
   };
 
   const handlePersonaModificationCancel = () => {
@@ -948,6 +858,14 @@ export function ChatInterface() {
 
   const handleViewAllResults = () => {
     setShowFullResults(true);
+  };
+
+  // Function to clear modified agents (for testing/debugging)
+  const clearModifiedAgents = () => {
+    localStorage.removeItem('modifiedAgents');
+    console.log('[DEBUG] Modified agents cleared from localStorage');
+    // Reload the page to refresh agent data
+    window.location.reload();
   };
 
   const renderWorkflowProgress = () => (
@@ -1222,7 +1140,7 @@ export function ChatInterface() {
                 if (selectedPersona) {
                   const newSelectedPersona: SelectedPersona = {
                     id: selectedPersona.id,
-                    title: selectedPersona.title,
+                    name: selectedPersona.name,
                     description: selectedPersona.description
                   };
                   
@@ -1245,14 +1163,12 @@ export function ChatInterface() {
   };
 
   if (currentStep === "find-contacts") {
-    const qualifiedCount = selectedAgentConfig?.qualifiedCompanies.length || 0;
-    const totalCount = selectedAgentConfig?.testResults.length || 0;
-    
     return (
       <div className="flex flex-col w-full h-screen">
         {renderWorkflowProgress()}
         <div className="flex flex-1 h-[calc(100vh-76px)]">
-          <div className="w-[35%] border-r border-muted/20 bg-background p-8 overflow-y-auto">
+          {/* Left Panel: Persona Categories */}
+          <div className="w-[40%] border-r border-muted/20 bg-background p-8 overflow-y-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1284,7 +1200,7 @@ export function ChatInterface() {
                 <>
                   <div className="space-y-3">
                     <h2 className="text-lg font-medium text-primary">
-                      Configure your persona for targeted outreach at {qualifiedCount} qualified companies.
+                      Configure your persona for targeted outreach at {qualifiedCompanies.length} qualified companies.
                     </h2>
                     <p className="text-muted-foreground">
                       Step 3 of 3: Configure persona and targeting
@@ -1302,162 +1218,135 @@ export function ChatInterface() {
                     />
                   </div>
                 </>
-              ) : selectedPersonaCategoryId ? (
-                <>
-                  <div className="space-y-3">
-                    <p className="text-lg font-medium text-primary">
-                      Great! Your research agent identified {qualifiedCount} qualified companies. Now let's find the right contacts at these companies.
-                    </p>
-                    <p className="text-muted-foreground">
-                      Step 3 of 3: Find contacts at qualified companies
-                    </p>
-                  </div>
-
-                  <div className="pt-4">
-                    <ChatInput
-                      onSend={handleSend}
-                      placeholder="Ask about contact finding or next steps..."
-                    />
-                  </div>
-                </>
               ) : (
                 <>
-                  <div className="space-y-3">
-                    <p className="text-lg font-medium text-primary">
-                      Let's identify the right personas to target at these {qualifiedCount} qualified companies.
-                    </p>
+                  <div className="space-y-2">
+                    <h2 className="text-xl font-semibold">
+                      Let's identify the right personas to target at these {qualifiedCompanies.length} qualified companies.
+                    </h2>
                     <p className="text-muted-foreground">
                       Choose the marketing roles most likely to have budget and pain points that Segment addresses.
                     </p>
                   </div>
-
                   <div className="space-y-4">
-                    {personaOptions.map((option) => (
+                    {personaOptions.map((category) => (
                       <ResearchStrategyCard
-                        key={option.id}
-                        strategy={option}
-                        isSelected={selectedPersonaCategoryId === option.id}
-                        onClick={() => handlePersonaCategorySelect(option.id)}
+                        key={category.id}
+                        strategy={{
+                          id: category.id,
+                          icon: category.icon,
+                          title: category.title,
+                          description: category.description,
+                          agents: category.agents
+                        }}
+                        isSelected={selectedPersonaCategoryId === category.id}
+                        onClick={() => handlePersonaCategorySelect(category.id)}
                       />
                     ))}
-                  </div>
-
-                  <div className="pt-4">
-                    <ChatInput
-                      onSend={handleSend}
-                      placeholder="Ask about contact finding or next steps..."
-                    />
                   </div>
                 </>
               )}
             </motion.div>
           </div>
-          <div className="w-[65%] bg-muted/10 overflow-y-auto">
-            {isTestingPersonas || showPersonaTestResults ? (
-              renderPersonaTestingView()
-            ) : isPersonaModifyMode && selectedPersona ? (
-              <PersonaModificationCard 
-                persona={selectedPersona}
-                onSave={handlePersonaModificationSave}
-                onCancel={handlePersonaModificationCancel}
-              />
-            ) : showMultiPersonaSelection ? (
-              renderMultiPersonaSelection()
-            ) : selectedPersona ? (
-              <PersonaConfigurationCard 
-                persona={selectedPersona}
-                onAddThisPersona={handleAddThisPersona}
-              />
-            ) : selectedPersonaCategoryId ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-8"
-              >
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <h2 className="text-xl font-semibold">Choose the buyer types you want to target for your sales outreach</h2>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    {personas.map((persona) => (
-                      <PersonaCard
-                        key={persona.id}
-                        persona={persona}
-                        onBuildClick={handlePersonaBuild}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-8"
-              >
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="space-y-2">
-                      <h2 className="text-2xl font-semibold">Marketing Personas Hiring?</h2>
-                      <p className="text-muted-foreground">
-                        Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles
-                      </p>
-                    </div>
 
-                    {/* Tab Navigation */}
-                    <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-                      <button
-                        onClick={() => setActiveResultsTab('qualified')}
-                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                          activeResultsTab === 'qualified'
-                            ? 'bg-white text-gray-900 shadow-sm'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        Qualified ({qualifiedCount})
-                      </button>
-                      <button
-                        onClick={() => setActiveResultsTab('all')}
-                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                          activeResultsTab === 'all'
-                            ? 'bg-white text-gray-900 shadow-sm'
-                            : 'text-gray-600 hover:text-gray-900'
-                        }`}
-                      >
-                        All Tested ({totalCount})
-                      </button>
-                    </div>
-
-                    {/* Results Table */}
-                    <div>
-                      {selectedAgentConfig?.agent && (
-                        <QualificationResultsTable
-                          results={selectedAgentConfig?.testResults || []}
-                          allTestedCount={totalCount}
-                          qualifiedCount={qualifiedCount}
-                          companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
-                          activeTab={activeResultsTab}
-                          setActiveTab={setActiveResultsTab}
-                          onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
-                          agent={selectedAgentConfig.agent}
-                          icon={categories.find(c => c.id === selectedCategoryId)?.icon || '🤖'}
-                        />
-                      )}
-                    </div>
+          {/* Right Panel: Personas or Empty State */}
+          <div className="w-[60%] bg-muted/10 overflow-y-auto p-8">
+            {(() => {
+              console.log("🔍 RENDERING DEBUG - Right Panel State:", {
+                selectedPersonaCategoryId,
+                selectedPersona: selectedPersona?.name || null,
+                isTestingPersonas,
+                showPersonaTestResults,
+                isPersonaModifyMode,
+                showMultiPersonaSelection,
+                personasCount: selectedPersonaCategoryId ? getPersonasByCategory(selectedPersonaCategoryId).length : 0
+              });
+              return null;
+            })()}
+            <AnimatePresence>
+              {!selectedPersonaCategoryId ? (
+                <motion.div
+                  key="empty"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="h-full flex items-center justify-center"
+                >
+                  <div className="text-center">
+                    <p className="text-lg font-medium text-gray-700">Select a persona category</p>
+                    <p className="text-sm text-gray-500">Choose a category from the left to see available personas.</p>
                   </div>
-                </div>
-              </motion.div>
-            )}
+                </motion.div>
+              ) : isTestingPersonas || showPersonaTestResults ? (
+                <motion.div
+                  key="persona-testing"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  {renderPersonaTestingView()}
+                </motion.div>
+              ) : isPersonaModifyMode && selectedPersona ? (
+                <motion.div
+                  key="persona-modify"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <PersonaModificationCard 
+                    persona={selectedPersona}
+                    onSave={handlePersonaModificationSave}
+                    onCancel={handlePersonaModificationCancel}
+                  />
+                </motion.div>
+              ) : showMultiPersonaSelection ? (
+                <motion.div
+                  key="multi-persona"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <MultiPersonaSelectionCard
+                    selectedPersonas={selectedPersonas}
+                    availablePersonas={personas}
+                    onEditPersona={handleEditPersona}
+                    onRemovePersona={handleRemovePersona}
+                    onBuildPersona={handlePersonaBuild}
+                    onContinueToCampaign={handleContinueToCampaign}
+                  />
+                </motion.div>
+              ) : selectedPersona ? (
+                <motion.div
+                  key="persona-config"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                >
+                  <PersonaConfigurationCard
+                    persona={selectedPersona}
+                    onAddThisPersona={handleAddThisPersona}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="personas"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-4"
+                >
+                  {getPersonasByCategory(selectedPersonaCategoryId).map((persona) => (
+                    <PersonaCard
+                      key={persona.id}
+                      persona={persona}
+                      onBuildClick={handlePersonaBuild}
+                    />
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-        
-        {/* Persona Configuration Modal */}
-        <PersonaConfigurationModal
-          isOpen={isPersonaModalOpen}
-          onClose={() => setIsPersonaModalOpen(false)}
-        />
       </div>
     );
   }
@@ -1516,6 +1405,19 @@ export function ChatInterface() {
                       onSend={handleSend}
                       placeholder="Choose above or ask about the agent..."
                     />
+                  </div>
+                  
+                  {/* Debug section - remove in production */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <p className="text-xs text-gray-500 mb-2">Debug Tools:</p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearModifiedAgents}
+                      className="text-xs"
+                    >
+                      Clear Modified Agents
+                    </Button>
                   </div>
                 </>
               )}
@@ -1639,15 +1541,26 @@ export function ChatInterface() {
                   agent={selectedAgent} 
                   isEditMode={isAgentEditMode}
                   icon={categories.find(c => c.id === selectedCategoryId)?.icon || "🤖"}
-                  onSave={({ questionType, researchQuestion, selectedSources }) => {
+                  onSave={({ questionType, researchQuestion, selectedSources, responseOptions }) => {
                     const updatedAgent = selectedAgent ? {
                       ...selectedAgent,
                       questionType,
                       researchQuestion,
-                      sources: selectedSources
+                      sources: selectedSources,
+                      responseOptions: responseOptions,
+                      // Preserve the original title - it should stay consistent across question types
+                      title: selectedAgent.title
                     } : null;
                     
                     setSelectedAgent(updatedAgent);
+                    
+                    // Persist agent changes to localStorage
+                    if (updatedAgent) {
+                      const storedAgents = JSON.parse(localStorage.getItem('modifiedAgents') || '{}');
+                      storedAgents[updatedAgent.id] = updatedAgent;
+                      localStorage.setItem('modifiedAgents', JSON.stringify(storedAgents));
+                      console.log('[DEBUG] Agent changes persisted to localStorage:', updatedAgent);
+                    }
                     
                     // Update the ResultsGenerator with the modified agent
                     if (updatedAgent && resultsGenerator) {
@@ -1834,7 +1747,7 @@ export function ChatInterface() {
       },
       selectedPersonas: {
         count: selectedPersonas.length,
-        personas: selectedPersonas.map(p => p.title)
+        personas: selectedPersonas.map(p => p.name)
       },
       personaTestResults: {
         count: personaTestResults.length,
@@ -1898,16 +1811,7 @@ export function ChatInterface() {
                   {/* Action Buttons */}
                   <div className="flex gap-4 pt-4">
                     <Button
-                      onClick={() => {
-                        console.log('🎯 LAUNCH BUTTON CLICKED:');
-                        console.log('Launching campaign with data:', {
-                          agent: selectedAgentConfig?.agent,
-                          qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies.length,
-                          personas: selectedPersonas.length,
-                          contacts: personaTestResults.length
-                        });
-                        // Handle campaign launch
-                      }}
+                      onClick={handleContinueToCampaign}
                       className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       Launch Campaign

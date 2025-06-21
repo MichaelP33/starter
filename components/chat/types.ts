@@ -44,6 +44,7 @@ export interface Agent {
   researchQuestion: string;
   questionType: QuestionType;
   sources: string[];
+  responseOptions?: string[];
   sourcesByQuestionType?: {
     Boolean: string[];
     Number: string[];
@@ -82,7 +83,7 @@ export interface QualificationResult {
 
 export interface SelectedPersona {
   id: string;
-  title: string;
+  name: string;
   description: string;
 }
 
@@ -157,9 +158,15 @@ interface FullQualificationResult extends QualificationResult {
 
 export interface Persona {
   id: string;
+  categoryId: string;
   icon: string;
-  title: string;
+  name: string;
+  expandedName: string;
+  seniorName: string;
   description: string;
+  expandedDescription: string;
+  titles: string[];
+  expandedTitles: string[];
 }
 
 export interface PersonaAction {

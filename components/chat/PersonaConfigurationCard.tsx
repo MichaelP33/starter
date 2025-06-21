@@ -4,13 +4,10 @@ import { motion } from "framer-motion";
 import { User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Persona } from "./types";
 
 interface PersonaConfigurationCardProps {
-  persona: {
-    id: string;
-    title: string;
-    description: string;
-  };
+  persona: Persona;
   onAddThisPersona: () => void;
 }
 
@@ -29,30 +26,6 @@ const personaTitles = [
 
 export function PersonaConfigurationCard({ persona, onAddThisPersona }: PersonaConfigurationCardProps) {
   const [searchMode, setSearchMode] = useState<'strict' | 'creative'>('strict');
-  const [titles, setTitles] = useState(personaTitles);
-  const [newTitle, setNewTitle] = useState("");
-  const [isAddingTitle, setIsAddingTitle] = useState(false);
-
-  const handleAddTitle = () => {
-    if (newTitle.trim()) {
-      setTitles([...titles, newTitle.trim()]);
-      setNewTitle("");
-      setIsAddingTitle(false);
-    }
-  };
-
-  const handleRemoveTitle = (index: number) => {
-    setTitles(titles.filter((_, i) => i !== index));
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleAddTitle();
-    } else if (e.key === 'Escape') {
-      setIsAddingTitle(false);
-      setNewTitle("");
-    }
-  };
 
   return (
     <motion.div
@@ -65,18 +38,14 @@ export function PersonaConfigurationCard({ persona, onAddThisPersona }: PersonaC
           {/* Header */}
           <div className="flex items-center gap-3">
             <User className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-semibold">{persona.title}</h2>
+            <h2 className="text-2xl font-semibold">{persona.expandedName}</h2>
           </div>
 
           {/* About This Role */}
           <div className="space-y-3">
             <h3 className="text-lg font-semibold text-gray-900">About This Role</h3>
             <p className="text-gray-700 leading-relaxed">
-              C-level or VP-level marketing leader who sets the strategic direction for the entire marketing organization. 
-              Responsible for brand positioning, competitive strategy, and cross-functional initiatives with board-level accountability. 
-              Has executive authority over marketing budgets, major technology investments, and strategic partnerships. 
-              Focuses on long-term growth strategy, market positioning, and organizational alignment while managing stakeholder 
-              relationships and driving company-wide marketing transformation.
+              {persona.expandedDescription}
             </p>
           </div>
 
@@ -84,7 +53,7 @@ export function PersonaConfigurationCard({ persona, onAddThisPersona }: PersonaC
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-900">Example Titles</h3>
             <div className="flex flex-wrap gap-2">
-              {titles.map((title, index) => (
+              {persona.expandedTitles.map((title, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -93,46 +62,9 @@ export function PersonaConfigurationCard({ persona, onAddThisPersona }: PersonaC
                 >
                   <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-800 border border-blue-200">
                     {title}
-                    <button
-                      onClick={() => handleRemoveTitle(index)}
-                      className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:text-blue-900"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
                   </span>
                 </motion.div>
               ))}
-              
-              {/* Add Title Button/Input */}
-              {isAddingTitle ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="inline-flex items-center"
-                >
-                  <input
-                    type="text"
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    onBlur={() => {
-                      if (!newTitle.trim()) {
-                        setIsAddingTitle(false);
-                      }
-                    }}
-                    placeholder="Enter title..."
-                    className="px-3 py-2 text-sm border border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    autoFocus
-                  />
-                </motion.div>
-              ) : (
-                <button
-                  onClick={() => setIsAddingTitle(true)}
-                  className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 transition-colors duration-200"
-                >
-                  + Add Title
-                </button>
-              )}
             </div>
           </div>
 

@@ -52,7 +52,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
   const [isRewritingAgent, setIsRewritingAgent] = useState(false);
   const [responseOptions, setResponseOptions] = useState<string[]>(
     agent.questionType === 'Picklist'
-      ? ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]
+      ? agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]
       : []
   );
   const [newOption, setNewOption] = useState("");
@@ -85,6 +85,17 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
     console.log('AgentDetails: Edit mode prop changed:', isEditMode);
     setEditMode(isEditMode);
   }, [isEditMode]);
+
+  // Sync local state with agent prop changes (for persisted data)
+  useEffect(() => {
+    setResearchQuestion(agent.researchQuestion);
+    setQuestionType(agent.questionType);
+    if (agent.questionType === 'Picklist') {
+      setResponseOptions(agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+    } else {
+      setResponseOptions([]);
+    }
+  }, [agent.researchQuestion, agent.questionType, agent.responseOptions]);
 
   useEffect(() => {
     // Reset response options if question type changes
@@ -145,7 +156,13 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
       
       if (template) {
         console.log('Found template for type:', newType, template);
-        setResearchQuestion(template);
+        // For Picklist type, clean up the template by removing the "Categories:" part
+        let cleanedTemplate = template;
+        if (newType === 'Picklist') {
+          // Remove "Categories:" and everything after it
+          cleanedTemplate = template.replace(/\s*Categories:.*$/, '');
+        }
+        setResearchQuestion(cleanedTemplate);
       } else {
         console.log('No template found for type:', newType);
         // Use a default template if none provided

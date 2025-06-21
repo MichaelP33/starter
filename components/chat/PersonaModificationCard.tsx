@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { User, Sparkles, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -10,58 +10,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Persona } from "./types";
 
 interface PersonaModificationCardProps {
-  persona: {
-    id: string;
-    title: string;
-    description: string;
-  };
-  onSave: () => void;
+  persona: Persona;
+  onSave: (modifiedData: { name: string; description: string; titles: string[] }) => void;
   onCancel: () => void;
 }
 
 type TargetingScope = 'precise' | 'expand' | 'senior';
-
-const baseTitles = [
-  "Chief Marketing Officer (CMO)",
-  "VP of Marketing", 
-  "VP of Brand Strategy",
-  "Head of Marketing",
-  "Marketing Executive",
-  "VP of Strategic Marketing",
-  "Chief Brand Officer",
-  "Senior VP of Marketing",
-  "Director of Marketing Strategy",
-  "VP of Corporate Marketing"
-];
-
-const expandedTitles = [
-  ...baseTitles,
-  "Director of Digital Marketing",
-  "Senior Marketing Manager",
-  "Marketing Lead",
-  "Digital Marketing Director",
-  "Marketing Operations Director",
-  "Growth Marketing Director",
-  "Brand Marketing Manager",
-  "Product Marketing Director"
-];
-
-const seniorFocusTitles = [
-  "Chief Marketing Officer (CMO)",
-  "Chief Brand Officer",
-  "VP of Marketing", 
-  "VP of Brand Strategy",
-  "VP of Strategic Marketing",
-  "Senior VP of Marketing",
-  "Executive VP of Marketing",
-  "Director of Marketing Strategy",
-  "VP of Corporate Marketing",
-  "Chief Revenue Officer",
-  "Chief Growth Officer",
-  "Executive Director of Marketing"
-];
 
 const scopeDescriptions = {
   precise: "Current exact title matching",
@@ -69,57 +26,66 @@ const scopeDescriptions = {
   senior: "Target more senior/executive variations and decision-makers"
 };
 
-const roleDescriptions = {
-  precise: "C-level or VP-level marketing leader who sets the strategic direction for the entire marketing organization. Responsible for brand positioning, competitive strategy, and cross-functional initiatives with board-level accountability. Has executive authority over marketing budgets, major technology investments, and strategic partnerships. Focuses on long-term growth strategy, market positioning, and organizational alignment while managing stakeholder relationships and driving company-wide marketing transformation.",
-  
-  expand: "Marketing leader at director level or above who influences strategic marketing decisions and has significant budget authority. Includes both C-level executives and senior directors who drive marketing strategy, oversee major campaigns, and manage marketing technology investments. Responsible for growth initiatives, brand positioning, and cross-functional collaboration with sales and product teams. May include emerging leadership roles in digital marketing, growth marketing, and marketing operations.",
-  
-  senior: "Executive-level marketing leader with C-suite or senior VP authority who drives enterprise-wide marketing strategy and transformation. Focuses on board-level marketing executives with ultimate decision-making power over marketing budgets, technology investments, and strategic partnerships. Includes Chief Marketing Officers, Chief Brand Officers, Chief Revenue Officers, and Executive VPs who report directly to the CEO and have company-wide influence over marketing direction and organizational change."
-};
-
 export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaModificationCardProps) {
   const [targetingScope, setTargetingScope] = useState<TargetingScope>('precise');
-  const [titles, setTitles] = useState(baseTitles);
-  const [roleDescription, setRoleDescription] = useState(roleDescriptions.precise);
+  const [currentTitles, setCurrentTitles] = useState<string[]>([]);
+  const [currentDescription, setCurrentDescription] = useState("");
+  const [currentName, setCurrentName] = useState("");
   const [newTitle, setNewTitle] = useState("");
   const [isAddingTitle, setIsAddingTitle] = useState(false);
   const [isRewriting, setIsRewriting] = useState(false);
 
-  const handleScopeChange = (scope: TargetingScope) => {
-    if (scope === targetingScope) return;
+  useEffect(() => {
+    handleScopeChange(targetingScope, true);
+  }, [persona, targetingScope]);
+
+  const handleScopeChange = (scope: TargetingScope, initial = false) => {
+    if (scope === targetingScope && !initial) return;
     
-    setIsRewriting(true);
+    if (!initial) {
+      setIsRewriting(true);
+    }
     setTargetingScope(scope);
     
-    // Simulate AI rewriting delay
-    setTimeout(() => {
+    const updateContent = () => {
       switch (scope) {
         case 'expand':
-          setTitles(expandedTitles);
-          setRoleDescription(roleDescriptions.expand);
+          setCurrentName(persona.expandedName);
+          setCurrentDescription(persona.expandedDescription);
+          setCurrentTitles(persona.expandedTitles);
           break;
         case 'senior':
-          setTitles(seniorFocusTitles);
-          setRoleDescription(roleDescriptions.senior);
+          setCurrentName(persona.seniorName);
+          setCurrentDescription(persona.expandedDescription);
+          setCurrentTitles(persona.expandedTitles);
           break;
-        default:
-          setTitles(baseTitles);
-          setRoleDescription(roleDescriptions.precise);
+        default: // 'precise'
+          setCurrentName(persona.name);
+          setCurrentDescription(persona.description);
+          setCurrentTitles(persona.titles);
       }
-      setIsRewriting(false);
-    }, 2000);
+      if (!initial) {
+        setIsRewriting(false);
+      }
+    };
+    
+    if (initial) {
+      updateContent();
+    } else {
+      setTimeout(updateContent, 1000);
+    }
   };
 
   const handleAddTitle = () => {
     if (newTitle.trim()) {
-      setTitles([...titles, newTitle.trim()]);
+      setCurrentTitles([...currentTitles, newTitle.trim()]);
       setNewTitle("");
       setIsAddingTitle(false);
     }
   };
 
   const handleRemoveTitle = (index: number) => {
-    setTitles(titles.filter((_, i) => i !== index));
+    setCurrentTitles(currentTitles.filter((_, i) => i !== index));
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -186,7 +152,11 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
             {/* Header */}
             <div className="flex items-center gap-3">
               <User className="w-6 h-6 text-primary" />
-              <h2 className="text-2xl font-semibold">{persona.title} - Targeting Options</h2>
+              <input
+                value={currentName}
+                onChange={(e) => setCurrentName(e.target.value)}
+                className="text-2xl font-semibold w-full bg-transparent border-none focus:ring-0 p-0"
+              />
             </div>
 
             {/* Description */}
@@ -237,7 +207,7 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
                   transition={{ duration: 0.4 }}
                   className="text-gray-700 leading-relaxed"
                 >
-                  {roleDescription}
+                  {currentDescription}
                 </motion.p>
               )}
             </div>
@@ -278,9 +248,9 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
                   </div>
                 ) : (
                   <>
-                    {titles.map((title, index) => (
+                    {currentTitles.map((title, index) => (
                       <motion.div
-                        key={`${targetingScope}-${index}`}
+                        key={`${title}-${index}`}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: index * 0.05 }}
@@ -333,21 +303,18 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
               </motion.div>
             </div>
 
-            {/* Save/Cancel buttons */}
-            <div className="flex gap-3 pt-4 border-t border-muted/20">
+            {/* Actions */}
+            <div className="flex justify-end gap-4 pt-4 border-t border-gray-200">
+              <Button variant="outline" onClick={onCancel}>Cancel</Button>
               <Button 
-                onClick={onSave} 
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
-                disabled={isRewriting}
+                onClick={() => onSave({ 
+                  name: currentName, 
+                  description: currentDescription, 
+                  titles: currentTitles 
+                })}
+                className="bg-[#6366f1] hover:bg-[#6366f1]/90 text-white"
               >
-                Save Changes
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={onCancel}
-                disabled={isRewriting}
-              >
-                Cancel
+                Save Persona Targeting
               </Button>
             </div>
           </div>

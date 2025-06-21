@@ -75,20 +75,14 @@ export type QuestionType = 'Boolean' | 'Number' | 'Picklist';
 interface Persona {
   id: string;
   categoryId: string;
-  title: string;
   description: string;
   icon: string;
-  seniority: string;
-  departmentFocus: string;
-  segmentFit: string;
-  keyResponsibilities: string[];
-  painPoints: string[];
-  segmentUseCases: string[];
-  commonTitles: string[];
-  reportingStructure: string;
-  budgetAuthority: string;
-  technicalProficiency: string;
-  decisionMakingRole: string;
+  name: string;
+  expandedName: string;
+  seniorName: string;
+  expandedDescription: string;
+  titles: string[];
+  expandedTitles: string[];
 }
 
 interface PersonaCategoryMetadata {
@@ -195,9 +189,26 @@ export function useDataConfig() {
               questionType: agent.questionType as QuestionType
             }))
           ) as Agent[];
+          
+          // Load modified agents from localStorage and merge with original data
+          const storedModifiedAgents = JSON.parse(localStorage.getItem('modifiedAgents') || '{}');
+          const mergedAgents = allAgents.map(agent => {
+            const modifiedAgent = storedModifiedAgents[agent.id];
+            if (modifiedAgent) {
+              console.log('[DEBUG] Loading modified agent from localStorage:', agent.id, modifiedAgent);
+              return {
+                ...agent,
+                ...modifiedAgent,
+                // Ensure categoryId is preserved from original agent
+                categoryId: agent.categoryId
+              };
+            }
+            return agent;
+          });
+          
           setState(prev => ({
             ...prev,
-            agents: allAgents,
+            agents: mergedAgents,
             isLoading: { ...prev.isLoading, agents: false },
           }));
         } catch (error) {
@@ -215,38 +226,32 @@ export function useDataConfig() {
           const categories = Object.values(personaData.personaCategories);
           
           // Create personas array from the data
-          const allPersonas: Persona[] = personaData.personas.map(persona => ({
+          const processedPersonas = personaData.personas.map((persona: any) => ({
             id: persona.id,
             categoryId: persona.categoryId,
-            title: persona.title,
             description: persona.description,
             icon: persona.icon,
-            seniority: persona.seniority,
-            departmentFocus: persona.departmentFocus,
-            segmentFit: persona.segmentFit,
-            keyResponsibilities: persona.keyResponsibilities,
-            painPoints: persona.painPoints,
-            segmentUseCases: persona.segmentUseCases,
-            commonTitles: persona.commonTitles,
-            reportingStructure: persona.reportingStructure,
-            budgetAuthority: persona.budgetAuthority,
-            technicalProficiency: persona.technicalProficiency,
-            decisionMakingRole: persona.decisionMakingRole,
+            name: persona.name,
+            expandedName: persona.expandedName,
+            seniorName: persona.seniorName,
+            expandedDescription: persona.expandedDescription,
+            titles: persona.titles,
+            expandedTitles: persona.expandedTitles,
           }));
 
           // Convert to old format for backward compatibility
           const oldFormatPersonas = {
-            personas: allPersonas.map(persona => ({
+            personas: processedPersonas.map(persona => ({
               id: persona.id,
               icon: '👔', // Default icon
-              title: persona.title,
+              title: persona.name,
               description: persona.description,
             })),
           };
 
           setState(prev => ({
             ...prev,
-            personas: allPersonas,
+            personas: processedPersonas,
             personaCategories: categories,
             oldFormatPersonas,
             isLoading: { ...prev.isLoading, personas: false },
