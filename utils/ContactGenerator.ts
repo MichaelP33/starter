@@ -178,7 +178,9 @@ export class ContactGenerator {
           matchScore: this.calculateMatchScore(),
           status: status,
           statusDays: days,
-          companyName: company.companyName
+          companyName: company.companyName,
+          companyId: company.id,
+          personaMatch: personaName,
         };
         contacts.push(contact);
       }
