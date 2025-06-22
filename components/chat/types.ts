@@ -142,6 +142,8 @@ export interface Contact {
   status: 'Not Contacted' | 'Send Message' | 'Awaiting Reply' | 'Replied' | 'Interested' | 'Demo Booked';
   statusDays?: number; // e.g., "Awaiting Reply" for 2 days
   companyName: string;
+  companyId: string;
+  personaMatch: string;
 }
 
 export interface PersonaTestResult {
