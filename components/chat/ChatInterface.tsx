@@ -42,6 +42,8 @@ import { PersonaTestResultsTable } from "./PersonaTestResultsTable";
 import { MultiPersonaSelectionCard } from "./MultiPersonaSelectionCard";
 import { motion, AnimatePresence } from "framer-motion";
 import AgentDetails from "./AgentDetails";
+import { CampaignLaunchScreen } from "./CampaignLaunchScreen";
+import { AutoTestLoadingScreen } from "./AutoTestLoadingScreen";
 
 interface Suggestion {
   title: string;
@@ -205,6 +207,7 @@ export function ChatInterface() {
   const [isTestingPersonas, setIsTestingPersonas] = useState(false);
   const [showPersonaTestResults, setShowPersonaTestResults] = useState(false);
   const [isPersonaModifyMode, setIsPersonaModifyMode] = useState(false);
+  const [isLaunchingCampaign, setIsLaunchingCampaign] = useState(false);
   const [message, setMessage] = useState("");
   const [uploadedAccounts, setUploadedAccounts] = useState<Account[]>([]);
   const [enrichmentOptions, setEnrichmentOptions] = useState<EnrichmentOption[]>(initialEnrichmentOptions);
@@ -221,6 +224,9 @@ export function ChatInterface() {
   const [lastTestedCompanies, setLastTestedCompanies] = useState<Account[]>([]);
   const [activeResultsTab, setActiveResultsTab] = useState<'qualified' | 'needsReview' | 'all'>('qualified');
   const [personas, setPersonas] = useState<Persona[]>([]);
+  const [phaseLabel, setPhaseLabel] = useState("");
+  const [hasManuallyTestedAgent, setHasManuallyTestedAgent] = useState(false);
+  const [autoTestInProgress, setAutoTestInProgress] = useState(false);
 
   useEffect(() => {
     if (initialPersonas.length > 0) {
@@ -428,6 +434,8 @@ export function ChatInterface() {
 
     if (action === 'test') {
       setIsTestingAgent(true);
+      setHasManuallyTestedAgent(true);
+      setAutoTestInProgress(false);
       setLoadingStep(0);
       setLoadingMessage("Selecting representative sample from your target list...");
 
@@ -453,7 +461,6 @@ export function ChatInterface() {
         yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
         tags: []
       }));
-      
       const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
       if (results) {
         setQualificationResults(results);
@@ -475,31 +482,80 @@ export function ChatInterface() {
       setShowFullResults(false);
 
     } else if (action === 'add') {
-      const results = resultsGenerator?.generateResults(agentForTest.id);
-      if (results) {
-        setQualificationResults(results);
-        // Connect selected personas to qualified companies
-        const personaNames = selectedPersonas.map(p => p.name);
-        console.log('---CONNECTING PERSONAS---');
-        console.log('Selected personas:', personaNames);
-        
-        const allCompanies: QualifiedCompanyWithResearch[] = results.map(r => ({
-          ...r,
-          assignedPersonas: r.qualified ? personaNames : [],
-          researchResults: { summary: r.researchSummary, sources: r.dataSources },
+      if (hasManuallyTestedAgent) {
+        const results = resultsGenerator?.generateResults(agentForTest.id);
+        if (results) {
+          setQualificationResults(results);
+          // Connect selected personas to qualified companies
+          const personaNames = selectedPersonas.map(p => p.name);
+          console.log('---CONNECTING PERSONAS---');
+          console.log('Selected personas:', personaNames);
+          
+          const allCompanies: QualifiedCompanyWithResearch[] = results.map(r => ({
+            ...r,
+            assignedPersonas: r.qualified ? personaNames : [],
+            researchResults: { summary: r.researchSummary, sources: r.dataSources },
+          }));
+
+          console.log('Companies with assigned personas:', allCompanies.filter(c => c.assignedPersonas.length > 0));
+          
+          setSelectedAgentConfig({
+            agent: agentForTest,
+            testResults: results,
+            qualifiedCompanies: allCompanies,
+          });
+          setQualifiedCompanies(allCompanies);
+
+          setShowAgentConfirmation(true);
+          setShowTestResults(true);
+        }
+      } else {
+        setIsTestingAgent(true);
+        setHasManuallyTestedAgent(true);
+        setAutoTestInProgress(true);
+        setLoadingStep(0);
+        setLoadingMessage("Selecting representative sample from your target list...");
+
+        // Simulate loading steps
+        setTimeout(() => setLoadingMessage("Running analysis on sample companies..."), 2000);
+        setTimeout(() => setLoadingMessage("Evaluating qualification criteria..."), 4000);
+        setTimeout(() => setLoadingMessage("Preparing sample results..."), 6000);
+
+        // Generate results
+        const sample = [...uploadedAccounts].sort(() => 0.5 - Math.random()).slice(0, 10);
+        const sampleCompanies = sample.map(acc => ({
+          id: acc.companyName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+          companyName: acc.companyName,
+          website: acc.website,
+          industry: acc.industry,
+          employeeCount: acc.employeeCount,
+          employeeCountNumeric: parseInt(acc.employeeCount.replace(/,/g, '')) || 0,
+          hqCountry: acc.hqCountry,
+          hqCity: acc.hqCity || '',
+          hqState: null,
+          totalFunding: acc.totalFunding || '',
+          estimatedAnnualRevenue: acc.estimatedAnnualRevenue || '',
+          yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
+          tags: []
         }));
+        const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
+        if (results) {
+          setQualificationResults(results);
+          const allCompanies: QualifiedCompanyWithResearch[] = results
+            .map(r => ({ ...r, assignedPersonas: [], researchResults: { summary: r.researchSummary, sources: r.dataSources } }));
+          setSelectedAgentConfig({ agent: agentForTest, testResults: results, qualifiedCompanies: allCompanies });
+          setQualifiedCompanies(allCompanies);
+        }
 
-        console.log('Companies with assigned personas:', allCompanies.filter(c => c.assignedPersonas.length > 0));
-        
-        setSelectedAgentConfig({
-          agent: agentForTest,
-          testResults: results,
-          qualifiedCompanies: allCompanies,
-        });
-        setQualifiedCompanies(allCompanies);
-
-        setShowAgentConfirmation(true);
-        setShowTestResults(true);
+        setTimeout(() => {
+          setIsTestingAgent(false);
+          setLoadingStep(0);
+          setAutoTestInProgress(false);
+          setShowAgentConfirmation(true);
+          setShowTestResults(true);
+          setCurrentStep('agent-details');
+          setWorkflowStep(2);
+        }, 7500);
       }
     }
   };
@@ -675,35 +731,8 @@ export function ChatInterface() {
   };
 
   const handleContinueToCampaign = () => {
-    console.log("Finalizing campaign setup...");
-    console.log("Current selectedAgent:", selectedAgent?.title);
-    console.log("Current qualifiedCompanies count:", qualifiedCompanies.length);
-    console.log("Current selectedPersonas count:", selectedPersonas.length);
-    console.log("Data being saved to localStorage:", { qualifiedCompanies });
-
-    // Final check to ensure personas are assigned before saving
-    const personaNames = selectedPersonas.map(p => p.name);
-    const finalQualifiedCompanies = qualifiedCompanies.map(c => ({
-      ...c,
-      assignedPersonas: c.qualified ? personaNames : [],
-    }));
-
-    console.log("Data being saved to localStorage:", { 
-      agent: selectedAgent,
-      qualifiedCompanies: finalQualifiedCompanies.filter(c => c.assignedPersonas.length > 0),
-      selectedPersonas
-    });
-
-    const campaignData = {
-      agent: selectedAgent,
-      qualifiedCompanies: finalQualifiedCompanies,
-      selectedPersonas,
-      createdAt: new Date().toISOString(),
-    };
-    
-    localStorage.setItem('campaignData', JSON.stringify(campaignData));
-    
-    router.push('/inbox');
+    // Instead of immediately saving and routing, trigger the animated launch flow
+    handlePersonaAction({ value: 'launch', icon: '🚀', label: 'Launch Campaign' });
   };
 
   const handlePersonaAction = (action: PersonaAction) => {
@@ -802,43 +831,63 @@ export function ChatInterface() {
         setShowPersonaTestResults(false);
       }
     } else if (action.value === "launch") {
-      console.log('🚀 LAUNCH CAMPAIGN DEBUG:');
-      console.log('Selected Agent Config:', {
-        agent: selectedAgentConfig?.agent,
-        qualifiedCompaniesCount: selectedAgentConfig?.qualifiedCompanies.length,
-        testResultsCount: selectedAgentConfig?.testResults.length
-      });
-      console.log('Selected Personas:', selectedPersonas.map(p => ({
-        id: p.id,
-        name: p.name
-      })));
-      console.log('Persona Test Results:', {
-        count: personaTestResults.length,
-        sample: personaTestResults.slice(0, 2)
-      });
-      console.log('Qualified Companies:', {
-        count: selectedAgentConfig?.qualifiedCompanies.length,
-        sample: selectedAgentConfig?.qualifiedCompanies.slice(0, 2).map(c => ({
-          id: c.companyId,
-          name: c.companyName
-        }))
-      });
-      console.log('Current Step:', currentStep);
-      console.log('Current Workflow Step:', workflowStep);
-      
-      // Store campaign data in localStorage for the inbox page
-      const campaignData = {
-        agent: selectedAgentConfig?.agent,
-        qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies,
-        selectedPersonas,
-        personaTestResults,
-        createdAt: new Date().toISOString()
-      };
-      localStorage.setItem('campaignData', JSON.stringify(campaignData));
-      
-      // Navigate to inbox page
-      console.log('Navigating to inbox page...');
-      router.push('/inbox');
+      setIsLaunchingCampaign(true);
+
+      const agentName = selectedAgentConfig?.agent?.title || 'the selected';
+      const researchQuestion = selectedAgentConfig?.agent?.researchQuestion || '';
+      // 8 steps: 2 per phase
+      const messages = [
+        // Full Prospect Analysis
+        "Scanning your entire prospect list of 152 companies...",
+        "Running Marketing Personas Hiring? analysis across all targets...",
+        // Company Qualification
+        "Identifying companies that match your criteria...",
+        "Finding businesses actively hiring marketing talent...",
+        // Contact Discovery
+        "Searching for qualified contacts at target companies...",
+        "Matching prospects to your selected personas...",
+        // List Building
+        "Building your personalized target list...",
+        "Preparing contact workflows and outreach sequences..."
+      ];
+      const phaseLabels = [
+        "Full Prospect Analysis",
+        "Full Prospect Analysis",
+        "Company Qualification",
+        "Company Qualification",
+        "Contact Discovery",
+        "Contact Discovery",
+        "List Building",
+        "List Building"
+      ];
+      let messageIndex = 0;
+      setLoadingMessage(messages[messageIndex]);
+      setLoadingStep(messageIndex);
+      setPhaseLabel(phaseLabels[messageIndex]);
+
+      const intervalId = setInterval(() => {
+        messageIndex++;
+        if (messageIndex < messages.length) {
+          setLoadingMessage(messages[messageIndex]);
+          setLoadingStep(messageIndex);
+          setPhaseLabel(phaseLabels[messageIndex]);
+        } else {
+          clearInterval(intervalId);
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        const campaignData = {
+          agent: selectedAgentConfig?.agent,
+          qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies,
+          selectedPersonas,
+          personaTestResults,
+          createdAt: new Date().toISOString()
+        };
+        localStorage.setItem('campaignData', JSON.stringify(campaignData));
+        router.push('/inbox');
+        setIsLaunchingCampaign(false);
+      }, 8200);
     } else if (action.value === "modify") {
       setIsPersonaModifyMode(true);
       setShowPersonaTestResults(false);
@@ -953,10 +1002,6 @@ export function ChatInterface() {
             transition={{ delay: 0.3 }}
             className="p-8 border-t border-muted/20"
           >
-            {/* Company count indicator */}
-            <div className="mb-2 text-xs text-muted-foreground">
-              Showing {uploadedAccounts.length} of {companies.length} companies in your target list
-            </div>
             <Button
               onClick={() => setCustomizationStage('confirm')}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-12 text-base font-medium"
@@ -1201,6 +1246,22 @@ export function ChatInterface() {
     return null;
   };
 
+  if (isLaunchingCampaign) {
+    const phaseNumber = Math.floor(loadingStep / 2) + 1;
+    return (
+      <div className="flex flex-col w-full h-screen">
+        {renderWorkflowProgress()}
+        <CampaignLaunchScreen 
+          agent={selectedAgentConfig?.agent || null}
+          loadingMessage={loadingMessage}
+          loadingStep={loadingStep}
+          phaseLabel={phaseLabel}
+          phaseNumber={phaseNumber}
+        />
+      </div>
+    );
+  }
+
   if (currentStep === "find-contacts") {
     return (
       <div className="flex flex-col w-full h-screen">
@@ -1401,7 +1462,7 @@ export function ChatInterface() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {showAgentConfirmation ? (
+              {showAgentConfirmation && (
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <p className="text-lg font-medium">
@@ -1420,14 +1481,19 @@ export function ChatInterface() {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={handleTestAgentFirst}
+                      onClick={() => {
+                        setCurrentStep("researching");
+                        setWorkflowStep(2);
+                      }}
                       className="h-11"
                     >
-                      Test this agent first
+                      Choose a different agent
                     </Button>
                   </div>
                 </div>
-              ) : (
+              )}
+            
+              {!(showAgentConfirmation || showTestResults) && (
                 <>
                   <div className="space-y-3">
                     <p className="text-lg font-medium text-primary">
@@ -1445,7 +1511,6 @@ export function ChatInterface() {
                       placeholder="Choose above or ask about the agent..."
                     />
                   </div>
-                  
                   {/* Debug section - remove in production */}
                   <div className="pt-4 border-t border-gray-200">
                     <p className="text-xs text-gray-500 mb-2">Debug Tools:</p>
@@ -1473,7 +1538,14 @@ export function ChatInterface() {
                         {selectedAgent?.title}
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        Sample Testing in Progress
+                        {autoTestInProgress ? (
+                          <>
+                            <span className="text-green-600">✨ Auto-testing in progress: We're making sure your agent is ready for action!</span>
+                            <p className="text-sm text-gray-700">You skipped manual testing, so we're running a quick check for you.</p>
+                          </>
+                        ) : (
+                          "Sample Testing in Progress"
+                        )}
                       </p>
                     </div>
 
@@ -1514,7 +1586,13 @@ export function ChatInterface() {
                         Why Sample Testing?
                       </h3>
                       <p className="text-sm text-blue-700">
-                        We test on a representative sample first to ensure the agent's criteria are relevant before analyzing your full target list. This saves time and helps optimize your campaign strategy.
+                        {autoTestInProgress ? (
+                          <>
+                            To ensure quality, we always test agents before adding them to your campaign. This helps you get the best results, every time.
+                          </>
+                        ) : (
+                          "We test on a representative sample first to ensure the agent's criteria are relevant before analyzing your full target list. This saves time and helps optimize your campaign strategy."
+                        )}
                       </p>
                     </div>
                   </div>

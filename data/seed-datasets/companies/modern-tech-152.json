@@ -1,0 +1,709 @@
+{
+  "metadata": {
+    "name": "Modern Tech Companies",
+    "description": "A list of 152 modern technology companies.",
+    "totalCompanies": 152
+  },
+  "companies": [
+    {
+      "name": "Apple Inc.",
+      "domain": "apple.com",
+      "tags": []
+    },
+    {
+      "name": "Microsoft Corporation",
+      "domain": "microsoft.com",
+      "tags": []
+    },
+    {
+      "name": "Amazon.com, Inc.",
+      "domain": "amazon.com",
+      "tags": []
+    },
+    {
+      "name": "Alphabet Inc. (Google)",
+      "domain": "abc.xyz",
+      "tags": []
+    },
+    {
+      "name": "Meta Platforms, Inc. (Facebook)",
+      "domain": "meta.com",
+      "tags": []
+    },
+    {
+      "name": "Tesla, Inc.",
+      "domain": "tesla.com",
+      "tags": []
+    },
+    {
+      "name": "NVIDIA Corporation",
+      "domain": "nvidia.com",
+      "tags": []
+    },
+    {
+      "name": "Tencent Holdings Ltd.",
+      "domain": "tencent.com",
+      "tags": []
+    },
+    {
+      "name": "Alibaba Group Holding Limited",
+      "domain": "alibabagroup.com",
+      "tags": []
+    },
+    {
+      "name": "Samsung Electronics Co., Ltd.",
+      "domain": "samsung.com",
+      "tags": []
+    },
+    {
+      "name": "Oracle Corporation",
+      "domain": "oracle.com",
+      "tags": []
+    },
+    {
+      "name": "Adobe Inc.",
+      "domain": "adobe.com",
+      "tags": []
+    },
+    {
+      "name": "Salesforce, Inc.",
+      "domain": "salesforce.com",
+      "tags": []
+    },
+    {
+      "name": "Cisco Systems, Inc.",
+      "domain": "cisco.com",
+      "tags": []
+    },
+    {
+      "name": "Intel Corporation",
+      "domain": "intel.com",
+      "tags": []
+    },
+    {
+      "name": "Broadcom Inc.",
+      "domain": "broadcom.com",
+      "tags": []
+    },
+    {
+      "name": "ASML Holding N.V.",
+      "domain": "asml.com",
+      "tags": []
+    },
+    {
+      "name": "SAP SE",
+      "domain": "sap.com",
+      "tags": []
+    },
+    {
+      "name": "Qualcomm Incorporated",
+      "domain": "qualcomm.com",
+      "tags": []
+    },
+    {
+      "name": "Netflix, Inc.",
+      "domain": "netflix.com",
+      "tags": []
+    },
+    {
+      "name": "Advanced Micro Devices, Inc.",
+      "domain": "amd.com",
+      "tags": []
+    },
+    {
+      "name": "Sony Group Corporation",
+      "domain": "sony.com",
+      "tags": []
+    },
+    {
+      "name": "International Business Machines Corporation (IBM)",
+      "domain": "ibm.com",
+      "tags": []
+    },
+    {
+      "name": "Intuit Inc.",
+      "domain": "intuit.com",
+      "tags": []
+    },
+    {
+      "name": "Applied Materials, Inc.",
+      "domain": "amat.com",
+      "tags": []
+    },
+    {
+      "name": "Texas Instruments Incorporated",
+      "domain": "ti.com",
+      "tags": []
+    },
+    {
+      "name": "ServiceNow, Inc.",
+      "domain": "servicenow.com",
+      "tags": []
+    },
+    {
+      "name": "Micron Technology, Inc.",
+      "domain": "micron.com",
+      "tags": []
+    },
+    {
+      "name": "Lam Research Corporation",
+      "domain": "lamresearch.com",
+      "tags": []
+    },
+    {
+      "name": "Booking Holdings Inc.",
+      "domain": "bookingholdings.com",
+      "tags": []
+    },
+    {
+      "name": "PayPal Holdings, Inc.",
+      "domain": "paypal.com",
+      "tags": []
+    },
+    {
+      "name": "Shopify Inc.",
+      "domain": "shopify.com",
+      "tags": []
+    },
+    {
+      "name": "Zoom Video Communications, Inc.",
+      "domain": "zoom.us",
+      "tags": []
+    },
+    {
+      "name": "Square, Inc. (Block)",
+      "domain": "squareup.com",
+      "tags": []
+    },
+    {
+      "name": "Airbnb, Inc.",
+      "domain": "airbnb.com",
+      "tags": []
+    },
+    {
+      "name": "Snap Inc.",
+      "domain": "snap.com",
+      "tags": []
+    },
+    {
+      "name": "Twitter, Inc. (X)",
+      "domain": "twitter.com",
+      "tags": []
+    },
+    {
+      "name": "Spotify Technology S.A.",
+      "domain": "spotify.com",
+      "tags": []
+    },
+    {
+      "name": "Uber Technologies, Inc.",
+      "domain": "uber.com",
+      "tags": []
+    },
+    {
+      "name": "DoorDash, Inc.",
+      "domain": "doordash.com",
+      "tags": []
+    },
+    {
+      "name": "Coinbase Global, Inc.",
+      "domain": "coinbase.com",
+      "tags": []
+    },
+    {
+      "name": "Roblox Corporation",
+      "domain": "roblox.com",
+      "tags": []
+    },
+    {
+      "name": "Datadog, Inc.",
+      "domain": "datadoghq.com",
+      "tags": []
+    },
+    {
+      "name": "CrowdStrike Holdings, Inc.",
+      "domain": "crowdstrike.com",
+      "tags": []
+    },
+    {
+      "name": "Palo Alto Networks, Inc.",
+      "domain": "paloaltonetworks.com",
+      "tags": []
+    },
+    {
+      "name": "Fortinet, Inc.",
+      "domain": "fortinet.com",
+      "tags": []
+    },
+    {
+      "name": "Zscaler, Inc.",
+      "domain": "zscaler.com",
+      "tags": []
+    },
+    {
+      "name": "Snowflake Inc.",
+      "domain": "snowflake.com",
+      "tags": []
+    },
+    {
+      "name": "Atlassian Corporation Plc",
+      "domain": "atlassian.com",
+      "tags": []
+    },
+    {
+      "name": "Workday, Inc.",
+      "domain": "workday.com",
+      "tags": []
+    },
+    {
+      "name": "DocuSign, Inc.",
+      "domain": "docusign.com",
+      "tags": []
+    },
+    {
+      "name": "Twilio Inc.",
+      "domain": "twilio.com",
+      "tags": []
+    },
+    {
+      "name": "Okta, Inc.",
+      "domain": "okta.com",
+      "tags": []
+    },
+    {
+        "name": "Splunk Inc.",
+        "domain": "splunk.com",
+        "tags": []
+    },
+    {
+        "name": "Autodesk, Inc.",
+        "domain": "autodesk.com",
+        "tags": []
+    },
+    {
+        "name": "VMware, Inc.",
+        "domain": "vmware.com",
+        "tags": []
+    },
+    {
+        "name": "Dell Technologies Inc.",
+        "domain": "dell.com",
+        "tags": []
+    },
+    {
+        "name": "HP Inc.",
+        "domain": "hp.com",
+        "tags": []
+    },
+    {
+        "name": "Lenovo Group Limited",
+        "domain": "lenovo.com",
+        "tags": []
+    },
+    {
+        "name": "Accenture plc",
+        "domain": "accenture.com",
+        "tags": []
+    },
+    {
+        "name": "Capgemini SE",
+        "domain": "capgemini.com",
+        "tags": []
+    },
+    {
+        "name": "Infosys Limited",
+        "domain": "infosys.com",
+        "tags": []
+    },
+    {
+        "name": "Tata Consultancy Services Limited",
+        "domain": "tcs.com",
+        "tags": []
+    },
+    {
+        "name": "Cognizant Technology Solutions Corporation",
+        "domain": "cognizant.com",
+        "tags": []
+    },
+    {
+        "name": "Wipro Limited",
+        "domain": "wipro.com",
+        "tags": []
+    },
+    {
+        "name": "HCL Technologies Limited",
+        "domain": "hcltech.com",
+        "tags": []
+    },
+    {
+        "name": "Ericsson",
+        "domain": "ericsson.com",
+        "tags": []
+    },
+    {
+        "name": "Nokia Corporation",
+        "domain": "nokia.com",
+        "tags": []
+    },
+    {
+        "name": "Panasonic Corporation",
+        "domain": "panasonic.com",
+        "tags": []
+    },
+    {
+        "name": "LG Electronics Inc.",
+        "domain": "lg.com",
+        "tags": []
+    },
+    {
+        "name": "Xiaomi Corporation",
+        "domain": "mi.com",
+        "tags": []
+    },
+    {
+        "name": "Huawei Technologies Co., Ltd.",
+        "domain": "huawei.com",
+        "tags": []
+    },
+    {
+        "name": "ZTE Corporation",
+        "domain": "zte.com.cn",
+        "tags": []
+    },
+    {
+        "name": "Foxconn (Hon Hai Precision Industry Co., Ltd.)",
+        "domain": "foxconn.com",
+        "tags": []
+    },
+    {
+        "name": "Pegatron Corporation",
+        "domain": "pegatroncorp.com",
+        "tags": []
+    },
+    {
+        "name": "Quanta Computer Inc.",
+        "domain": "quantatw.com",
+        "tags": []
+    },
+    {
+        "name": "Compal Electronics, Inc.",
+        "domain": "compal.com",
+        "tags": []
+    },
+    {
+        "name": "Wistron Corporation",
+        "domain": "wistron.com",
+        "tags": []
+    },
+    {
+        "name": "Inventec Corporation",
+        "domain": "inventec.com",
+        "tags": []
+    },
+    {
+        "name": "Luxshare Precision Industry Co., Ltd.",
+        "domain": "luxshare-ict.com",
+        "tags": []
+    },
+    {
+        "name": "Goertek Inc.",
+        "domain": "goertek.com",
+        "tags": []
+    },
+    {
+        "name": "BYD Company Ltd.",
+        "domain": "byd.com",
+        "tags": []
+    },
+    {
+        "name": "Contemporary Amperex Technology Co. Limited (CATL)",
+        "domain": "catl.com",
+        "tags": []
+    },
+    {
+        "name": "LG Chem Ltd.",
+        "domain": "lgchem.com",
+        "tags": []
+    },
+    {
+        "name": "SK Hynix Inc.",
+        "domain": "skhynix.com",
+        "tags": []
+    },
+    {
+        "name": "Kioxia Holdings Corporation",
+        "domain": "kioxia.com",
+        "tags": []
+    },
+    {
+        "name": "Western Digital Corporation",
+        "domain": "westerndigital.com",
+        "tags": []
+    },
+    {
+        "name": "Seagate Technology Holdings plc",
+        "domain": "seagate.com",
+        "tags": []
+    },
+    {
+        "name": "Corning Incorporated",
+        "domain": "corning.com",
+        "tags": []
+    },
+    {
+        "name": "Analog Devices, Inc.",
+        "domain": "analog.com",
+        "tags": []
+    },
+    {
+        "name": "NXP Semiconductors N.V.",
+        "domain": "nxp.com",
+        "tags": []
+    },
+    {
+        "name": "Infineon Technologies AG",
+        "domain": "infineon.com",
+        "tags": []
+    },
+    {
+        "name": "STMicroelectronics N.V.",
+        "domain": "st.com",
+        "tags": []
+    },
+    {
+        "name": "Renesas Electronics Corporation",
+        "domain": "renesas.com",
+        "tags": []
+    },
+    {
+        "name": "MediaTek Inc.",
+        "domain": "mediatek.com",
+        "tags": []
+    },
+    {
+        "name": "Marvell Technology, Inc.",
+        "domain": "marvell.com",
+        "tags": []
+    },
+    {
+        "name": "Synopsys, Inc.",
+        "domain": "synopsys.com",
+        "tags": []
+    },
+    {
+        "name": "Cadence Design Systems, Inc.",
+        "domain": "cadence.com",
+        "tags": []
+    },
+    {
+        "name": "Ansys, Inc.",
+        "domain": "ansys.com",
+        "tags": []
+    },
+    {
+        "name": "Dassault Systèmes SE",
+        "domain": "3ds.com",
+        "tags": []
+    },
+    {
+        "name": "Siemens AG",
+        "domain": "siemens.com",
+        "tags": []
+    },
+    {
+        "name": "Schneider Electric SE",
+        "domain": "se.com",
+        "tags": []
+    },
+    {
+        "name": "ABB Ltd",
+        "domain": "global.abb",
+        "tags": []
+    },
+    {
+        "name": "Honeywell International Inc.",
+        "domain": "honeywell.com",
+        "tags": []
+    },
+    {
+        "name": "General Electric Company",
+        "domain": "ge.com",
+        "tags": []
+    },
+    {
+        "name": "Emerson Electric Co.",
+        "domain": "emerson.com",
+        "tags": []
+    },
+    {
+        "name": "Johnson Controls International plc",
+        "domain": "johnsoncontrols.com",
+        "tags": []
+    },
+    {
+        "name": "Eaton Corporation plc",
+        "domain": "eaton.com",
+        "tags": []
+    },
+    {
+        "name": "Rockwell Automation, Inc.",
+        "domain": "rockwellautomation.com",
+        "tags": []
+    },
+    {
+        "name": "Keysight Technologies, Inc.",
+        "domain": "keysight.com",
+        "tags": []
+    },
+    {
+        "name": "Agilent Technologies, Inc.",
+        "domain": "agilent.com",
+        "tags": []
+    },
+    {
+        "name": "Danaher Corporation",
+        "domain": "danaher.com",
+        "tags": []
+    },
+    {
+        "name": "Roper Technologies, Inc.",
+        "domain": "ropertech.com",
+        "tags": []
+    },
+    {
+        "name": "TE Connectivity Ltd.",
+        "domain": "te.com",
+        "tags": []
+    },
+    {
+        "name": "Amphenol Corporation",
+        "domain": "amphenol.com",
+        "tags": []
+    },
+    {
+        "name": "Molex, LLC",
+        "domain": "molex.com",
+        "tags": []
+    },
+    {
+        "name": "Yazaki Corporation",
+        "domain": "yazaki-group.com",
+        "tags": []
+    },
+    {
+        "name": "Sumitomo Electric Industries, Ltd.",
+        "domain": "sumitomoelectric.com",
+        "tags": []
+    },
+    {
+        "name": "Furukawa Electric Co., Ltd.",
+        "domain": "furukawa.co.jp",
+        "tags": []
+    },
+    {
+        "name": "Prysmian Group",
+        "domain": "prysmiangroup.com",
+        "tags": []
+    },
+    {
+        "name": "Corning Incorporated",
+        "domain": "corning.com",
+        "tags": []
+    },
+    {
+        "name": "Fujitsu Limited",
+        "domain": "fujitsu.com",
+        "tags": []
+    },
+    {
+        "name": "NEC Corporation",
+        "domain": "nec.com",
+        "tags": []
+    },
+    {
+        "name": "Hitachi, Ltd.",
+        "domain": "hitachi.com",
+        "tags": []
+    },
+    {
+        "name": "Mitsubishi Electric Corporation",
+        "domain": "mitsubishielectric.com",
+        "tags": []
+    },
+    {
+        "name": "Toshiba Corporation",
+        "domain": "global.toshiba",
+        "tags": []
+    },
+    {
+        "name": "Canon Inc.",
+        "domain": "global.canon",
+        "tags": []
+    },
+    {
+        "name": "Ricoh Company, Ltd.",
+        "domain": "ricoh.com",
+        "tags": []
+    },
+    {
+        "name": "Xerox Holdings Corporation",
+        "domain": "xerox.com",
+        "tags": []
+    },
+    {
+        "name": "Seiko Epson Corporation",
+        "domain": "epson.com",
+        "tags": []
+    },
+    {
+        "name": "Brother Industries, Ltd.",
+        "domain": "brother.com",
+        "tags": []
+    },
+    {
+        "name": "Kyocera Corporation",
+        "domain": "global.kyocera.com",
+        "tags": []
+    },
+    {
+        "name": "Murata Manufacturing Co., Ltd.",
+        "domain": "murata.com",
+        "tags": []
+    },
+    {
+        "name": "TDK Corporation",
+        "domain": "tdk.com",
+        "tags": []
+    },
+    {
+        "name": "Taiyo Yuden Co., Ltd.",
+        "domain": "yuden.co.jp",
+        "tags": []
+    },
+    {
+        "name": "Rohm Co., Ltd.",
+        "domain": "rohm.com",
+        "tags": []
+    },
+    {
+        "name": "onsemi",
+        "domain": "onsemi.com",
+        "tags": []
+    },
+    {
+        "name": "Microchip Technology Inc.",
+        "domain": "microchip.com",
+        "tags": []
+    },
+    {
+        "name": "Skyworks Solutions, Inc.",
+        "domain": "skyworksinc.com",
+        "tags": []
+    },
+    {
+      "name": "Qorvo, Inc.",
+      "domain": "qorvo.com",
+      "tags": []
+    }
+  ]
+}
