@@ -60,7 +60,7 @@ export function PersonaConfigurationCard({ persona, onAddThisPersona }: PersonaC
                   animate={{ opacity: 1, scale: 1 }}
                   className="group relative"
                 >
-                  <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-800 border border-blue-200">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200">
                     {title}
                   </span>
                 </motion.div>

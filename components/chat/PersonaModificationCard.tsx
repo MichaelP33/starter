@@ -106,7 +106,7 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
         onClick={() => handleScopeChange(scope)}
         disabled={isRewriting}
         className={`
-          inline-flex items-center px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 
+          inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 
           ${isSelected
             ? 'bg-purple-600 text-white shadow-sm'
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -256,7 +256,7 @@ export function PersonaModificationCard({ persona, onSave, onCancel }: PersonaMo
                         transition={{ delay: index * 0.05 }}
                         className="group relative"
                       >
-                        <span className="inline-flex items-center px-3 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-800 border border-blue-200">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200">
                           {title}
                           <button
                             onClick={() => handleRemoveTitle(index)}
