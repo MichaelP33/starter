@@ -506,6 +506,7 @@ export function ChatInterface() {
           });
           setQualifiedCompanies(allCompanies);
 
+          // Show confirmation/results screen, do NOT advance yet
           setShowAgentConfirmation(true);
           setShowTestResults(true);
         }
@@ -551,6 +552,7 @@ export function ChatInterface() {
           setIsTestingAgent(false);
           setLoadingStep(0);
           setAutoTestInProgress(false);
+          // Show confirmation/results screen, do NOT advance yet
           setShowAgentConfirmation(true);
           setShowTestResults(true);
           setCurrentStep('agent-details');
@@ -1463,7 +1465,7 @@ export function ChatInterface() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {showAgentConfirmation && (
+              {showAgentConfirmation ? (
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <p className="text-lg font-medium">
@@ -1492,20 +1494,16 @@ export function ChatInterface() {
                     </Button>
                   </div>
                 </div>
-              )}
-            
-              {!(showAgentConfirmation || showTestResults) && (
+              ) : (
                 <>
                   <div className="space-y-3">
                     <p className="text-lg font-medium text-primary">
                       Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
                     </p>
                   </div>
-
                   <div className="flex flex-wrap gap-3">
                     {agentActions.map(renderActionChip)}
                   </div>
-
                   <div className="pt-4">
                     <ChatInput
                       onSend={handleSend}
