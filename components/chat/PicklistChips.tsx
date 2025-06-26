@@ -7,14 +7,22 @@ const LIGHT_CATEGORY_COLORS: Record<string, string> = {
   "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
   "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
   "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
-  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200"
+  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200",
+  "Data Engineering": "bg-purple-100 text-purple-800 border border-purple-200",
+  "Data Science": "bg-blue-100 text-blue-800 border border-blue-200",
+  "Analytics": "bg-green-100 text-green-800 border border-green-200",
+  "Data Leadership": "bg-orange-100 text-orange-800 border border-orange-200"
 };
 
 const DARK_CATEGORY_COLORS: Record<string, string> = {
   "Marketing Leadership": "bg-purple-600 text-white border-purple-700",
   "Marketing Operations": "bg-blue-600 text-white border-blue-700",
   "Growth Marketing": "bg-green-600 text-white border-green-700",
-  "Digital Marketing": "bg-orange-600 text-white border-orange-700"
+  "Digital Marketing": "bg-orange-600 text-white border-orange-700",
+  "Data Engineering": "bg-purple-600 text-white border-purple-700",
+  "Data Science": "bg-blue-600 text-white border-blue-700",
+  "Analytics": "bg-green-600 text-white border-green-700",
+  "Data Leadership": "bg-orange-600 text-white border-orange-700"
 };
 
 interface PicklistChipsProps {

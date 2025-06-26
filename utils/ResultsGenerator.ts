@@ -226,6 +226,7 @@ export class ResultsGenerator {
   // 1. Define multiple template variations for qualified/unqualified results
   private MARKETING_HIRING_QUALIFIED_VARIATIONS = [
     {
+      selectedOptions: ["Marketing Leadership", "Growth Marketing", "Digital Marketing"],
       whyQualified: "Yes, multiple senior marketing roles including Marketing Operations Manager and Director of Growth Marketing",
       researchSummary: "[COMPANY] currently has 3 open marketing leadership positions focused on data-driven marketing. Key roles include Marketing Operations Manager responsible for martech stack optimization and lead routing, Director of Growth Marketing overseeing acquisition channels and conversion optimization, and Senior Marketing Technology Manager managing CDP implementation and data integration.",
       evidenceTemplates: [
@@ -235,6 +236,7 @@ export class ResultsGenerator {
       ]
     },
     {
+      selectedOptions: ["Marketing Operations", "Growth Marketing"],
       whyQualified: "Yes, with positions like Senior Performance Marketer, Growth Marketing Lead, and Marketing Analytics Manager",
       researchSummary: "[COMPANY] is expanding their performance marketing team with data-focused roles. They're hiring a Senior Performance Marketer to lead growth efforts and digital marketing strategies, a Growth Marketing Lead for acquisition channel optimization, and a Marketing Analytics Manager to build data-driven marketing measurement capabilities.",
       evidenceTemplates: [
@@ -244,6 +246,7 @@ export class ResultsGenerator {
       ]
     },
     {
+      selectedOptions: ["Marketing Leadership"],
       whyQualified: "Yes, Product Marketing Manager and senior leadership roles focusing on go-to-market strategies",
       researchSummary: "[COMPANY] has open senior marketing positions including Product Marketing Manager for GTM strategy development, Director of Marketing Strategy for cross-functional collaboration, and Head of Customer Marketing for lifecycle management. These roles emphasize strategic planning, market research, and data-driven decision making.",
       evidenceTemplates: [
@@ -256,6 +259,7 @@ export class ResultsGenerator {
 
   private MARKETING_HIRING_UNQUALIFIED_VARIATIONS = [
     {
+      selectedOptions: [],
       whyQualified: "No, only brand and creative roles currently posted",
       researchSummary: "[COMPANY]'s current marketing openings focus primarily on brand and creative functions rather than operations or data-driven roles. Available positions include Brand Designer for visual identity work, Content Marketing Specialist for blog content creation, and Creative Marketing Coordinator for campaign asset development.",
       evidenceTemplates: [
@@ -265,6 +269,7 @@ export class ResultsGenerator {
       ]
     },
     {
+      selectedOptions: [],
       whyQualified: "No, no marketing leadership or operations positions currently open",
       researchSummary: "[COMPANY] shows no current openings for marketing leadership, operations, or growth marketing roles. Their recent job postings focus on engineering and product roles, with no marketing team expansion evident. The company appears to be in a technical scaling phase rather than marketing operations investment.",
       evidenceTemplates: [
@@ -274,6 +279,7 @@ export class ResultsGenerator {
       ]
     },
     {
+      selectedOptions: [],
       whyQualified: "No, only junior-level and internship marketing roles available",
       researchSummary: "[COMPANY]'s current marketing positions are primarily entry-level roles that don't indicate senior marketing operations investment. Available roles include Marketing Intern for campaign support, Junior Marketing Associate for administrative tasks, and Marketing Coordinator for event logistics.",
       evidenceTemplates: [
@@ -286,6 +292,7 @@ export class ResultsGenerator {
 
   private MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS = [
     {
+      selectedOptions: ["Marketing Operations"],
       whyQualified: "Needs Review: Junior marketing roles found, seniority unclear",
       researchSummary: "As of June 18, 2025, [COMPANY] has entry-level marketing roles including Marketing Intern, Junior Marketing Associate, and Marketing Coordinator, which don't indicate senior operations or leadership investment.",
       evidenceTemplates: [
@@ -295,12 +302,123 @@ export class ResultsGenerator {
       ]
     },
     {
+      selectedOptions: ["Growth Marketing"],
       whyQualified: "Needs Review: Marketing roles found, but may not be senior enough",
       researchSummary: "As of June 18, 2025, [COMPANY] is hiring for Marketing Specialist and Digital Marketing roles, but the seniority level and scope of responsibilities need review to determine if they match senior operations criteria.",
       evidenceTemplates: [
         "Marketing Specialist - general marketing support",
         "Digital Marketing - entry to mid-level role",
         "Marketing Associate - junior position"
+      ]
+    }
+  ];
+
+  private DATA_HIRING_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["Data Engineering", "Data Science", "Analytics"],
+      whyQualified: "Yes, hiring for Staff Data Engineer, Principal Data Scientist, and Senior Analytics Engineer roles as part of a major data team expansion.",
+      researchSummary: "[COMPANY] is scaling their data team with multiple senior-level openings. The company is investing in a new data platform, advanced analytics, and machine learning initiatives.",
+      evidenceTemplates: [
+        "Staff Data Engineer - building distributed data pipelines for real-time analytics and reporting.",
+        "Principal Data Scientist - leading machine learning projects to drive product innovation.",
+        "Senior Analytics Engineer - developing BI solutions and self-serve dashboards for business teams.",
+        "Data Team Expansion - 4 new roles posted in the last 30 days, signaling rapid growth."
+      ]
+    },
+    {
+      selectedOptions: ["Data Engineering", "Data Leadership"],
+      whyQualified: "Yes, hiring for VP of Data and Lead Data Engineer to drive data strategy and infrastructure modernization.",
+      researchSummary: "[COMPANY] is investing in data leadership and engineering. Recent postings include VP of Data and Lead Data Engineer, with a focus on cloud migration and data governance.",
+      evidenceTemplates: [
+        "VP of Data - overseeing company-wide data strategy and governance initiatives.",
+        "Lead Data Engineer - leading cloud data migration and platform modernization.",
+        "Data Platform Architect - designing scalable systems for analytics and AI workloads."
+      ]
+    },
+    {
+      selectedOptions: ["Analytics"],
+      whyQualified: "Yes, hiring for Analytics Manager, BI Developer, and Data Visualization Specialist to support company-wide analytics.",
+      researchSummary: "[COMPANY] is expanding analytics capabilities with new roles focused on business intelligence and data visualization.",
+      evidenceTemplates: [
+        "Analytics Manager - building a centralized analytics function for all business units.",
+        "BI Developer - creating dashboards and automated reporting pipelines.",
+        "Data Visualization Specialist - delivering advanced reporting and executive insights."
+      ]
+    }
+  ];
+
+  private DATA_HIRING_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No data team hiring: all open roles are in sales, marketing, or support.",
+      researchSummary: "[COMPANY] has no open positions for data engineering, science, or analytics. Current job postings are focused on other departments.",
+      evidenceTemplates: [
+        "Sales Development Rep - expanding sales team to drive new business.",
+        "Customer Support Specialist - focus on customer retention and support.",
+        "No data roles found in the last 60 days across all job boards."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Only hiring in IT and operations, no data team expansion evident.",
+      researchSummary: "[COMPANY]'s current openings are for IT support and general operations, with no data team growth.",
+      evidenceTemplates: [
+        "IT Support Analyst - maintaining internal systems and help desk operations.",
+        "Operations Coordinator - supporting logistics and office management.",
+        "No data engineering or analytics postings in recent hiring cycles."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Data team appears stable and fully staffed, no new hiring activity.",
+      researchSummary: "[COMPANY] has a stable data team with no current hiring for data roles. Recent blog posts highlight existing team members only.",
+      evidenceTemplates: [
+        "No new data team positions posted in the last quarter.",
+        "Stable data org - highlighting current team in company updates.",
+        "Employee spotlight: existing data team members featured in blog."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Hiring only in engineering, but not for data roles.",
+      researchSummary: "[COMPANY] is hiring for backend and frontend engineers, but no data-specific positions are open.",
+      evidenceTemplates: [
+        "Backend Engineer - building product features and APIs.",
+        "Frontend Developer - focusing on UI/UX improvements.",
+        "No data engineering or analytics jobs in current hiring round."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Focus on other technical areas, not data.",
+      researchSummary: "[COMPANY] is investing in DevOps and cloud infrastructure, but no data team hiring is evident.",
+      evidenceTemplates: [
+        "DevOps Engineer - automating cloud infrastructure and deployments.",
+        "Cloud Architect - leading AWS/GCP migration projects.",
+        "No data roles in current hiring or company announcements."
+      ]
+    }
+  ];
+
+  private DATA_HIRING_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Analytics"],
+      whyQualified: "Needs Review: Hiring for junior analytics roles, unclear if expanding senior team.",
+      researchSummary: "[COMPANY] is hiring for Junior Data Analyst and Analytics Assistant, but no senior data roles are posted. Some evidence suggests possible future expansion.",
+      evidenceTemplates: [
+        "Junior Data Analyst - supporting ad hoc reporting and data entry.",
+        "Analytics Assistant - assisting with basic dashboard updates.",
+        "Recent blog post hints at future data hiring and analytics investment."
+      ]
+    },
+    {
+      selectedOptions: ["Data Science"],
+      whyQualified: "Needs Review: Data science roles found, but may not be core team; mixed signals in evidence.",
+      researchSummary: "[COMPANY] is hiring for Data Science Intern and Research Assistant, but also has open roles in marketing and product. Human review needed to determine if data team is expanding.",
+      evidenceTemplates: [
+        "Data Science Intern - working on short-term research projects.",
+        "Research Assistant - supporting temporary data initiatives.",
+        "Product Marketing Specialist - non-data role, but listed alongside data positions."
       ]
     }
   ];
@@ -343,84 +461,9 @@ export class ResultsGenerator {
       const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
       if (isPicklist) {
         // Picklist qualified variations
-        const picklistQualifiedVariations = [
-          {
-            selectedOptions: ["Marketing Leadership", "Growth Marketing", "Digital Marketing"],
-            whyQualified: "[COMPANY] is hiring for Digital Marketing, Growth Marketing, and Marketing Leadership roles",
-            researchSummary: "As of June 18, 2025, [COMPANY] is actively hiring for several marketing positions: Digital Marketing Lead focusing on establishing digital marketing discipline including SEO and conversion optimization; Senior Performance Marketer responsible for leading growth efforts and digital marketing strategies; Head of Enterprise Marketing responsible for building enterprise marketing strategy.",
-            evidenceTemplates: [
-              "Digital Marketing Lead - SEO and conversion optimization",
-              "Senior Performance Marketer - growth and digital strategies",
-              "Head of Enterprise Marketing - enterprise strategy"
-            ]
-          },
-          {
-            selectedOptions: ["Marketing Operations", "Growth Marketing"],
-            whyQualified: "[COMPANY] is hiring for Marketing Operations and Growth Marketing roles",
-            researchSummary: "As of June 18, 2025, [COMPANY] is expanding their marketing operations with Marketing Operations Manager focusing on martech stack optimization, Growth Marketing Lead for acquisition channel management, and Marketing Analytics Manager for data-driven measurement capabilities.",
-            evidenceTemplates: [
-              "Marketing Operations Manager - martech stack optimization",
-              "Growth Marketing Lead - acquisition channel management",
-              "Marketing Analytics Manager - data-driven measurement"
-            ]
-          },
-          {
-            selectedOptions: ["Marketing Leadership"],
-            whyQualified: "[COMPANY] is hiring for Marketing Leadership roles",
-            researchSummary: "As of June 18, 2025, [COMPANY] has senior marketing leadership positions including Director of Marketing Strategy, VP of Product Marketing, and Head of Customer Marketing, focusing on strategic planning and cross-functional collaboration.",
-            evidenceTemplates: [
-              "Director of Marketing Strategy - strategic planning",
-              "VP of Product Marketing - product strategy",
-              "Head of Customer Marketing - customer lifecycle"
-            ]
-          }
-        ];
-        // Picklist unqualified variations
-        const picklistUnqualifiedVariations = [
-          {
-            selectedOptions: [],
-            whyQualified: "No marketing roles in specified categories found",
-            researchSummary: "As of June 18, 2025, [COMPANY] shows no current openings for marketing leadership, operations, growth, or digital marketing roles. Recent job postings focus on engineering and product development.",
-            evidenceTemplates: [
-              "No marketing leadership positions found",
-              "Engineering and product roles prioritized",
-              "No evidence of marketing team expansion"
-            ]
-          },
-          {
-            selectedOptions: [],
-            whyQualified: "Only creative and content roles currently available",
-            researchSummary: "As of June 18, 2025, [COMPANY]'s marketing openings focus on creative and content functions rather than the specified categories. Available positions include Brand Designer, Content Creator, and Social Media Coordinator.",
-            evidenceTemplates: [
-              "Brand Designer - visual identity work",
-              "Content Creator - content development",
-              "Social Media Coordinator - social media management"
-            ]
-          }
-        ];
-        // Picklist needsReview variations (junior roles that need review)
-        const picklistNeedsReviewVariations = [
-          {
-            selectedOptions: ["Marketing Operations"],
-            whyQualified: "Junior marketing roles available but need seniority review",
-            researchSummary: "As of June 18, 2025, [COMPANY] has marketing roles including Marketing Coordinator and Junior Marketing Associate, but these are entry-level positions that may not indicate senior operations investment.",
-            evidenceTemplates: [
-              "Marketing Coordinator - entry-level coordination",
-              "Junior Marketing Associate - basic administrative tasks",
-              "Marketing Assistant - support role"
-            ]
-          },
-          {
-            selectedOptions: ["Growth Marketing"],
-            whyQualified: "Marketing roles found but seniority level unclear",
-            researchSummary: "As of June 18, 2025, [COMPANY] is hiring for Marketing Specialist and Digital Marketing roles, but the seniority level and scope of responsibilities need review to determine if they match senior operations criteria.",
-            evidenceTemplates: [
-              "Marketing Specialist - general marketing support",
-              "Digital Marketing - entry to mid-level role",
-              "Marketing Associate - junior position"
-            ]
-          }
-        ];
+        const picklistQualifiedVariations = this.MARKETING_HIRING_QUALIFIED_VARIATIONS;
+        const picklistUnqualifiedVariations = this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS;
+        const picklistNeedsReviewVariations = this.MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS;
         // Assign qualified variations in order, cycling if needed
         const qualifiedResults = qualifiedCompanies.map((company, idx) => {
           const template = picklistQualifiedVariations[idx % picklistQualifiedVariations.length];
@@ -654,6 +697,152 @@ export class ResultsGenerator {
       
       // Return all results (3 qualified + 2 needsReview + 5 unqualified)
       return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+    }
+
+    if (agentId === 'data-hiring') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist) {
+        // Picklist qualified variations
+        const picklistQualifiedVariations = this.DATA_HIRING_QUALIFIED_VARIATIONS;
+        const picklistUnqualifiedVariations = this.DATA_HIRING_UNQUALIFIED_VARIATIONS;
+        const picklistNeedsReviewVariations = this.DATA_HIRING_NEEDS_REVIEW_VARIATIONS;
+        // Assign qualified variations in order, cycling if needed
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = picklistQualifiedVariations[idx % picklistQualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'job_posting',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'LinkedIn Jobs'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['LinkedIn Jobs', 'Company Website'],
+            selectedOptions: template.selectedOptions,
+            questionType: 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['LinkedIn Jobs', 'Company Website']
+            },
+            assignedPersonas: []
+          };
+        });
+        // Assign needsReview variations in order, cycling if needed
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = picklistNeedsReviewVariations[idx % picklistNeedsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'job_posting',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'LinkedIn Jobs'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['LinkedIn Jobs', 'Company Website'],
+            selectedOptions: template.selectedOptions,
+            questionType: 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['LinkedIn Jobs', 'Company Website']
+            },
+            assignedPersonas: []
+          };
+        });
+        // Assign unqualified variations in order, cycling if needed
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = picklistUnqualifiedVariations[idx % picklistUnqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'job_posting',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Company Careers Page'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Company Website'],
+            selectedOptions: template.selectedOptions,
+            questionType: 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Company Website']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+      // Boolean logic for data-hiring (fallback to generic for now)
+      // You can add similar logic for Boolean if needed
     }
 
     return targetCompanies.map(company => {

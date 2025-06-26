@@ -224,7 +224,7 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
         showStats={true}
         qualifiedCount={qualifiedCount}
         totalCount={allTestedCount}
-        responseOptions={agent.questionType === 'Picklist' ? defaultResponseOptions : undefined}
+        responseOptions={agent.questionType === 'Picklist' ? (agent.responseOptions || defaultResponseOptions) : undefined}
       />
 
       {/* Modern Segmented Control Tabs */}

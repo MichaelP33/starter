@@ -41,7 +41,9 @@
             "Boolean": "Does the company have any open positions for Data Engineers, Data Scientists, or Analytics roles?",
             "Number": "How many data-related positions (Data Engineers, Data Scientists, Analytics roles) are currently open at this company?",
             "Picklist": "What types of data roles is the company currently hiring for? Categories: Data Engineering, Data Science, Analytics, Data Leadership."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Data Engineering", "Data Science", "Analytics", "Data Leadership"]
         },
         {
           "id": "leadership-changes",

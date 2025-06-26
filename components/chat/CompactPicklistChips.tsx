@@ -13,7 +13,11 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
   "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
   "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
-  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200"
+  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200",
+  "Data Engineering": "bg-purple-100 text-purple-800 border border-purple-200",
+  "Data Science": "bg-blue-100 text-blue-800 border border-blue-200",
+  "Analytics": "bg-green-100 text-green-800 border border-green-200",
+  "Data Leadership": "bg-orange-100 text-orange-800 border border-orange-200"
 };
 
 const MAX_CHARS = 40; // Only truncate if text exceeds 40 chars

@@ -46,14 +46,31 @@ const sourceIcons = {
   "Conference Presentations": FileText
 };
 
+// Helper function to get default response options based on agent ID
+const getDefaultResponseOptions = (agentId: string): string[] => {
+  switch (agentId) {
+    case 'marketing-hiring':
+      return ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"];
+    case 'data-hiring':
+      return ["Data Engineering", "Data Science", "Analytics", "Data Leadership"];
+    default:
+      return ["Option 1", "Option 2", "Option 3", "Option 4"];
+  }
+};
+
 export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave, onSourcesChange, allAgents }: AgentDetailsProps) {
+  // Debug logging
+  console.log('AgentDetails received agent:', agent);
+  console.log('Available question types:', agent.availableQuestionTypes);
+  console.log('Current question type:', agent.questionType);
+
   const [editMode, setEditMode] = useState(isEditMode);
   const [researchQuestion, setResearchQuestion] = useState(agent.researchQuestion);
   const [questionType, setQuestionType] = useState<QuestionType>(agent.questionType);
   const [isRewritingAgent, setIsRewritingAgent] = useState(false);
   const [responseOptions, setResponseOptions] = useState<string[]>(
     agent.questionType === 'Picklist'
-      ? agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]
+      ? agent.responseOptions || getDefaultResponseOptions(agent.id)
       : []
   );
   const [newOption, setNewOption] = useState("");
@@ -94,7 +111,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
     setResearchQuestion(agent.researchQuestion);
     setQuestionType(agent.questionType);
     if (agent.questionType === 'Picklist') {
-      setResponseOptions(agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+      setResponseOptions(agent.responseOptions || getDefaultResponseOptions(agent.id));
     } else {
       setResponseOptions([]);
     }
@@ -103,7 +120,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
   useEffect(() => {
     // Reset response options if question type changes
     if (questionType === 'Picklist' && responseOptions.length === 0) {
-      setResponseOptions(["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+      setResponseOptions(getDefaultResponseOptions(agent.id));
     }
     if (questionType !== 'Picklist') {
       setResponseOptions([]);
@@ -161,7 +178,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
       onSourcesChange(newSources);
     }
     if (newType === 'Picklist') {
-      setResponseOptions(agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+      setResponseOptions(getDefaultResponseOptions(agent.id));
     } else {
       setResponseOptions([]);
     }
@@ -347,6 +364,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
         {(showPicklistOptions || (!editMode && questionType === 'Picklist')) && (
           <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
             <h3 className="text-sm font-medium text-gray-600 mb-1">Picklist Response Options</h3>
+            {(() => { console.log('Rendering picklist chips with options:', responseOptions); return null; })()}
             {editMode ? (
               <>
                 <div className="flex flex-wrap gap-2 items-center">

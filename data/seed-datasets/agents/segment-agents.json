@@ -99,7 +99,9 @@
         "Boolean": "Does the company currently have any open positions for Data Engineers, Data Scientists, Analytics Engineers, or Data Platform roles?",
         "Number": "How many open data team positions does the company currently have posted on their careers page or LinkedIn?",
         "Picklist": "What types of data team roles is the company currently hiring for on their careers page or LinkedIn?"
-      }
+      },
+      "availableQuestionTypes": ["Boolean", "Picklist"],
+      "responseOptions": ["Data Engineering", "Data Science", "Analytics", "Data Leadership"]
     },
     {
       "id": "leadership-changes",

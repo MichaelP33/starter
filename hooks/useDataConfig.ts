@@ -68,6 +68,7 @@ export interface Agent {
     Picklist: string;
   };
   availableQuestionTypes?: QuestionType[];
+  responseOptions?: string[];
 }
 
 export type QuestionType = 'Boolean' | 'Number' | 'Picklist';
@@ -189,6 +190,16 @@ export function useDataConfig() {
               questionType: agent.questionType as QuestionType
             }))
           ) as Agent[];
+          
+          // Debug logging for data-hiring agent
+          const dataHiringAgent = allAgents.find(agent => agent.id === 'data-hiring');
+          if (dataHiringAgent) {
+            console.log('Raw data-hiring agent from agents.json:', dataHiringAgent);
+            console.log('Available question types:', dataHiringAgent.availableQuestionTypes);
+            console.log('Response options:', dataHiringAgent.responseOptions);
+          } else {
+            console.log('data-hiring agent not found in agents.json');
+          }
           
           // Load modified agents from localStorage and merge with original data
           const storedModifiedAgents = JSON.parse(localStorage.getItem('modifiedAgents') || '{}');
@@ -355,4 +366,5 @@ export interface Agent {
     Picklist: string;
   };
   availableQuestionTypes?: QuestionType[];
+  responseOptions?: string[];
 } 
