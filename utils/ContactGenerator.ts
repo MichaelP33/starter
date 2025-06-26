@@ -164,8 +164,8 @@ export class ContactGenerator {
     countPerPersona: number = 1
   ): Contact[] {
     const contacts: Contact[] = [];
-    
     for (const personaName of assignedPersonas) {
+      let personaContacts: Contact[] = [];
       for (let i = 0; i < countPerPersona; i++) {
         const name = this.generateName();
         const { status, days } = this.generateStatus();
@@ -182,10 +182,28 @@ export class ContactGenerator {
           companyId: company.id,
           personaMatch: personaName,
         };
-        contacts.push(contact);
+        personaContacts.push(contact);
       }
+      // Fallback: If for some reason no contacts were generated, force one
+      if (personaContacts.length === 0) {
+        const name = this.generateName();
+        const { status, days } = this.generateStatus();
+        personaContacts.push({
+          id: `contact-${Math.random().toString(36).substring(2, 9)}`,
+          name,
+          title: this.generateTitle(personaName),
+          email: this.generateEmail(name, company.companyName),
+          linkedin: this.generateLinkedIn(name),
+          matchScore: this.calculateMatchScore(),
+          status: status,
+          statusDays: days,
+          companyName: company.companyName,
+          companyId: company.id,
+          personaMatch: personaName,
+        });
+      }
+      contacts.push(...personaContacts);
     }
-
     return contacts;
   }
 
@@ -193,12 +211,29 @@ export class ContactGenerator {
     return companies.flatMap(company => {
       // For this generic method, we can't know the assigned personas.
       // We'll select a few random personas from the available list to generate contacts.
-      const randomPersonaNames = this.personas
-        .sort(() => 0.5 - Math.random())
-        .slice(0, contactsPerCompany)
-        .map(p => p.name);
-        
-      return this.generateContactsForCompany(company, randomPersonaNames, 1);
+      const personaNames = this.personas.map(p => p.name);
+      const contacts = this.generateContactsForCompany(company, personaNames, contactsPerCompany);
+      // Guarantee: If for some reason no contacts were generated, fallback to at least one contact for each persona
+      if (contacts.length === 0) {
+        return personaNames.map(personaName => {
+          const name = this.generateName();
+          const { status, days } = this.generateStatus();
+          return {
+            id: `contact-${Math.random().toString(36).substring(2, 9)}`,
+            name,
+            title: this.generateTitle(personaName),
+            email: this.generateEmail(name, company.companyName),
+            linkedin: this.generateLinkedIn(name),
+            matchScore: this.calculateMatchScore(),
+            status: status,
+            statusDays: days,
+            companyName: company.companyName,
+            companyId: company.id,
+            personaMatch: personaName,
+          };
+        });
+      }
+      return contacts;
     });
   }
 } 

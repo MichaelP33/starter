@@ -32,7 +32,7 @@
       "categoryId": "hiring",
       "title": "Marketing Team Hiring?",
       "description": "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
-      "researchQuestion": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+      "researchQuestion": "Is the company currently hiring for data-driven marketing roles such as Marketing Operations, Growth Marketing, or Marketing Leadership positions?",
       "questionType": "Boolean",
       "sources": ["Company Career Page", "LinkedIn Jobs"],
       "segmentRelevance": "Companies hiring marketing roles likely have budget and need better customer data infrastructure",
@@ -59,7 +59,7 @@
         ]
       },
       "rewriteTemplates": {
-        "Boolean": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+        "Boolean": "Is the company currently hiring for data-driven marketing roles such as Marketing Operations, Growth Marketing, or Marketing Leadership positions?",
         "Number": "How many open marketing positions does the company currently have posted on their careers page or LinkedIn?",
         "Picklist": "What types of marketing roles is the company currently hiring for on their careers page or LinkedIn?"
       }

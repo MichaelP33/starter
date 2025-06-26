@@ -21,11 +21,12 @@ interface PicklistChipsProps {
   options: string[];
   selectedOptions?: string[];
   onToggle?: (option: string, selected: boolean) => void;
+  onRemove?: (option: string) => void;
   className?: string;
-  variant?: 'default' | 'source'; // 'default' for picklist, 'source' for data source chips
+  variant?: 'default' | 'source' | 'qualification'; // add 'qualification' for picklist qualification selection
 }
 
-const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions, onToggle, className, variant = 'default' }) => {
+const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions, onToggle, onRemove, className, variant = 'default' }) => {
   console.log('[PicklistChips] Rendering with options:', options, 'selectedOptions:', selectedOptions, 'variant:', variant);
   const isToggleable = typeof selectedOptions !== 'undefined' && typeof onToggle === 'function';
   const [internalSelected, setInternalSelected] = useState<string[]>(selectedOptions || []);
@@ -54,15 +55,29 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
     return (
       <div className={cn("flex flex-wrap gap-2", className)}>
         {options.map((option) => (
-          <span
-            key={option}
-            className={cn(
-              "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm",
-              LIGHT_CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200"
+          <div key={option} className="group relative inline-flex items-center">
+            <span
+              className={cn(
+                "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm",
+                LIGHT_CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200",
+                typeof onRemove === 'function' ? 'pr-6' : ''
+              )}
+            >
+              {option}
+            </span>
+            {typeof onRemove === 'function' && (
+              <button
+                type="button"
+                aria-label={`Remove ${option}`}
+                onClick={() => onRemove(option)}
+                className="absolute right-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500"
+                tabIndex={-1}
+              >
+                <span className="sr-only">Remove</span>
+                <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L8 6.94l2.72-2.72a.75.75 0 1 1 1.06 1.06L9.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 1 1-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 0 1 0-1.06z" fill="currentColor"/></svg>
+              </button>
             )}
-          >
-            {option}
-          </span>
+          </div>
         ))}
       </div>
     );
@@ -73,49 +88,102 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
     <div className={cn("flex flex-wrap gap-2", className)}>
       {options.map((option) => {
         const isSelected = selected.includes(option);
+        const removable = typeof onRemove === 'function';
         if (variant === 'source') {
           // Data Source chip style
           return (
-            <motion.button
+            <motion.div
               key={option}
-              type="button"
-              onClick={() => handleToggle(option)}
-              aria-pressed={isSelected}
+              className="group relative"
               initial={false}
               animate={isSelected ? { scale: 1, opacity: 1 } : { scale: deselected === option ? 0.92 : 1, opacity: 1 }}
               transition={{ duration: 0.18 }}
-              className={cn(
-                "px-2 py-0.5 rounded-full text-xs font-semibold inline-flex items-center border transition-all duration-200 focus:outline-none cursor-pointer select-none",
-                isSelected
-                  ? "bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200"
-                  : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200",
-                "transition-all duration-200"
-              )}
             >
-              {option}
-            </motion.button>
+              <button
+                type="button"
+                onClick={() => handleToggle(option)}
+                aria-pressed={isSelected}
+                className={cn(
+                  "px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center border transition-all duration-200 focus:outline-none cursor-pointer select-none",
+                  isSelected
+                    ? "bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200"
+                    : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200",
+                  "transition-all duration-200",
+                  removable ? 'pr-6' : ''
+                )}
+              >
+                {option}
+              </button>
+              {removable && (
+                <button
+                  type="button"
+                  aria-label={`Remove ${option}`}
+                  onClick={() => onRemove(option)}
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500"
+                  tabIndex={-1}
+                >
+                  <span className="sr-only">Remove</span>
+                  <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L8 6.94l2.72-2.72a.75.75 0 1 1 1.06 1.06L9.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 1 1-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 0 1 0-1.06z" fill="currentColor"/></svg>
+                </button>
+              )}
+            </motion.div>
           );
-        } else {
-          // Default picklist chip style (with checkmark)
+        } else if (variant === 'qualification') {
+          // Qualification selection chips (green accent for selected)
           return (
             <button
               key={option}
               type="button"
               onClick={() => handleToggle(option)}
               className={cn(
-                "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200 focus:outline-none cursor-pointer",
+                "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200 focus:outline-none cursor-pointer pr-6",
                 isSelected
-                  ? `${DARK_CATEGORY_COLORS[option] || "bg-gray-600 text-white border-gray-700"} shadow-sm`
-                  : "bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:text-gray-800",
+                  ? "bg-green-100 text-green-800 border-green-300 hover:bg-green-200 shadow-sm"
+                  : "bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200",
                 "transition-all duration-200"
               )}
               aria-pressed={isSelected}
             >
               {isSelected && (
-                <Check className="w-3 h-3 mr-1 text-white" />
+                <Check className="w-3 h-3 mr-1 text-green-700" />
               )}
               {option}
             </button>
+          );
+        } else {
+          // Default picklist chip style (with checkmark)
+          return (
+            <div key={option} className="group relative inline-flex items-center">
+              <button
+                type="button"
+                onClick={() => handleToggle(option)}
+                className={cn(
+                  "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200 focus:outline-none cursor-pointer pr-6",
+                  isSelected
+                    ? `${DARK_CATEGORY_COLORS[option] || "bg-gray-600 text-white border-gray-700"} shadow-sm`
+                    : "bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:text-gray-800",
+                  "transition-all duration-200"
+                )}
+                aria-pressed={isSelected}
+              >
+                {isSelected && (
+                  <Check className="w-3 h-3 mr-1 text-white" />
+                )}
+                {option}
+              </button>
+              {removable && (
+                <button
+                  type="button"
+                  aria-label={`Remove ${option}`}
+                  onClick={() => onRemove(option)}
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500"
+                  tabIndex={-1}
+                >
+                  <span className="sr-only">Remove</span>
+                  <svg width="14" height="14" fill="none" viewBox="0 0 16 16"><path d="M4.22 4.22a.75.75 0 0 1 1.06 0L8 6.94l2.72-2.72a.75.75 0 1 1 1.06 1.06L9.06 8l2.72 2.72a.75.75 0 1 1-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 1 1-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 0 1 0-1.06z" fill="currentColor"/></svg>
+                </button>
+              )}
+            </div>
           );
         }
       })}

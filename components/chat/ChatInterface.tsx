@@ -578,14 +578,15 @@ export function ChatInterface() {
     // Update qualified companies with selected personas before proceeding
     if (selectedAgentConfig) {
       const personaNames = selectedPersonas.map(p => p.name);
+      const defaultPersona = personaNames[0] || 'Growth Marketing Leader';
       const updatedCompanies = selectedAgentConfig.qualifiedCompanies.map(c => ({
         ...c,
-        assignedPersonas: c.qualified ? personaNames : [],
+        assignedPersonas: c.qualified
+          ? (personaNames.length > 0 ? personaNames : [defaultPersona])
+          : [],
       }));
-      
       setSelectedAgentConfig(prev => prev ? { ...prev, qualifiedCompanies: updatedCompanies } : null);
       setQualifiedCompanies(updatedCompanies);
-
       console.log('---UPDATING QUALIFIED COs WITH PERSONAS---');
       console.log('Personas to assign:', personaNames);
       console.log('Updated companies:', updatedCompanies.filter(c => c.assignedPersonas.length > 0));
@@ -1511,18 +1512,6 @@ export function ChatInterface() {
                       placeholder="Choose above or ask about the agent..."
                     />
                   </div>
-                  {/* Debug section - remove in production */}
-                  <div className="pt-4 border-t border-gray-200">
-                    <p className="text-xs text-gray-500 mb-2">Debug Tools:</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearModifiedAgents}
-                      className="text-xs"
-                    >
-                      Clear Modified Agents
-                    </Button>
-                  </div>
                 </>
               )}
             </motion.div>
@@ -1662,6 +1651,7 @@ export function ChatInterface() {
                   agent={selectedAgent} 
                   isEditMode={isAgentEditMode}
                   icon={categories.find(c => c.id === selectedCategoryId)?.icon || "🤖"}
+                  allAgents={agents}
                   onSave={({ questionType, researchQuestion, selectedSources, responseOptions }) => {
                     const updatedAgent = selectedAgent ? {
                       ...selectedAgent,

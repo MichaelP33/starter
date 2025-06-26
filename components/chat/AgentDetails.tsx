@@ -14,6 +14,7 @@ interface AgentDetailsProps {
   icon?: string;
   onSave?: (updates: { questionType: QuestionType; researchQuestion: string; selectedSources: string[]; responseOptions?: string[] }) => void;
   onSourcesChange?: (sources: string[]) => void;
+  allAgents?: Agent[];
 }
 
 const questionTemplates: Record<QuestionType, string> = {
@@ -45,7 +46,7 @@ const sourceIcons = {
   "Conference Presentations": FileText
 };
 
-export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave, onSourcesChange }: AgentDetailsProps) {
+export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave, onSourcesChange, allAgents }: AgentDetailsProps) {
   const [editMode, setEditMode] = useState(isEditMode);
   const [researchQuestion, setResearchQuestion] = useState(agent.researchQuestion);
   const [questionType, setQuestionType] = useState<QuestionType>(agent.questionType);
@@ -57,6 +58,8 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
   );
   const [newOption, setNewOption] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [booleanQualification, setBooleanQualification] = useState<'true' | 'false'>('true');
+  const [qualifyingOptions, setQualifyingOptions] = useState<string[]>(responseOptions || []);
 
   // Update sources when question type changes
   useEffect(() => {
@@ -107,6 +110,10 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
     }
   }, [questionType]);
 
+  useEffect(() => {
+    setQualifyingOptions(responseOptions || []);
+  }, [responseOptions]);
+
   const handleSaveChanges = () => {
     console.log('AgentDetails: Saving changes');
     setEditMode(false);
@@ -129,57 +136,35 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
 
   const handleQuestionTypeChange = (newType: QuestionType) => {
     if (!editMode) return;
-    
-    console.log('Question type change requested:', {
-      newType,
-      currentType: questionType,
-      isEditMode: editMode,
-      agentId: agent.id,
-      agentTitle: agent.title
-    });
-
-    // If switching to Boolean, update immediately
-    if (newType === 'Boolean') {
-      setQuestionType(newType);
-      setResearchQuestion(agent.researchQuestion);
-      return;
+    // Find canonical agent config by id
+    let canonicalAgent = agent;
+    if (Array.isArray(allAgents)) {
+      const found = allAgents.find(a => a.id === agent.id);
+      if (found) canonicalAgent = found;
     }
-
-    // For Number and Picklist, show loading state
-    setIsRewritingAgent(true);
+    // Always use canonical templates for the new type
+    const template = canonicalAgent.rewriteTemplates?.[newType as keyof typeof canonicalAgent.rewriteTemplates];
     setQuestionType(newType);
-
-    // Simulate AI rewriting delay
-    setTimeout(() => {
-      // Get the template for the new question type
-      const template = agent.rewriteTemplates?.[newType as keyof typeof agent.rewriteTemplates];
-      
-      if (template) {
-        console.log('Found template for type:', newType, template);
-        // For Picklist type, clean up the template by removing the "Categories:" part
-        let cleanedTemplate = template;
-        if (newType === 'Picklist') {
-          // Remove "Categories:" and everything after it
-          cleanedTemplate = template.replace(/\s*Categories:.*$/, '');
-        }
-        setResearchQuestion(cleanedTemplate);
-      } else {
-        console.log('No template found for type:', newType);
-        // Use a default template if none provided
-        const defaultTemplate = newType === 'Number' 
-          ? `How many ${agent.title.toLowerCase()} positions has this company posted in the last 3 months?`
-          : `What types of ${agent.title.toLowerCase()} positions has this company posted in the last 3 months?`;
-        setResearchQuestion(defaultTemplate);
+    if (template) {
+      let cleanedTemplate = template;
+      if (newType === 'Picklist') {
+        cleanedTemplate = template.replace(/\s*Categories:.*$/, '');
       }
-
-      // Update data sources based on question type
-      const newSources = agent.sourcesByQuestionType?.[newType] || agent.sources || [];
-      if (typeof onSourcesChange === 'function') {
-        onSourcesChange(newSources);
-      }
-
-      setIsRewritingAgent(false);
-    }, 2500); // 2.5 second delay for AI rewriting
+      setResearchQuestion(cleanedTemplate);
+    } else {
+      // Fallback to default
+      setResearchQuestion(questionTemplates[newType]);
+    }
+    // Update sources
+    const newSources = canonicalAgent.sourcesByQuestionType?.[newType] || canonicalAgent.sources || [];
+    if (typeof onSourcesChange === 'function') {
+      onSourcesChange(newSources);
+    }
+    if (newType === 'Picklist') {
+      setResponseOptions(agent.responseOptions || ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]);
+    } else {
+      setResponseOptions([]);
+    }
   };
 
   const handleSourceToggle = (source: string) => {
@@ -255,8 +240,9 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
         <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
           <h3 className="text-sm font-medium text-gray-600 mb-1">Question Type</h3>
           <div className="flex flex-wrap gap-2">
-            {(['Boolean', 'Number', 'Picklist'] as QuestionType[]).map(type => {
+            {(agent.availableQuestionTypes || []).map(type => {
               const isSelected = questionType === type;
+              const needsAI = type === 'Number' || type === 'Picklist';
               return (
                 <button
                   key={type}
@@ -319,11 +305,106 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
           </AnimatePresence>
         </div>
 
+        {/* After Research Question, before Data Sources */}
+        {editMode && questionType === 'Boolean' && (
+          <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Qualification Criteria</h3>
+            <p className="text-xs text-gray-500 mb-3">Which response should qualify leads for enrollment?</p>
+            <div className="space-y-3">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="booleanQualification"
+                  value="true"
+                  checked={booleanQualification === 'true'}
+                  onChange={() => setBooleanQualification('true')}
+                  className="mt-1 w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span>
+                  <span className="text-sm font-medium text-gray-900">Yes/True responses qualify leads</span>
+                  <div className="text-xs text-gray-600">Companies that answer 'Yes' to this question will be enrolled</div>
+                </span>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  name="booleanQualification"
+                  value="false"
+                  checked={booleanQualification === 'false'}
+                  onChange={() => setBooleanQualification('false')}
+                  className="mt-1 w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                />
+                <span>
+                  <span className="text-sm font-medium text-gray-900">No/False responses qualify leads</span>
+                  <div className="text-xs text-gray-600">Companies that answer 'No' to this question will be enrolled</div>
+                </span>
+              </label>
+            </div>
+          </div>
+        )}
+
         {/* Picklist Response Options (no add/remove, muted chips) */}
         {(showPicklistOptions || (!editMode && questionType === 'Picklist')) && (
           <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
             <h3 className="text-sm font-medium text-gray-600 mb-1">Picklist Response Options</h3>
-            <PicklistChips options={responseOptions} />
+            {editMode ? (
+              <>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <PicklistChips
+                    options={responseOptions}
+                    onRemove={handleRemoveOption}
+                  />
+                </div>
+                <form
+                  onSubmit={e => {
+                    e.preventDefault();
+                    handleAddOption(newOption);
+                  }}
+                  className="flex items-center gap-2 mt-3 w-full max-w-sm"
+                >
+                  <span className="inline-flex items-center justify-center mr-2">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 20 20" className="w-4 h-4 text-gray-400"><path d="M10 4v12m6-6H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </span>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={newOption}
+                    onChange={e => setNewOption(e.target.value)}
+                    placeholder="Add response option..."
+                    className="min-w-0 flex-1 px-3 py-2 rounded-full border border-gray-200 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-gray-50/30"
+                    maxLength={40}
+                    onKeyDown={e => {
+                      if (e.key === 'Escape') setNewOption("");
+                    }}
+                  />
+                </form>
+              </>
+            ) : (
+              <PicklistChips options={responseOptions} />
+            )}
+          </div>
+        )}
+
+        {/* After Picklist Response Options, before Data Sources */}
+        {editMode && questionType === 'Picklist' && (
+          <div className="bg-gray-50/50 rounded-lg p-4 space-y-4">
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Qualification Criteria</h3>
+            <p className="text-xs text-gray-500 mb-3">Select which response options should qualify leads for enrollment</p>
+            <PicklistChips
+              options={responseOptions}
+              selectedOptions={qualifyingOptions}
+              onToggle={(option, selected) => {
+                setQualifyingOptions(selected
+                  ? [...qualifyingOptions, option]
+                  : qualifyingOptions.filter(o => o !== option)
+                );
+              }}
+              variant="qualification"
+            />
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-gray-500">Leads will qualify if they match ANY of the selected options</p>
+              <span className="text-xs text-gray-500">{qualifyingOptions.length} of {responseOptions.length} options selected for qualification</span>
+            </div>
           </div>
         )}
 
@@ -336,6 +417,7 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
                 options={availableSources}
                 selectedOptions={agent.sources}
                 onToggle={(source, selected) => handleSourceToggle(source)}
+                onRemove={handleSourceToggle}
                 variant="source"
               />
             ) :

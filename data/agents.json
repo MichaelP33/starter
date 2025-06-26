@@ -10,7 +10,7 @@
           "id": "marketing-hiring",
           "title": "Marketing Personas Hiring?",
           "description": "Identify companies actively expanding their marketing teams, particularly in leadership and specialized roles",
-          "researchQuestion": "Does the company currently have any open job positions specifically for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles posted on their official careers page or LinkedIn?",
+          "researchQuestion": "Is the company currently hiring for data-driven marketing roles such as Marketing Operations, Growth Marketing, or Marketing Leadership positions?",
           "questionType": "Boolean",
           "sources": ["Company Career Pages", "Professional Networks", "Job Posting Platforms"],
           "sourcesByQuestionType": {
@@ -19,10 +19,11 @@
             "Picklist": ["Job Posting Platforms", "Company Career Pages", "Professional Networks"]
           },
           "rewriteTemplates": {
-            "Boolean": "Does the company have any open positions for Marketing Leadership, Operations, Growth Marketing, or Digital Marketing roles?",
+            "Boolean": "Is the company currently hiring for data-driven marketing roles such as Marketing Operations, Growth Marketing, or Marketing Leadership positions?",
             "Number": "How many marketing-related positions (Leadership, Operations, Growth, Digital) are currently open at this company?",
             "Picklist": "What types of marketing roles is the company currently hiring for? Categories: Marketing Leadership, Marketing Operations, Growth Marketing, Digital Marketing."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"]
         },
         {
           "id": "data-hiring",

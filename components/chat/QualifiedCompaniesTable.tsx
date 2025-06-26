@@ -54,11 +54,15 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
 
     if (!isCurrentlyExpanded && !generatedContacts[companyId]) {
       const companyData = allCompanies.find(c => c.id === companyId);
-      if (companyData && company.assignedPersonas.length > 0) {
+      // Fallback: if no assignedPersonas, use all persona names
+      const personaList = (company.assignedPersonas && company.assignedPersonas.length > 0)
+        ? company.assignedPersonas
+        : personas.map(p => p.name);
+      if (companyData && personaList.length > 0) {
         const contactGenerator = new ContactGenerator(allCompanies, personas);
         const newContacts = contactGenerator.generateContactsForCompany(
           companyData,
-          company.assignedPersonas,
+          personaList,
           2
         );
         setGeneratedContacts(prev => ({ ...prev, [companyId]: newContacts }));
