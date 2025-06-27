@@ -139,7 +139,7 @@ export interface Contact {
   email: string;
   linkedin: string;
   matchScore: number;
-  status: 'Not Contacted' | 'Send Message' | 'Awaiting Reply' | 'Replied' | 'Interested' | 'Demo Booked';
+  status: 'Not Contacted' | 'Send Message' | 'Awaiting Reply' | 'Replied' | 'Interested' | 'Demo Booked' | 'Not Interested';
   statusDays?: number; // e.g., "Awaiting Reply" for 2 days
   companyName: string;
   companyId: string;

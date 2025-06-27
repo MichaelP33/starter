@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-const LIGHT_CATEGORY_COLORS: Record<string, string> = {
+export const CATEGORY_COLORS: Record<string, string> = {
   "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
   "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
   "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
@@ -67,7 +67,7 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm",
-                LIGHT_CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200",
+                CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200",
                 typeof onRemove === 'function' ? 'pr-6' : ''
               )}
             >

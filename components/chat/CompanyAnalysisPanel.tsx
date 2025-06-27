@@ -5,7 +5,7 @@ import { X, ChevronDown, ChevronRight, ExternalLink, CheckCircle } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AgentResult } from "./types";
-import PicklistChips from "./PicklistChips";
+import { CATEGORY_COLORS } from "./PicklistChips";
 
 interface CompanyAnalysisPanelProps {
   isOpen: boolean;
@@ -76,26 +76,14 @@ export function CompanyAnalysisPanel({
                 {/* Show chips for Picklist, Yes/No for Boolean, number for Number */}
                 {result.questionType === 'Picklist' && Array.isArray(result.selectedOptions) && result.selectedOptions.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {result.selectedOptions.map(option => {
-                      const CATEGORY_COLORS: Record<string, string> = {
-                        "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
-                        "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
-                        "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
-                        "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200",
-                        "Data Engineering": "bg-purple-100 text-purple-800 border border-purple-200",
-                        "Data Science": "bg-blue-100 text-blue-800 border border-blue-200",
-                        "Analytics": "bg-green-100 text-green-800 border border-green-200",
-                        "Data Leadership": "bg-orange-100 text-orange-800 border border-orange-200"
-                      };
-                      return (
-                        <span
-                          key={option}
-                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200"}`}
-                        >
-                          {option}
-                        </span>
-                      );
-                    })}
+                    {result.selectedOptions.map(option => (
+                      <span
+                        key={option}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200"}`}
+                      >
+                        {option}
+                      </span>
+                    ))}
                   </div>
                 ) : result.questionType === 'Number' && result.researchSummary ? (
                   <div className="text-lg font-medium text-blue-700">

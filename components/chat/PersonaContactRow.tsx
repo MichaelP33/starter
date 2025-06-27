@@ -35,19 +35,36 @@ const statusComponents: Record<Contact['status'], (contact: Contact) => React.Re
     </div>
   ),
   'Replied': (contact) => (
-    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold border border-green-200 transition-all duration-200 hover:scale-105">
-      Replied ✓
-    </span>
+    <div className="flex flex-col items-start transition-all duration-200 hover:scale-105">
+      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-semibold border border-green-200">
+        Replied ✓
+      </span>
+      <span className="text-gray-500 text-xs mt-1">Replied {contact.statusDays} day{contact.statusDays === 1 ? '' : 's'} ago</span>
+    </div>
   ),
   'Interested': (contact) => (
-    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold border border-blue-200 transition-all duration-200 hover:scale-105">
-      Interested
-    </span>
+    <div className="flex flex-col items-start transition-all duration-200 hover:scale-105">
+      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold border border-blue-200">
+        Interested
+      </span>
+      <span className="text-gray-500 text-xs mt-1">Marked {contact.statusDays} day{contact.statusDays === 1 ? '' : 's'} ago</span>
+    </div>
   ),
   'Demo Booked': (contact) => (
-    <span className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-xs font-semibold border border-teal-200 transition-all duration-200 hover:scale-105">
-      Demo Booked
-    </span>
+    <div className="flex flex-col items-start transition-all duration-200 hover:scale-105">
+      <span className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-xs font-semibold border border-teal-200">
+        Demo Booked
+      </span>
+      <span className="text-gray-500 text-xs mt-1">Marked {contact.statusDays} day{contact.statusDays === 1 ? '' : 's'} ago</span>
+    </div>
+  ),
+  'Not Interested': (contact) => (
+    <div className="flex flex-col items-start transition-all duration-200 hover:scale-105">
+      <span className="bg-gray-100 text-gray-400 px-2 py-1 rounded-full text-xs font-semibold border border-gray-200">
+        Not Interested
+      </span>
+      <span className="text-gray-500 text-xs mt-1">Replied {contact.statusDays} day{contact.statusDays === 1 ? '' : 's'} ago</span>
+    </div>
   ),
 };
 

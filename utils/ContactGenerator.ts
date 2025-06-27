@@ -13,13 +13,6 @@ interface GeneratedContact {
   companyName: string;
 }
 
-const contactStatuses: Contact['status'][] = [
-  'Not Contacted', 'Not Contacted', 'Not Contacted', 'Not Contacted', 'Not Contacted', // 50% chance
-  'Send Message', 'Send Message', // 20% chance
-  'Awaiting Reply', 'Awaiting Reply', // 20% chance
-  'Replied', 'Interested', 'Demo Booked' // 10% chance total
-];
-
 export class ContactGenerator {
   private companies: Company[];
   private personas: Persona[];
@@ -149,26 +142,55 @@ export class ContactGenerator {
     return Math.floor(Math.random() * (98 - 75 + 1)) + 75;
   }
 
-  private generateStatus(): { status: Contact['status'], days: number } {
-    const status = contactStatuses[Math.floor(Math.random() * contactStatuses.length)];
-    let days = 0;
-    if (status === 'Awaiting Reply') {
-      days = Math.floor(Math.random() * 7) + 1; // 1-7 days ago
-    }
-    return { status, days };
-  }
-
   public generateContactsForCompany(
     company: Company, 
     assignedPersonas: string[],
-    countPerPersona: number = 1
+    countPerPersona: number = 1,
+    companyIndex?: number // Optional: for cycling stories externally
   ): Contact[] {
     const contacts: Contact[] = [];
-    for (const personaName of assignedPersonas) {
+    // Determine which story to use for this company
+    // If companyIndex is not provided, use a random one (for backward compatibility)
+    const storyIdx = typeof companyIndex === 'number' ? companyIndex % 3 : Math.floor(Math.random() * 3);
+
+    // Define the three story patterns
+    // Story 1: All Not Contacted
+    // Story 2: Mix of Awaiting Reply and Not Interested
+    // Story 3: Mix of Awaiting Reply, Interested, Demo Booked
+    for (let pIdx = 0; pIdx < assignedPersonas.length; pIdx++) {
+      const personaName = assignedPersonas[pIdx];
       let personaContacts: Contact[] = [];
       for (let i = 0; i < countPerPersona; i++) {
         const name = this.generateName();
-        const { status, days } = this.generateStatus();
+        let status: Contact['status'] = 'Not Contacted';
+        let statusDays = 0;
+        if (storyIdx === 0) {
+          // Story 1: All Not Contacted
+          status = 'Not Contacted';
+          statusDays = 0;
+        } else if (storyIdx === 1) {
+          // Story 2: 2/3 Awaiting Reply, 1/3 Not Interested (less frequent)
+          if ((pIdx + i) % 3 === 0) {
+            status = 'Not Interested';
+            statusDays = Math.floor(Math.random() * 4) + 1; // 1-4 days ago
+          } else {
+            status = 'Awaiting Reply';
+            statusDays = Math.floor(Math.random() * 5) + 1; // 1-5 days ago
+          }
+        } else if (storyIdx === 2) {
+          // Story 3: Cycle Awaiting Reply, Interested, Demo Booked
+          const mod = (pIdx + i) % 3;
+          if (mod === 0) {
+            status = 'Awaiting Reply';
+            statusDays = Math.floor(Math.random() * 5) + 1;
+          } else if (mod === 1) {
+            status = 'Interested';
+            statusDays = Math.floor(Math.random() * 7) + 1; // 1-7 days ago
+          } else {
+            status = 'Demo Booked';
+            statusDays = Math.floor(Math.random() * 10) + 1; // 1-10 days ago
+          }
+        }
         const contact: Contact = {
           id: `contact-${Math.random().toString(36).substring(2, 9)}`,
           name,
@@ -176,18 +198,17 @@ export class ContactGenerator {
           email: this.generateEmail(name, company.companyName),
           linkedin: this.generateLinkedIn(name),
           matchScore: this.calculateMatchScore(),
-          status: status,
-          statusDays: days,
+          status,
+          statusDays,
           companyName: company.companyName,
           companyId: company.id,
           personaMatch: personaName,
         };
         personaContacts.push(contact);
       }
-      // Fallback: If for some reason no contacts were generated, force one
       if (personaContacts.length === 0) {
+        // Fallback: always at least one contact
         const name = this.generateName();
-        const { status, days } = this.generateStatus();
         personaContacts.push({
           id: `contact-${Math.random().toString(36).substring(2, 9)}`,
           name,
@@ -195,8 +216,8 @@ export class ContactGenerator {
           email: this.generateEmail(name, company.companyName),
           linkedin: this.generateLinkedIn(name),
           matchScore: this.calculateMatchScore(),
-          status: status,
-          statusDays: days,
+          status: 'Not Contacted',
+          statusDays: 0,
           companyName: company.companyName,
           companyId: company.id,
           personaMatch: personaName,
@@ -217,7 +238,6 @@ export class ContactGenerator {
       if (contacts.length === 0) {
         return personaNames.map(personaName => {
           const name = this.generateName();
-          const { status, days } = this.generateStatus();
           return {
             id: `contact-${Math.random().toString(36).substring(2, 9)}`,
             name,
@@ -225,8 +245,8 @@ export class ContactGenerator {
             email: this.generateEmail(name, company.companyName),
             linkedin: this.generateLinkedIn(name),
             matchScore: this.calculateMatchScore(),
-            status: status,
-            statusDays: days,
+            status: 'Not Contacted',
+            statusDays: 0,
             companyName: company.companyName,
             companyId: company.id,
             personaMatch: personaName,

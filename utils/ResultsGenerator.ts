@@ -1361,7 +1361,7 @@ export class ResultsGenerator {
       const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
       const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
       const qualifiedResults = qualifiedCompanies.map((company, idx) => {
-        const template = this.TECH_STACK_QUALIFIED_VARIATIONS[idx % this.TECH_STACK_QUALIFIED_VARIATIONS.length];
+        const template = this.TECH_PRODUCT_QUALIFIED_VARIATIONS[idx % this.TECH_PRODUCT_QUALIFIED_VARIATIONS.length];
         const evidence = template.evidenceTemplates.map(et => ({
           type: 'job_posting',
           title: et,
@@ -1401,7 +1401,7 @@ export class ResultsGenerator {
         };
       });
       const needsReviewResults = needsReviewCompanies.map((company, idx) => {
-        const template = this.TECH_STACK_NEEDS_REVIEW_VARIATIONS[idx % this.TECH_STACK_NEEDS_REVIEW_VARIATIONS.length];
+        const template = this.TECH_PRODUCT_NEEDS_REVIEW_VARIATIONS[idx % this.TECH_PRODUCT_NEEDS_REVIEW_VARIATIONS.length];
         const evidence = template.evidenceTemplates.map(et => ({
           type: 'job_posting',
           title: et,
@@ -1442,7 +1442,7 @@ export class ResultsGenerator {
         };
       });
       const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
-        const template = this.TECH_STACK_UNQUALIFIED_VARIATIONS[idx % this.TECH_STACK_UNQUALIFIED_VARIATIONS.length];
+        const template = this.TECH_PRODUCT_UNQUALIFIED_VARIATIONS[idx % this.TECH_PRODUCT_UNQUALIFIED_VARIATIONS.length];
         const evidence = template.evidenceTemplates.map(et => ({
           type: 'job_posting',
           title: et,
@@ -1498,9 +1498,10 @@ export class ResultsGenerator {
       const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
       const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
       if (isPicklist || isBoolean) {
-        const qualifiedVariations = this.NEWS_FUNDING_QUALIFIED_VARIATIONS;
-        const unqualifiedVariations = this.NEWS_FUNDING_UNQUALIFIED_VARIATIONS;
-        const needsReviewVariations = this.NEWS_FUNDING_NEEDS_REVIEW_VARIATIONS;
+        // Use NEWS_MA variations for news-funding agent
+        const qualifiedVariations = this.NEWS_MA_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.NEWS_MA_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.NEWS_MA_NEEDS_REVIEW_VARIATIONS;
         const qualifiedResults = qualifiedCompanies.map((company, idx) => {
           const template = qualifiedVariations[idx % qualifiedVariations.length];
           const evidence = template.evidenceTemplates.map(et => ({
