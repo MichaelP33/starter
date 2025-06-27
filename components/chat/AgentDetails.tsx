@@ -110,8 +110,10 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
   useEffect(() => {
     setResearchQuestion(agent.researchQuestion);
     setQuestionType(agent.questionType);
+    console.log('[AgentDetails] agent.responseOptions:', agent.responseOptions);
     if (agent.questionType === 'Picklist') {
       setResponseOptions(agent.responseOptions || getDefaultResponseOptions(agent.id));
+      console.log('[AgentDetails] Setting responseOptions state to:', agent.responseOptions || getDefaultResponseOptions(agent.id));
     } else {
       setResponseOptions([]);
     }
@@ -178,7 +180,8 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
       onSourcesChange(newSources);
     }
     if (newType === 'Picklist') {
-      setResponseOptions(getDefaultResponseOptions(agent.id));
+      console.log('[AgentDetails] handleQuestionTypeChange: canonicalAgent.responseOptions:', canonicalAgent.responseOptions);
+      setResponseOptions(canonicalAgent.responseOptions || getDefaultResponseOptions(agent.id));
     } else {
       setResponseOptions([]);
     }

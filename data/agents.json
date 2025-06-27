@@ -23,7 +23,8 @@
             "Number": "How many marketing-related positions (Leadership, Operations, Growth, Digital) are currently open at this company?",
             "Picklist": "What types of marketing roles is the company currently hiring for? Categories: Marketing Leadership, Marketing Operations, Growth Marketing, Digital Marketing."
           },
-          "availableQuestionTypes": ["Boolean", "Picklist"]
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Marketing Leadership", "Marketing Operations", "Growth Marketing", "Digital Marketing"]
         },
         {
           "id": "data-hiring",
@@ -61,7 +62,9 @@
             "Boolean": "Has the company had any recent C-level, VP, or senior leadership changes in the last 6 months?",
             "Number": "How many senior leadership changes (C-level, VP, Director level) has the company had in the last 6 months?",
             "Picklist": "What is the relevance level of recent leadership changes to Segment's value proposition? Categories: Very High Relevance (CDO, VP Data, CMO within 6 months), High Relevance (VP Marketing, CTO, Head of Analytics within 12 months), Moderate Relevance (VP Product, VP Engineering within 12 months), Low Relevance (Other C-level or VP roles)."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["CTO/VP Engineering", "CMO/VP Marketing", "CDO/VP Data", "VP Product"]
         }
       ]
     },
@@ -87,7 +90,9 @@
             "Boolean": "Has the company raised any funding rounds in the last 12 months?",
             "Number": "How much funding has the company raised in the last 12 months (in millions)?",
             "Picklist": "What type of funding round did the company most recently raise? Categories: Seed, Series A, Series B, Series C+, Growth Equity, Other."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Series A", "Series B", "Series C+", "Growth/Late Stage"]
         },
         {
           "id": "news-ma",
@@ -105,7 +110,9 @@
             "Boolean": "Has the company been involved in any M&A activity (acquired, made acquisitions, or announced mergers) in the last 12 months?",
             "Number": "What is the total value (in millions USD) of M&A transactions the company has been involved in during the last 12 months?",
             "Picklist": "What type of M&A activity has the company been involved in? Categories: Company Was Acquired, Made Strategic Acquisition, Made Multiple Acquisitions, Announced Merger, Acquired Data/Analytics Company."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Acquisition Target", "Acquiring Company", "Merger", "Strategic Partnership"]
         },
         {
           "id": "news-expansion",
@@ -123,7 +130,9 @@
             "Boolean": "Has the company expanded into new markets or regions in the last 12 months?",
             "Number": "How many new markets or regions has the company expanded into in the last 12 months?",
             "Picklist": "What type of market expansion suggests budget allocation for new data infrastructure? Categories: New Geographic Markets (multi-region data compliance needs), New Industry Vertical (different data requirements), Enterprise Market Entry (complex data integration needs), International Expansion (data localization requirements)."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Geographic Expansion", "Product Expansion", "Team Expansion", "Market Expansion"]
         },
         {
           "id": "news-announcements",
@@ -141,7 +150,9 @@
             "Boolean": "Has the company made any major announcements (partnerships, awards, milestones) in the last 6 months that suggest growth or change?",
             "Number": "How many major announcements (partnerships, awards, milestones) has the company made in the last 6 months?",
             "Picklist": "What type of recent company news suggests readiness for data infrastructure investment? Categories: Major Partnership Announcements, Industry Awards/Recognition, Significant Customer Milestone, Executive Speaking Engagements, Thought Leadership Publication."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Product Launch", "Strategic Initiative", "Partnership", "Technology Investment"]
         }
       ]
     },
@@ -167,7 +178,9 @@
             "Boolean": "Has the company launched any new products or major features in the last 6 months?",
             "Number": "How many new products or major features has the company launched in the last 6 months?",
             "Picklist": "What type of product launch suggests increased data complexity? Categories: New Product Line (additional data streams), Customer-Facing Analytics Feature (data presentation needs), API/Integration Platform (data connectivity requirements), Mobile App Launch (cross-platform data tracking)."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["New Product Line", "Major Feature Release", "Platform Launch", "API/Integration"]
         },
         {
           "id": "tech-migration",
@@ -185,7 +198,9 @@
             "Boolean": "Is the company currently migrating or upgrading their data infrastructure or analytics platform?",
             "Number": "How many data infrastructure or analytics platform changes has the company made in the last 12 months?",
             "Picklist": "What type of data infrastructure change suggests timing for Segment evaluation? Categories: Cloud Migration In Progress, Data Warehouse Modernization, Analytics Platform Replacement, Customer Data Platform Evaluation."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Cloud Migration", "Data Platform", "Analytics Tools", "Infrastructure Modernization"]
         },
         {
           "id": "tech-stack",
@@ -203,7 +218,9 @@
             "Boolean": "Does the company mention specific data and analytics technologies in their job postings, blog posts, or case studies?",
             "Number": "How many different data and analytics technologies does the company mention in their job postings, blog posts, or case studies?",
             "Picklist": "What type of technology mentions suggest Segment fit? Categories: Segment Competitors (mentions Adobe Analytics, Mixpanel, Amplitude, Heap), Data Warehouse Modern Stack (mentions Snowflake, BigQuery, Databricks), Complex Integration Setup (mentions Zapier, custom APIs, multiple ETL tools), Analytics-Heavy Stack (mentions Tableau, Looker, dbt with multiple data sources)."
-          }
+          },
+          "availableQuestionTypes": ["Boolean", "Picklist"],
+          "responseOptions": ["Segment Competitors", "Data Warehouse Stack", "Analytics/BI Tools", "Custom Data Infrastructure"]
         }
       ]
     }

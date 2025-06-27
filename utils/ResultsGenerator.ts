@@ -423,6 +423,486 @@ export class ResultsGenerator {
     }
   ];
 
+  // --- LEADERSHIP CHANGES AGENT VARIATIONS ---
+  private LEADERSHIP_CHANGES_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["CTO/VP Engineering", "CDO/VP Data"],
+      whyQualified: "Recent CTO or CDO hire signals strategic shift toward data and technology modernization.",
+      researchSummary: "[COMPANY] announced a new CTO and CDO in the last 6 months, with a mandate to modernize data infrastructure and drive innovation.",
+      evidenceTemplates: [
+        "LinkedIn: New CTO joins from leading SaaS company.",
+        "Press release: Appointment of Chief Data Officer to lead analytics strategy.",
+        "Company blog: Leadership team expands to accelerate digital transformation."
+      ]
+    },
+    {
+      selectedOptions: ["VP Product", "CMO/VP Marketing"],
+      whyQualified: "VP Product and CMO hires indicate focus on product-led growth and marketing innovation.",
+      researchSummary: "[COMPANY] hired a new VP Product and CMO to drive product expansion and go-to-market strategy.",
+      evidenceTemplates: [
+        "Press release: VP Product joins to lead new product initiatives.",
+        "LinkedIn: CMO brings experience from top tech brands.",
+        "Company blog: Leadership changes to support growth."
+      ]
+    },
+    {
+      selectedOptions: ["CTO/VP Engineering"],
+      whyQualified: "CTO transition suggests evaluation of current tech stack and vendor relationships.",
+      researchSummary: "[COMPANY] recently transitioned CTOs, with a focus on reviewing technology partners and infrastructure.",
+      evidenceTemplates: [
+        "LinkedIn: CTO transition post highlights new priorities.",
+        "Press release: Outgoing CTO to remain as advisor.",
+        "Company blog: Technology review underway."
+      ]
+    }
+  ];
+
+  private LEADERSHIP_CHANGES_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No recent leadership changes in technology or data roles.",
+      researchSummary: "[COMPANY] has had a stable leadership team for the past 2 years, with no new executive hires.",
+      evidenceTemplates: [
+        "No press releases or LinkedIn updates on leadership changes.",
+        "Company blog focuses on existing team achievements.",
+        "No new executive roles listed in company announcements."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Recent hires in non-technical roles only.",
+      researchSummary: "[COMPANY] recently hired in HR and finance, but no changes in product, engineering, or data leadership.",
+      evidenceTemplates: [
+        "Press release: New CFO joins the company.",
+        "LinkedIn: HR Director announced, no tech leadership changes.",
+        "Company blog: Focus on operational excellence."
+      ]
+    }
+  ];
+
+  private LEADERSHIP_CHANGES_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["VP Product"],
+      whyQualified: "VP Product role filled, but unclear impact on technology direction.",
+      researchSummary: "[COMPANY] hired a VP Product, but public materials do not specify changes to tech stack or data strategy.",
+      evidenceTemplates: [
+        "Press release: VP Product joins, no mention of technology initiatives.",
+        "LinkedIn: New product leadership, unclear mandate.",
+        "Company blog: Product roadmap under review."
+      ]
+    },
+    {
+      selectedOptions: ["CMO/VP Marketing"],
+      whyQualified: "CMO hire announced, but no details on marketing technology plans.",
+      researchSummary: "[COMPANY] announced a new CMO, but has not shared plans for martech or analytics investments.",
+      evidenceTemplates: [
+        "Press release: CMO joins, focus on brand strategy.",
+        "LinkedIn: Marketing leadership update, no tech details.",
+        "Company blog: Brand refresh in progress."
+      ]
+    }
+  ];
+
+  // --- NEWS MA AGENT VARIATIONS ---
+  private NEWS_MA_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["Acquiring Company", "Merger"],
+      whyQualified: "Company is actively acquiring or merging, creating integration and data consolidation needs.",
+      researchSummary: "[COMPANY] recently acquired a competitor and announced a merger, requiring unified data infrastructure and analytics.",
+      evidenceTemplates: [
+        "Business news: [COMPANY] acquires major competitor.",
+        "SEC filing: Merger agreement details integration plans.",
+        "Press release: Company to consolidate platforms post-merger."
+      ]
+    },
+    {
+      selectedOptions: ["Acquisition Target"],
+      whyQualified: "Company identified as an acquisition target, likely to undergo technology integration.",
+      researchSummary: "[COMPANY] is rumored to be an acquisition target, with analysts predicting significant system integration work ahead.",
+      evidenceTemplates: [
+        "Business news: [COMPANY] in talks for acquisition.",
+        "Analyst report: Integration challenges expected.",
+        "Company blog: Preparing for transition."
+      ]
+    },
+    {
+      selectedOptions: ["Strategic Partnership"],
+      whyQualified: "Announced strategic partnership, opening new data sharing and integration opportunities.",
+      researchSummary: "[COMPANY] formed a strategic partnership with a leading SaaS provider, focusing on joint data initiatives.",
+      evidenceTemplates: [
+        "Press release: Strategic partnership for data collaboration.",
+        "Industry publication: Partnership to drive integration.",
+        "Company blog: Joint product roadmap announced."
+      ]
+    }
+  ];
+
+  private NEWS_MA_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No recent M&A activity or partnership announcements.",
+      researchSummary: "[COMPANY] has not participated in any mergers, acquisitions, or strategic partnerships in the last 24 months.",
+      evidenceTemplates: [
+        "No business news or SEC filings on M&A activity.",
+        "Company blog focuses on organic growth.",
+        "No press releases on partnerships or acquisitions."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Recent M&A activity unrelated to technology or data integration.",
+      researchSummary: "[COMPANY] completed a minor acquisition in a non-core business area, with no impact on technology stack.",
+      evidenceTemplates: [
+        "Press release: Acquisition of small services firm.",
+        "Business news: Deal focused on market expansion, not tech.",
+        "No mention of data or platform integration."
+      ]
+    }
+  ];
+
+  private NEWS_MA_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Merger"],
+      whyQualified: "Merger announced, but unclear integration plans or technology roadmap.",
+      researchSummary: "[COMPANY] announced a merger, but public materials do not specify how systems or data will be unified.",
+      evidenceTemplates: [
+        "SEC filing: Merger agreement, no tech details.",
+        "Press release: Merger to drive growth, integration TBD.",
+        "Industry news: Analysts question integration strategy."
+      ]
+    },
+    {
+      selectedOptions: ["Acquisition Target"],
+      whyQualified: "Rumored acquisition, but no confirmation or integration plans shared.",
+      researchSummary: "[COMPANY] is rumored to be an acquisition target, but no official statements or plans have been released.",
+      evidenceTemplates: [
+        "Business news: Acquisition rumors circulate.",
+        "No press releases or SEC filings confirming deal.",
+        "Company blog: No comment on M&A activity."
+      ]
+    }
+  ];
+
+  // --- NEWS EXPANSION AGENT VARIATIONS ---
+  private NEWS_EXPANSION_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["Geographic Expansion", "Market Expansion"],
+      whyQualified: "Announced new offices and market entry, signaling growth and new data needs.",
+      researchSummary: "[COMPANY] opened offices in two new countries and entered a new market segment, requiring expanded data infrastructure.",
+      evidenceTemplates: [
+        "Press release: New office openings in Europe and APAC.",
+        "Job postings: Hiring for regional sales and engineering roles.",
+        "Company update: Market entry strategy for 2025."
+      ]
+    },
+    {
+      selectedOptions: ["Product Expansion"],
+      whyQualified: "Launched new product lines, increasing data complexity and integration needs.",
+      researchSummary: "[COMPANY] expanded its product portfolio, launching two new SaaS offerings in the last year.",
+      evidenceTemplates: [
+        "Product blog: Announcing new SaaS products.",
+        "Press release: Product expansion to serve new verticals.",
+        "Industry news: Company diversifies product suite."
+      ]
+    },
+    {
+      selectedOptions: ["Team Expansion"],
+      whyQualified: "Significant team growth, especially in engineering and data roles.",
+      researchSummary: "[COMPANY] doubled its engineering team and added new data science roles to support growth.",
+      evidenceTemplates: [
+        "Job postings: Multiple openings for engineers and data scientists.",
+        "Company blog: Team milestones and new hires.",
+        "Press release: Team expansion to support product roadmap."
+      ]
+    }
+  ];
+
+  private NEWS_EXPANSION_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No recent expansion activity or new market entry.",
+      researchSummary: "[COMPANY] has not announced any new offices, products, or market entries in the last 18 months.",
+      evidenceTemplates: [
+        "No press releases on expansion or new markets.",
+        "Job postings focus on backfills, not growth.",
+        "Company blog: Focus on existing operations."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Expansion limited to minor operational changes.",
+      researchSummary: "[COMPANY] made minor operational changes, but no significant expansion or growth initiatives.",
+      evidenceTemplates: [
+        "Press release: Office renovation, not new location.",
+        "No new product or market announcements.",
+        "Industry news: Company maintains current footprint."
+      ]
+    }
+  ];
+
+  private NEWS_EXPANSION_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Market Expansion"],
+      whyQualified: "Market expansion announced, but unclear impact on technology or data needs.",
+      researchSummary: "[COMPANY] entered a new market, but public materials do not specify changes to data infrastructure.",
+      evidenceTemplates: [
+        "Press release: Market entry, no tech details.",
+        "Company blog: New market, but no mention of data.",
+        "Industry news: Analysts question readiness for expansion."
+      ]
+    },
+    {
+      selectedOptions: ["Product Expansion"],
+      whyQualified: "Product expansion underway, but integration and data plans not disclosed.",
+      researchSummary: "[COMPANY] launched new products, but has not shared details on supporting technology or data integration.",
+      evidenceTemplates: [
+        "Product blog: New product launch, no tech info.",
+        "Press release: Product expansion, integration TBD.",
+        "Company update: Awaiting details on data plans."
+      ]
+    }
+  ];
+
+  // --- NEWS ANNOUNCEMENTS AGENT VARIATIONS ---
+  private NEWS_ANNOUNCEMENTS_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["Product Launch", "Strategic Initiative"],
+      whyQualified: "Announced major product launch and strategic initiative, indicating innovation and investment.",
+      researchSummary: "[COMPANY] launched a new flagship product and announced a strategic initiative to drive growth.",
+      evidenceTemplates: [
+        "Company blog: Major product launch recap.",
+        "Press release: Strategic initiative for 2025.",
+        "Industry publication: Company recognized for innovation."
+      ]
+    },
+    {
+      selectedOptions: ["Partnership"],
+      whyQualified: "Formed new partnership with leading technology provider.",
+      researchSummary: "[COMPANY] announced a partnership with a top cloud provider to accelerate digital transformation.",
+      evidenceTemplates: [
+        "Press release: Partnership with cloud leader.",
+        "Industry news: Collaboration to drive technology adoption.",
+        "Company blog: Partnership goals and roadmap."
+      ]
+    },
+    {
+      selectedOptions: ["Technology Investment"],
+      whyQualified: "Invested in new technology platforms and infrastructure.",
+      researchSummary: "[COMPANY] made significant investments in technology, upgrading platforms and expanding R&D.",
+      evidenceTemplates: [
+        "Press release: $20M investment in technology.",
+        "Company blog: R&D expansion and new hires.",
+        "Industry publication: Company leads in tech adoption."
+      ]
+    }
+  ];
+
+  private NEWS_ANNOUNCEMENTS_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No major announcements or strategic initiatives in the last year.",
+      researchSummary: "[COMPANY] has not made any significant product launches, partnerships, or investments recently.",
+      evidenceTemplates: [
+        "No press releases on new products or initiatives.",
+        "Company blog: Focus on ongoing operations.",
+        "Industry news: No recent coverage of company activities."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Recent announcements unrelated to technology or growth.",
+      researchSummary: "[COMPANY] made minor announcements about community events, with no impact on technology or business strategy.",
+      evidenceTemplates: [
+        "Press release: Community event sponsorship.",
+        "Company blog: Local charity partnership.",
+        "Industry news: No mention of product or tech."
+      ]
+    }
+  ];
+
+  private NEWS_ANNOUNCEMENTS_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Strategic Initiative"],
+      whyQualified: "Strategic initiative announced, but unclear scope or investment level.",
+      researchSummary: "[COMPANY] announced a new strategic initiative, but public materials do not specify budget or technology plans.",
+      evidenceTemplates: [
+        "Press release: Initiative launch, no budget details.",
+        "Company blog: Initiative goals, tech plans TBD.",
+        "Industry news: Analysts await more information."
+      ]
+    },
+    {
+      selectedOptions: ["Product Launch"],
+      whyQualified: "Product launch announced, but no details on supporting technology or integration.",
+      researchSummary: "[COMPANY] launched a new product, but has not shared information on technology stack or data integration.",
+      evidenceTemplates: [
+        "Company blog: Product launch, no tech info.",
+        "Press release: Launch announcement, integration TBD.",
+        "Industry publication: Awaiting details on product roadmap."
+      ]
+    }
+  ];
+
+  // --- TECH PRODUCT AGENT VARIATIONS ---
+  private TECH_PRODUCT_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["New Product Line", "Platform Launch"],
+      whyQualified: "Launched new product line and platform, increasing data and integration needs.",
+      researchSummary: "[COMPANY] introduced a new product line and launched a platform for developers, expanding integration complexity.",
+      evidenceTemplates: [
+        "Product blog: Announcing new product line for 2025.",
+        "Release notes: Platform launch with API integrations.",
+        "Customer communication: New features available to all users."
+      ]
+    },
+    {
+      selectedOptions: ["Major Feature Release"],
+      whyQualified: "Released major new features, signaling ongoing product investment.",
+      researchSummary: "[COMPANY] rolled out a major feature release, adding analytics and automation capabilities.",
+      evidenceTemplates: [
+        "Release notes: Major feature update for analytics.",
+        "Product blog: Automation features now live.",
+        "Customer email: Feature highlights and onboarding."
+      ]
+    },
+    {
+      selectedOptions: ["API/Integration"],
+      whyQualified: "Launched new API and integration options for partners and customers.",
+      researchSummary: "[COMPANY] released new API endpoints and integration guides to support partners and developers.",
+      evidenceTemplates: [
+        "Developer blog: API launch and documentation.",
+        "Release notes: Integration support for new platforms.",
+        "Customer communication: API access now available."
+      ]
+    }
+  ];
+
+  private TECH_PRODUCT_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No recent product launches or major feature releases.",
+      researchSummary: "[COMPANY] has not launched any new products or features in the last 12 months.",
+      evidenceTemplates: [
+        "No product blog updates on new launches.",
+        "Release notes: Minor bug fixes only.",
+        "Customer communication: No new features announced."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Recent product updates limited to maintenance and minor improvements.",
+      researchSummary: "[COMPANY] focused on maintenance releases, with no major product or platform changes.",
+      evidenceTemplates: [
+        "Release notes: Maintenance update.",
+        "Product blog: Focus on stability and reliability.",
+        "Customer email: No new features this quarter."
+      ]
+    }
+  ];
+
+  private TECH_PRODUCT_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Platform Launch"],
+      whyQualified: "Platform launch announced, but unclear integration or customer adoption.",
+      researchSummary: "[COMPANY] launched a new platform, but public materials do not specify integration partners or customer uptake.",
+      evidenceTemplates: [
+        "Product blog: Platform launch, integration details TBD.",
+        "Release notes: Platform available, adoption unclear.",
+        "Industry news: Analysts await customer feedback."
+      ]
+    },
+    {
+      selectedOptions: ["Major Feature Release"],
+      whyQualified: "Major feature release announced, but no details on impact or usage.",
+      researchSummary: "[COMPANY] released a major feature, but has not shared adoption metrics or customer stories.",
+      evidenceTemplates: [
+        "Release notes: Feature release, no usage data.",
+        "Product blog: Feature highlights, impact TBD.",
+        "Customer communication: Awaiting feedback."
+      ]
+    }
+  ];
+
+  // --- TECH MIGRATION AGENT VARIATIONS ---
+  private TECH_MIGRATION_QUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: ["Cloud Migration", "Data Platform"],
+      whyQualified: "Company is migrating to the cloud and modernizing data platforms.",
+      researchSummary: "[COMPANY] is undergoing a cloud migration and upgrading its data platform to support analytics and growth.",
+      evidenceTemplates: [
+        "Engineering blog: Cloud migration project kickoff.",
+        "Job posting: Data platform engineer for migration.",
+        "Tech conference talk: Lessons learned from cloud migration."
+      ]
+    },
+    {
+      selectedOptions: ["Analytics Tools"],
+      whyQualified: "Adopting new analytics tools as part of infrastructure modernization.",
+      researchSummary: "[COMPANY] implemented new analytics tools to improve reporting and data-driven decision making.",
+      evidenceTemplates: [
+        "Job posting: Analytics engineer for tool rollout.",
+        "Engineering blog: Analytics stack modernization.",
+        "Conference talk: Analytics tool adoption case study."
+      ]
+    },
+    {
+      selectedOptions: ["Infrastructure Modernization"],
+      whyQualified: "Investing in infrastructure modernization to support scalability and performance.",
+      researchSummary: "[COMPANY] is modernizing its infrastructure, focusing on scalability, reliability, and integration.",
+      evidenceTemplates: [
+        "Engineering blog: Infrastructure modernization journey.",
+        "Job posting: DevOps engineer for modernization projects.",
+        "Tech conference: Company presents on modernization best practices."
+      ]
+    }
+  ];
+
+  private TECH_MIGRATION_UNQUALIFIED_VARIATIONS = [
+    {
+      selectedOptions: [],
+      whyQualified: "No recent migration or modernization projects announced.",
+      researchSummary: "[COMPANY] has not announced any cloud migration, data platform, or analytics tool adoption in the last 18 months.",
+      evidenceTemplates: [
+        "No engineering blog posts on migration.",
+        "Job postings focus on maintenance roles.",
+        "No conference talks or case studies on modernization."
+      ]
+    },
+    {
+      selectedOptions: [],
+      whyQualified: "Recent infrastructure changes limited to minor upgrades.",
+      researchSummary: "[COMPANY] made minor infrastructure upgrades, but no major migration or analytics tool adoption.",
+      evidenceTemplates: [
+        "Engineering blog: Minor upgrade announcement.",
+        "Job posting: Maintenance engineer role.",
+        "No mention of cloud or analytics in public materials."
+      ]
+    }
+  ];
+
+  private TECH_MIGRATION_NEEDS_REVIEW_VARIATIONS = [
+    {
+      selectedOptions: ["Cloud Migration"],
+      whyQualified: "Cloud migration project underway, but unclear scope or timeline.",
+      researchSummary: "[COMPANY] started a cloud migration, but public materials do not specify project scope or expected outcomes.",
+      evidenceTemplates: [
+        "Engineering blog: Migration kickoff, details TBD.",
+        "Job posting: Cloud migration engineer, contract role.",
+        "Conference talk: Migration challenges discussed, no timeline shared."
+      ]
+    },
+    {
+      selectedOptions: ["Analytics Tools"],
+      whyQualified: "Analytics tool adoption mentioned, but no details on integration or impact.",
+      researchSummary: "[COMPANY] referenced new analytics tools, but has not shared integration plans or results.",
+      evidenceTemplates: [
+        "Engineering blog: Analytics tool mention, no follow-up.",
+        "Job posting: Analytics engineer, project details unclear.",
+        "Conference talk: Tool adoption, impact TBD."
+      ]
+    }
+  ];
+
   generateResults(agentId: string, companySample?: Company[]): AgentResult[] {
     console.log('🔍 AGENT TEST DEBUG:');
     console.log('Agent ID requested:', agentId);
@@ -604,7 +1084,7 @@ export class ResultsGenerator {
           needsReview: false,
           evidence,
           researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
-          whyQualified: template.whyQualified,
+          whyQualified: template.whyQualified.replace(/\[COMPANY\]/g, company.companyName),
           confidence: 0.92,
           confidenceScore: 92,
           researchDate: new Date().toISOString(),
@@ -621,7 +1101,10 @@ export class ResultsGenerator {
           yearFounded: company.yearFounded,
           dataSources: ['LinkedIn Jobs', 'Company Website'],
           questionType: agent?.questionType || 'Boolean',
-          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['LinkedIn Jobs', 'Company Website'] },
+          researchResults: {
+            summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
+            sources: ['LinkedIn Jobs', 'Company Website']
+          },
           assignedPersonas: []
         };
       });
@@ -629,7 +1112,13 @@ export class ResultsGenerator {
       // Build needsReview results
       const needsReviewResults = needsReviewCompanies.map(company => {
         const template = this.MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_NEEDS_REVIEW_VARIATIONS.length)];
-        const evidence = template.evidenceTemplates.map(et => ({ type: 'job_posting', title: et, description: et, confidence: 0.8, source: 'LinkedIn Jobs' }));
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.8,
+          source: 'LinkedIn Jobs'
+        }));
         return {
           companyId: company.id,
           companyName: company.companyName,
@@ -637,7 +1126,7 @@ export class ResultsGenerator {
           needsReview: true,
           evidence,
           researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
-          whyQualified: template.whyQualified,
+          whyQualified: template.whyQualified.replace(/\[COMPANY\]/g, company.companyName),
           confidence: 0.8,
           confidenceScore: 80,
           researchDate: new Date().toISOString(),
@@ -654,7 +1143,10 @@ export class ResultsGenerator {
           yearFounded: company.yearFounded,
           dataSources: ['LinkedIn Jobs', 'Company Website'],
           questionType: agent?.questionType || 'Boolean',
-          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['LinkedIn Jobs', 'Company Website'] },
+          researchResults: {
+            summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
+            sources: ['LinkedIn Jobs', 'Company Website']
+          },
           assignedPersonas: []
         };
       });
@@ -662,7 +1154,13 @@ export class ResultsGenerator {
       // Build unqualified results
       const unqualifiedResults = unqualifiedCompanies.map(company => {
         const template = this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS[Math.floor(Math.random() * this.MARKETING_HIRING_UNQUALIFIED_VARIATIONS.length)];
-        const evidence = template.evidenceTemplates.map(et => ({ type: 'job_posting', title: et, description: et, confidence: 0.7, source: 'Company Careers Page' }));
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.7,
+          source: 'Company Careers Page'
+        }));
         return {
           companyId: company.id,
           companyName: company.companyName,
@@ -670,7 +1168,7 @@ export class ResultsGenerator {
           needsReview: false,
           evidence,
           researchSummary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
-          whyQualified: template.whyQualified,
+          whyQualified: template.whyQualified.replace(/\[COMPANY\]/g, company.companyName),
           confidence: 0.7,
           confidenceScore: 70,
           researchDate: new Date().toISOString(),
@@ -687,7 +1185,10 @@ export class ResultsGenerator {
           yearFounded: company.yearFounded,
           dataSources: ['Company Website'],
           questionType: agent?.questionType || 'Boolean',
-          researchResults: { summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName), sources: ['Company Website'] },
+          researchResults: {
+            summary: template.researchSummary.replace(/\[COMPANY\]/g, company.companyName),
+            sources: ['Company Website']
+          },
           assignedPersonas: []
         };
       });
@@ -699,9 +1200,12 @@ export class ResultsGenerator {
       return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
     }
 
+    // --- DATA HIRING AGENT LOGIC ---
     if (agentId === 'data-hiring') {
       const agent = this.agents.find(a => a.id === agentId);
       const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      console.log('[DATA-HIRING] Block entered. agent:', agent, 'isPicklist:', isPicklist, 'isBoolean:', isBoolean);
       const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
       const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
       const sample = shuffled.slice(0, 10);
@@ -710,14 +1214,17 @@ export class ResultsGenerator {
       const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
       const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
       const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
-      if (isPicklist) {
-        // Picklist qualified variations
-        const picklistQualifiedVariations = this.DATA_HIRING_QUALIFIED_VARIATIONS;
-        const picklistUnqualifiedVariations = this.DATA_HIRING_UNQUALIFIED_VARIATIONS;
-        const picklistNeedsReviewVariations = this.DATA_HIRING_NEEDS_REVIEW_VARIATIONS;
-        // Assign qualified variations in order, cycling if needed
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.DATA_HIRING_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.DATA_HIRING_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.DATA_HIRING_NEEDS_REVIEW_VARIATIONS;
+        console.log('[DATA-HIRING] Using variations for Picklist/Boolean:', {
+          qualifiedVariations,
+          unqualifiedVariations,
+          needsReviewVariations
+        });
         const qualifiedResults = qualifiedCompanies.map((company, idx) => {
-          const template = picklistQualifiedVariations[idx % picklistQualifiedVariations.length];
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
           const evidence = template.evidenceTemplates.map(et => ({
             type: 'job_posting',
             title: et,
@@ -748,7 +1255,7 @@ export class ResultsGenerator {
             yearFounded: company.yearFounded,
             dataSources: ['LinkedIn Jobs', 'Company Website'],
             selectedOptions: template.selectedOptions,
-            questionType: 'Picklist',
+            questionType: agent?.questionType || 'Picklist',
             researchResults: {
               summary: template.researchSummary.replace('[COMPANY]', company.companyName),
               sources: ['LinkedIn Jobs', 'Company Website']
@@ -756,9 +1263,8 @@ export class ResultsGenerator {
             assignedPersonas: []
           };
         });
-        // Assign needsReview variations in order, cycling if needed
         const needsReviewResults = needsReviewCompanies.map((company, idx) => {
-          const template = picklistNeedsReviewVariations[idx % picklistNeedsReviewVariations.length];
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
           const evidence = template.evidenceTemplates.map(et => ({
             type: 'job_posting',
             title: et,
@@ -790,7 +1296,7 @@ export class ResultsGenerator {
             yearFounded: company.yearFounded,
             dataSources: ['LinkedIn Jobs', 'Company Website'],
             selectedOptions: template.selectedOptions,
-            questionType: 'Picklist',
+            questionType: agent?.questionType || 'Picklist',
             researchResults: {
               summary: template.researchSummary.replace('[COMPANY]', company.companyName),
               sources: ['LinkedIn Jobs', 'Company Website']
@@ -798,15 +1304,14 @@ export class ResultsGenerator {
             assignedPersonas: []
           };
         });
-        // Assign unqualified variations in order, cycling if needed
         const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
-          const template = picklistUnqualifiedVariations[idx % picklistUnqualifiedVariations.length];
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
           const evidence = template.evidenceTemplates.map(et => ({
             type: 'job_posting',
             title: et,
             description: et,
             confidence: 0.7,
-            source: 'Company Careers Page'
+            source: 'LinkedIn Jobs'
           }));
           return {
             companyId: company.id,
@@ -829,20 +1334,1006 @@ export class ResultsGenerator {
             totalFunding: company.totalFunding,
             estimatedAnnualRevenue: company.estimatedAnnualRevenue,
             yearFounded: company.yearFounded,
-            dataSources: ['Company Website'],
+            dataSources: ['LinkedIn Jobs', 'Company Website'],
             selectedOptions: template.selectedOptions,
-            questionType: 'Picklist',
+            questionType: agent?.questionType || 'Picklist',
             researchResults: {
               summary: template.researchSummary.replace('[COMPANY]', company.companyName),
-              sources: ['Company Website']
+              sources: ['LinkedIn Jobs', 'Company Website']
             },
             assignedPersonas: []
           };
         });
         return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
       }
-      // Boolean logic for data-hiring (fallback to generic for now)
-      // You can add similar logic for Boolean if needed
+    }
+
+    // --- TECH STACK AGENT LOGIC ---
+    if (agentId === 'tech-stack') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+        const template = this.TECH_STACK_QUALIFIED_VARIATIONS[idx % this.TECH_STACK_QUALIFIED_VARIATIONS.length];
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.92,
+          source: 'Job Posting'
+        }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: true,
+          evidence,
+          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+          confidence: 0.92,
+          confidenceScore: 92,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: agent?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['Job Posting', 'Company Blog'],
+          selectedOptions: template.selectedOptions,
+          questionType: agent?.questionType || 'Picklist',
+          researchResults: {
+            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            sources: ['Job Posting', 'Company Blog']
+          },
+          assignedPersonas: []
+        };
+      });
+      const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+        const template = this.TECH_STACK_NEEDS_REVIEW_VARIATIONS[idx % this.TECH_STACK_NEEDS_REVIEW_VARIATIONS.length];
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.8,
+          source: 'Job Posting'
+        }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: false,
+          needsReview: true,
+          evidence,
+          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+          confidence: 0.8,
+          confidenceScore: 80,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: agent?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['Job Posting', 'Company Blog'],
+          selectedOptions: template.selectedOptions,
+          questionType: agent?.questionType || 'Picklist',
+          researchResults: {
+            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            sources: ['Job Posting', 'Company Blog']
+          },
+          assignedPersonas: []
+        };
+      });
+      const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+        const template = this.TECH_STACK_UNQUALIFIED_VARIATIONS[idx % this.TECH_STACK_UNQUALIFIED_VARIATIONS.length];
+        const evidence = template.evidenceTemplates.map(et => ({
+          type: 'job_posting',
+          title: et,
+          description: et,
+          confidence: 0.7,
+          source: 'Job Posting'
+        }));
+        return {
+          companyId: company.id,
+          companyName: company.companyName,
+          qualified: false,
+          evidence,
+          researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+          whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+          confidence: 0.7,
+          confidenceScore: 70,
+          researchDate: new Date().toISOString(),
+          agentId,
+          agentName: agent?.title || '',
+          industry: company.industry,
+          employeeCount: company.employeeCount,
+          hqCountry: company.hqCountry,
+          hqState: company.hqState,
+          hqCity: company.hqCity,
+          website: company.website,
+          totalFunding: company.totalFunding,
+          estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+          yearFounded: company.yearFounded,
+          dataSources: ['Job Posting', 'Company Blog'],
+          selectedOptions: template.selectedOptions,
+          questionType: agent?.questionType || 'Picklist',
+          researchResults: {
+            summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            sources: ['Job Posting', 'Company Blog']
+          },
+          assignedPersonas: []
+        };
+      });
+      return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+    }
+
+    // --- NEWS FUNDING AGENT LOGIC ---
+    if (agentId === 'news-funding') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.NEWS_FUNDING_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.NEWS_FUNDING_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.NEWS_FUNDING_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'TechCrunch', 'Investor Relations'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'TechCrunch', 'Investor Relations']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'TechCrunch', 'Investor Relations'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'TechCrunch', 'Investor Relations']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'TechCrunch', 'Investor Relations'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'TechCrunch', 'Investor Relations']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+    }
+
+    // --- NEWS MA AGENT LOGIC ---
+    if (agentId === 'news-ma') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.NEWS_MA_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.NEWS_MA_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.NEWS_MA_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Business News', 'SEC Filing'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Business News', 'SEC Filing']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Business News', 'SEC Filing'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Business News', 'SEC Filing']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Business News', 'SEC Filing'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Business News', 'SEC Filing']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+    }
+
+    // --- NEWS EXPANSION AGENT LOGIC ---
+    if (agentId === 'news-expansion') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.NEWS_EXPANSION_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.NEWS_EXPANSION_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.NEWS_EXPANSION_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Job Posting', 'Company Update'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Job Posting', 'Company Update']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Job Posting', 'Company Update'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Job Posting', 'Company Update']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Job Posting', 'Company Update'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Job Posting', 'Company Update']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+    }
+
+    // --- NEWS ANNOUNCEMENTS AGENT LOGIC ---
+    if (agentId === 'news-announcements') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.NEWS_ANNOUNCEMENTS_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.NEWS_ANNOUNCEMENTS_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.NEWS_ANNOUNCEMENTS_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Company Blog', 'Industry Publication'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Company Blog', 'Industry Publication']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Company Blog', 'Industry Publication'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Company Blog', 'Industry Publication']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Company Blog', 'Industry Publication'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Company Blog', 'Industry Publication']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+    }
+
+    // --- TECH PRODUCT AGENT LOGIC ---
+    if (agentId === 'tech-product') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.TECH_PRODUCT_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.TECH_PRODUCT_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.TECH_PRODUCT_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Product Blog', 'Release Notes'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Product Blog', 'Release Notes']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Product Blog', 'Release Notes'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Product Blog', 'Release Notes']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Product Blog', 'Release Notes'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Product Blog', 'Release Notes']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
+    }
+
+    // --- TECH MIGRATION AGENT LOGIC ---
+    if (agentId === 'tech-migration') {
+      const agent = this.agents.find(a => a.id === agentId);
+      const isPicklist = agent?.questionType === 'Picklist';
+      const isBoolean = agent?.questionType === 'Boolean';
+      const baseCompanies = companySample && companySample.length >= 10 ? companySample : [...this.companies];
+      const shuffled = [...baseCompanies].sort(() => 0.5 - Math.random());
+      const sample = shuffled.slice(0, 10);
+      const qualifiedCompanies = sample.slice(0, 3);
+      const qualifiedIds = new Set(qualifiedCompanies.map(c => c.id));
+      const needsReviewCompanies = sample.filter(c => !qualifiedIds.has(c.id)).slice(0, 2);
+      const needsReviewIds = new Set([...Array.from(qualifiedIds), ...needsReviewCompanies.map(c => c.id)]);
+      const unqualifiedCompanies = sample.filter(c => !needsReviewIds.has(c.id)).slice(0, 5);
+      if (isPicklist || isBoolean) {
+        const qualifiedVariations = this.TECH_MIGRATION_QUALIFIED_VARIATIONS;
+        const unqualifiedVariations = this.TECH_MIGRATION_UNQUALIFIED_VARIATIONS;
+        const needsReviewVariations = this.TECH_MIGRATION_NEEDS_REVIEW_VARIATIONS;
+        const qualifiedResults = qualifiedCompanies.map((company, idx) => {
+          const template = qualifiedVariations[idx % qualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.92,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.92,
+            confidenceScore: 92,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Engineering Blog', 'Conference Talk'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Engineering Blog', 'Conference Talk']
+            },
+            assignedPersonas: []
+          };
+        });
+        const needsReviewResults = needsReviewCompanies.map((company, idx) => {
+          const template = needsReviewVariations[idx % needsReviewVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.8,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            needsReview: true,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.8,
+            confidenceScore: 80,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Engineering Blog', 'Conference Talk'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Engineering Blog', 'Conference Talk']
+            },
+            assignedPersonas: []
+          };
+        });
+        const unqualifiedResults = unqualifiedCompanies.map((company, idx) => {
+          const template = unqualifiedVariations[idx % unqualifiedVariations.length];
+          const evidence = template.evidenceTemplates.map(et => ({
+            type: 'news',
+            title: et,
+            description: et,
+            confidence: 0.7,
+            source: 'Press Release'
+          }));
+          return {
+            companyId: company.id,
+            companyName: company.companyName,
+            qualified: false,
+            evidence,
+            researchSummary: template.researchSummary.replace('[COMPANY]', company.companyName),
+            whyQualified: template.whyQualified.replace('[COMPANY]', company.companyName),
+            confidence: 0.7,
+            confidenceScore: 70,
+            researchDate: new Date().toISOString(),
+            agentId,
+            agentName: agent?.title || '',
+            industry: company.industry,
+            employeeCount: company.employeeCount,
+            hqCountry: company.hqCountry,
+            hqState: company.hqState,
+            hqCity: company.hqCity,
+            website: company.website,
+            totalFunding: company.totalFunding,
+            estimatedAnnualRevenue: company.estimatedAnnualRevenue,
+            yearFounded: company.yearFounded,
+            dataSources: ['Press Release', 'Engineering Blog', 'Conference Talk'],
+            selectedOptions: template.selectedOptions,
+            questionType: agent?.questionType || 'Picklist',
+            researchResults: {
+              summary: template.researchSummary.replace('[COMPANY]', company.companyName),
+              sources: ['Press Release', 'Engineering Blog', 'Conference Talk']
+            },
+            assignedPersonas: []
+          };
+        });
+        return [...qualifiedResults, ...needsReviewResults, ...unqualifiedResults];
+      }
     }
 
     return targetCompanies.map(company => {
@@ -885,7 +2376,7 @@ export class ResultsGenerator {
         totalFunding: company.totalFunding,
         estimatedAnnualRevenue: company.estimatedAnnualRevenue,
         yearFounded: company.yearFounded,
-        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News'],
+        dataSources: ['LinkedIn Jobs', 'Company Website'],
         questionType: this.agents.find(a => a.id === agentId)?.questionType || 'Boolean'
       };
     });
@@ -914,17 +2405,17 @@ export class ResultsGenerator {
     return targetCompanies.map(company => {
       const evidence = this.mockResults?.[agentId]?.evidenceTemplates?.map(template => ({
         type: 'news',
-        title: template.replace('[COMPANY]', company.companyName),
-        description: template.replace('[COMPANY]', company.companyName),
+        title: template,
+        description: template,
         confidence: 0.92,
         source: 'Company Website'
       })) || [];
-
+      
       const researchSummary = this.mockResults?.[agentId]?.researchSummary?.replace(
         '[COMPANY]', 
         company.companyName
       ) || '';
-
+      
       const whyQualified = this.mockResults?.[agentId]?.whyQualified?.replace(
         '[COMPANY]', 
         company.companyName
@@ -946,12 +2437,12 @@ export class ResultsGenerator {
         employeeCount: company.employeeCount,
         hqCountry: company.hqCountry,
         hqState: company.hqState,
-        hqCity: company.hqCity || '',
+        hqCity: company.hqCity,
         website: company.website,
         totalFunding: company.totalFunding,
         estimatedAnnualRevenue: company.estimatedAnnualRevenue,
         yearFounded: company.yearFounded,
-        dataSources: ['LinkedIn Jobs', 'Company Website', 'Tech News'],
+        dataSources: ['LinkedIn Jobs', 'Company Website'],
         questionType: this.agents.find(a => a.id === agentId)?.questionType || 'Boolean'
       };
     });
@@ -1036,7 +2527,7 @@ export class ResultsGenerator {
     'tech-product': {
       companySets: ['framer', 'spline', 'raycast'],
       evidenceTemplates: [
-        'New feature launch',
+        'New product launch',
         'Product update announcement',
         'Platform enhancement release'
       ],
