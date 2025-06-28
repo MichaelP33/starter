@@ -2,23 +2,33 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+// --- Begin: Shared color logic with PicklistChips.tsx ---
+const SOFT_PASTEL_COLORS = [
+  "bg-purple-50 text-purple-700 border-purple-200",
+  "bg-blue-50 text-blue-700 border-blue-200",
+  "bg-green-50 text-green-700 border-green-200",
+  "bg-orange-50 text-orange-700 border-orange-200",
+  "bg-pink-50 text-pink-700 border-pink-200",
+  "bg-indigo-50 text-indigo-700 border-indigo-200",
+  "bg-teal-50 text-teal-700 border-teal-200",
+  "bg-rose-50 text-rose-700 border-rose-200",
+];
+
+function getColorClass(option: string) {
+  let hash = 0;
+  for (let i = 0; i < option.length; i++) {
+    hash = option.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const idx = Math.abs(hash) % SOFT_PASTEL_COLORS.length;
+  return SOFT_PASTEL_COLORS[idx];
+}
+// --- End: Shared color logic ---
+
 interface CompactPicklistChipsProps {
   options: string[];
   maxVisible?: number;
   className?: string;
 }
-
-// Use the same color palette as PicklistChips
-const CATEGORY_COLORS: Record<string, string> = {
-  "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
-  "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
-  "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
-  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200",
-  "Data Engineering": "bg-purple-100 text-purple-800 border border-purple-200",
-  "Data Science": "bg-blue-100 text-blue-800 border border-blue-200",
-  "Analytics": "bg-green-100 text-green-800 border border-green-200",
-  "Data Leadership": "bg-orange-100 text-orange-800 border border-orange-200"
-};
 
 const MAX_CHARS = 40; // Only truncate if text exceeds 40 chars
 const DEFAULT_MAX_VISIBLE = 3;
@@ -33,17 +43,15 @@ const CompactPicklistChips: React.FC<CompactPicklistChipsProps> = ({ options, ma
     <div className={cn("flex flex-wrap items-center gap-1", className)}>
       <TooltipProvider>
         {visible.map((option, idx) => {
-          // Only truncate if not a standard category and text is very long
-          const isStandardCategory = Object.keys(CATEGORY_COLORS).includes(option);
-          const shouldTruncate = !isStandardCategory && option.length > MAX_CHARS;
+          const shouldTruncate = option.length > MAX_CHARS;
           const displayText = shouldTruncate ? option.slice(0, MAX_CHARS) + "…" : option;
-          const colorClass = CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200";
+          const colorClass = getColorClass(option);
           return (
             <Tooltip key={option + idx}>
               <TooltipTrigger asChild>
                 <span
                   className={cn(
-                    "inline-block px-2 py-0.5 rounded-full text-xs font-normal max-w-[180px] truncate cursor-default",
+                    "inline-block px-2 py-0.5 rounded-full text-xs font-normal max-w-[180px] truncate cursor-default border",
                     colorClass
                   )}
                   style={{ maxWidth: 180 }}
