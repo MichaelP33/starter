@@ -37,7 +37,7 @@ const qualificationInsights: Record<string, string> = {
   "Supabase": "Actively recruiting Marketing Operations and Digital Marketing specialists"
 };
 
-const ResearchResultCell = ({ result, onViewDetails, compact = false }: { result: AgentResult; onViewDetails: (companyName: string) => void; compact?: boolean }) => {
+const ResearchResultCell = ({ result, onViewDetails, compact = false, referenceOptions }: { result: AgentResult; onViewDetails: (companyName: string) => void; compact?: boolean; referenceOptions?: string[] }) => {
   // Picklist question type: always use vertical stack
   if (result.questionType === 'Picklist') {
     const hasOptions = Array.isArray(result.selectedOptions) && result.selectedOptions.length > 0;
@@ -46,7 +46,7 @@ const ResearchResultCell = ({ result, onViewDetails, compact = false }: { result
       <div className="flex flex-col items-start gap-2">
         <div className="flex flex-wrap items-start gap-1">
           {hasOptions ? (
-            <CompactPicklistChips options={options} />
+            <CompactPicklistChips options={options} referenceOptions={referenceOptions} />
           ) : (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
               No Relevant Hiring
@@ -326,7 +326,7 @@ export function QualificationResultsTable({ results, allTestedCount, qualifiedCo
                       {column.id === "companyName" ? (
                         renderCompanyNameCell(result)
                       ) : column.id === "researchResults" ? (
-                        <ResearchResultCell result={result} onViewDetails={handleViewDetails} compact={isBoolean} />
+                        <ResearchResultCell result={result} onViewDetails={handleViewDetails} referenceOptions={agent.responseOptions} />
                       ) : column.id === "confidence" ? (
                         <div className="text-sm text-gray-900">
                           {Math.round(result.confidence * 100)}%

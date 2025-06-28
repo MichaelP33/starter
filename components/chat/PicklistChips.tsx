@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 // Soft pastel color palette
 const SOFT_PASTEL_COLORS = [
   "bg-purple-50 text-purple-700 border-purple-200",
-  "bg-blue-50 text-blue-700 border-blue-200",
   "bg-green-50 text-green-700 border-green-200",
   "bg-orange-50 text-orange-700 border-orange-200",
   "bg-pink-50 text-pink-700 border-pink-200",
@@ -15,14 +14,10 @@ const SOFT_PASTEL_COLORS = [
   "bg-rose-50 text-rose-700 border-rose-200",
 ];
 
-// Simple hash function to assign a color index based on option text
-function getColorClass(option: string) {
-  let hash = 0;
-  for (let i = 0; i < option.length; i++) {
-    hash = option.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const idx = Math.abs(hash) % SOFT_PASTEL_COLORS.length;
-  return SOFT_PASTEL_COLORS[idx];
+// Simple color assignment based on option position (not text content)
+function getColorClass(option: string, optionIndex: number) {
+  console.log('[PicklistChips] Option:', option, 'at index:', optionIndex, '-> color index:', optionIndex % SOFT_PASTEL_COLORS.length);
+  return SOFT_PASTEL_COLORS[optionIndex % SOFT_PASTEL_COLORS.length];
 }
 
 interface PicklistChipsProps {
@@ -66,7 +61,7 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm",
-                getColorClass(option),
+                getColorClass(option, options.indexOf(option)),
                 typeof onRemove === 'function' ? 'pr-6' : ''
               )}
             >
@@ -96,9 +91,9 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
       {options.map((option) => {
         const isSelected = selected.includes(option);
         const removable = typeof onRemove === 'function';
-        const colorClass = getColorClass(option);
+        const colorClass = getColorClass(option, options.indexOf(option));
         if (variant === 'source') {
-          // Data Source chip style
+          // Data Source chip style: always blue, greyed if deselected
           return (
             <motion.div
               key={option}
@@ -114,8 +109,8 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
                 className={cn(
                   "px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center border transition-all duration-200 focus:outline-none cursor-pointer select-none",
                   isSelected
-                    ? colorClass + " ring-2 ring-blue-200"
-                    : colorClass + " opacity-70 hover:opacity-100",
+                    ? "bg-blue-100 text-blue-800 border-blue-200 ring-2 ring-blue-200"
+                    : "bg-gray-100 text-gray-400 border-gray-200 opacity-70 hover:opacity-100",
                   removable ? 'pr-6' : ''
                 )}
               >

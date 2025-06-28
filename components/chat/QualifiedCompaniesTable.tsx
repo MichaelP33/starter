@@ -31,9 +31,10 @@ interface QualifiedCompaniesTableProps {
   companies: QualifiedCompanyWithResearch[];
   enrichmentOptions: EnrichmentOption[];
   totalPersonas?: number;
+  agent: any; // Accept agent prop for referenceOptions
 }
 
-export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPersonas }: QualifiedCompaniesTableProps) {
+export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPersonas, agent }: QualifiedCompaniesTableProps) {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [expandedCompanyIds, setExpandedCompanyIds] = useState<string[]>([]);
@@ -154,7 +155,7 @@ export function QualifiedCompaniesTable({ companies, enrichmentOptions, totalPer
       return (
         <div className="flex flex-col items-start gap-2">
           {Array.isArray(company.selectedOptions) && company.selectedOptions.length > 0 ? (
-            <CompactPicklistChips options={company.selectedOptions} />
+            <CompactPicklistChips options={company.selectedOptions} referenceOptions={agent?.responseOptions} />
           ) : (
             <span className="text-xs text-gray-500">No matching roles found</span>
           )}

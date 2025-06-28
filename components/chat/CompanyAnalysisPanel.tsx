@@ -9,7 +9,6 @@ import { AgentResult } from "./types";
 // --- Begin: Shared color logic with PicklistChips.tsx ---
 const SOFT_PASTEL_COLORS = [
   "bg-purple-50 text-purple-700 border-purple-200",
-  "bg-blue-50 text-blue-700 border-blue-200",
   "bg-green-50 text-green-700 border-green-200",
   "bg-orange-50 text-orange-700 border-orange-200",
   "bg-pink-50 text-pink-700 border-pink-200",
@@ -18,13 +17,9 @@ const SOFT_PASTEL_COLORS = [
   "bg-rose-50 text-rose-700 border-rose-200",
 ];
 
-function getColorClass(option: string) {
-  let hash = 0;
-  for (let i = 0; i < option.length; i++) {
-    hash = option.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const idx = Math.abs(hash) % SOFT_PASTEL_COLORS.length;
-  return SOFT_PASTEL_COLORS[idx];
+function getColorClass(option: string, optionIndex: number) {
+  console.log('[CompanyAnalysisPanel] Option:', option, 'at index:', optionIndex, '-> color index:', optionIndex % SOFT_PASTEL_COLORS.length);
+  return SOFT_PASTEL_COLORS[optionIndex % SOFT_PASTEL_COLORS.length];
 }
 // --- End: Shared color logic ---
 
@@ -97,10 +92,10 @@ export function CompanyAnalysisPanel({
                 {/* Show chips for Picklist, Yes/No for Boolean, number for Number */}
                 {result.questionType === 'Picklist' && Array.isArray(result.selectedOptions) && result.selectedOptions.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {result.selectedOptions.map(option => (
+                    {result.selectedOptions.map((option, index) => (
                       <span
                         key={option}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getColorClass(option)}`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getColorClass(option, index)}`}
                       >
                         {option}
                       </span>

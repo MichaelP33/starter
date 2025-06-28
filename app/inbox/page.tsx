@@ -153,6 +153,7 @@ export default function CampaignInbox() {
                 companies={companiesToShow}
                 enrichmentOptions={initialEnrichmentOptions}
                 totalPersonas={selectedPersonas.length}
+                agent={agent}
               />
             </div>
           </div>
