@@ -5,7 +5,28 @@ import { X, ChevronDown, ChevronRight, ExternalLink, CheckCircle } from "lucide-
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { AgentResult } from "./types";
-import { CATEGORY_COLORS } from "./PicklistChips";
+
+// --- Begin: Shared color logic with PicklistChips.tsx ---
+const SOFT_PASTEL_COLORS = [
+  "bg-purple-50 text-purple-700 border-purple-200",
+  "bg-blue-50 text-blue-700 border-blue-200",
+  "bg-green-50 text-green-700 border-green-200",
+  "bg-orange-50 text-orange-700 border-orange-200",
+  "bg-pink-50 text-pink-700 border-pink-200",
+  "bg-indigo-50 text-indigo-700 border-indigo-200",
+  "bg-teal-50 text-teal-700 border-teal-200",
+  "bg-rose-50 text-rose-700 border-rose-200",
+];
+
+function getColorClass(option: string) {
+  let hash = 0;
+  for (let i = 0; i < option.length; i++) {
+    hash = option.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const idx = Math.abs(hash) % SOFT_PASTEL_COLORS.length;
+  return SOFT_PASTEL_COLORS[idx];
+}
+// --- End: Shared color logic ---
 
 interface CompanyAnalysisPanelProps {
   isOpen: boolean;
@@ -79,7 +100,7 @@ export function CompanyAnalysisPanel({
                     {result.selectedOptions.map(option => (
                       <span
                         key={option}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200"}`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getColorClass(option)}`}
                       >
                         {option}
                       </span>
