@@ -3,27 +3,27 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const CATEGORY_COLORS: Record<string, string> = {
-  "Marketing Leadership": "bg-purple-100 text-purple-800 border border-purple-200",
-  "Marketing Operations": "bg-blue-100 text-blue-800 border border-blue-200",
-  "Growth Marketing": "bg-green-100 text-green-800 border border-green-200",
-  "Digital Marketing": "bg-orange-100 text-orange-800 border border-orange-200",
-  "Data Engineering": "bg-purple-100 text-purple-800 border border-purple-200",
-  "Data Science": "bg-blue-100 text-blue-800 border border-blue-200",
-  "Analytics": "bg-green-100 text-green-800 border border-green-200",
-  "Data Leadership": "bg-orange-100 text-orange-800 border border-orange-200"
-};
+// Soft pastel color palette
+const SOFT_PASTEL_COLORS = [
+  "bg-purple-50 text-purple-700 border-purple-200",
+  "bg-blue-50 text-blue-700 border-blue-200",
+  "bg-green-50 text-green-700 border-green-200",
+  "bg-orange-50 text-orange-700 border-orange-200",
+  "bg-pink-50 text-pink-700 border-pink-200",
+  "bg-indigo-50 text-indigo-700 border-indigo-200",
+  "bg-teal-50 text-teal-700 border-teal-200",
+  "bg-rose-50 text-rose-700 border-rose-200",
+];
 
-const DARK_CATEGORY_COLORS: Record<string, string> = {
-  "Marketing Leadership": "bg-purple-600 text-white border-purple-700",
-  "Marketing Operations": "bg-blue-600 text-white border-blue-700",
-  "Growth Marketing": "bg-green-600 text-white border-green-700",
-  "Digital Marketing": "bg-orange-600 text-white border-orange-700",
-  "Data Engineering": "bg-purple-600 text-white border-purple-700",
-  "Data Science": "bg-blue-600 text-white border-blue-700",
-  "Analytics": "bg-green-600 text-white border-green-700",
-  "Data Leadership": "bg-orange-600 text-white border-orange-700"
-};
+// Simple hash function to assign a color index based on option text
+function getColorClass(option: string) {
+  let hash = 0;
+  for (let i = 0; i < option.length; i++) {
+    hash = option.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const idx = Math.abs(hash) % SOFT_PASTEL_COLORS.length;
+  return SOFT_PASTEL_COLORS[idx];
+}
 
 interface PicklistChipsProps {
   options: string[];
@@ -35,7 +35,6 @@ interface PicklistChipsProps {
 }
 
 const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions, onToggle, onRemove, className, variant = 'default' }) => {
-  console.log('[PicklistChips] Rendering with options:', options, 'selectedOptions:', selectedOptions, 'variant:', variant);
   const isToggleable = typeof selectedOptions !== 'undefined' && typeof onToggle === 'function';
   const [internalSelected, setInternalSelected] = useState<string[]>(selectedOptions || []);
   const isControlled = typeof selectedOptions !== 'undefined';
@@ -67,7 +66,7 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
             <span
               className={cn(
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border shadow-sm",
-                CATEGORY_COLORS[option] || "bg-gray-100 text-gray-800 border border-gray-200",
+                getColorClass(option),
                 typeof onRemove === 'function' ? 'pr-6' : ''
               )}
             >
@@ -97,6 +96,7 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
       {options.map((option) => {
         const isSelected = selected.includes(option);
         const removable = typeof onRemove === 'function';
+        const colorClass = getColorClass(option);
         if (variant === 'source') {
           // Data Source chip style
           return (
@@ -114,9 +114,8 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
                 className={cn(
                   "px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center border transition-all duration-200 focus:outline-none cursor-pointer select-none",
                   isSelected
-                    ? "bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200"
-                    : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200",
-                  "transition-all duration-200",
+                    ? colorClass + " ring-2 ring-blue-200"
+                    : colorClass + " opacity-70 hover:opacity-100",
                   removable ? 'pr-6' : ''
                 )}
               >
@@ -147,7 +146,7 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
                 "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200 focus:outline-none cursor-pointer pr-6",
                 isSelected
                   ? "bg-green-100 text-green-800 border-green-300 hover:bg-green-200 shadow-sm"
-                  : "bg-gray-100 text-gray-500 border border-gray-200 hover:bg-gray-200",
+                  : colorClass + " opacity-70 hover:opacity-100 border",
                 "transition-all duration-200"
               )}
               aria-pressed={isSelected}
@@ -167,15 +166,14 @@ const PicklistChips: React.FC<PicklistChipsProps> = ({ options, selectedOptions,
                 onClick={() => handleToggle(option)}
                 className={cn(
                   "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-200 focus:outline-none cursor-pointer pr-6",
-                  isSelected
-                    ? `${DARK_CATEGORY_COLORS[option] || "bg-gray-600 text-white border-gray-700"} shadow-sm`
-                    : "bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200 hover:text-gray-800",
+                  colorClass,
+                  isSelected ? "ring-2 ring-primary/30" : "opacity-80 hover:opacity-100",
                   "transition-all duration-200"
                 )}
                 aria-pressed={isSelected}
               >
                 {isSelected && (
-                  <Check className="w-3 h-3 mr-1 text-white" />
+                  <Check className="w-3 h-3 mr-1 text-primary" />
                 )}
                 {option}
               </button>

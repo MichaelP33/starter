@@ -2411,12 +2411,12 @@ export class ResultsGenerator {
         confidence: 0.92,
         source: 'Company Website'
       })) || [];
-      
+
       const researchSummary = this.mockResults?.[agentId]?.researchSummary?.replace(
         '[COMPANY]', 
         company.companyName
       ) || '';
-      
+
       const whyQualified = this.mockResults?.[agentId]?.whyQualified?.replace(
         '[COMPANY]', 
         company.companyName
