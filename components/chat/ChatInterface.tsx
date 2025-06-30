@@ -488,7 +488,7 @@ export function ChatInterface() {
         resultsLength: results?.length,
         results
       });
-      // Special handling for tech-migration: show loading then no-results if not manually tested
+      // Tech-migration: no results
       if (agentForTest.id === 'tech-migration' && results && results.length === 0) {
         if (!hasManuallyTestedAgent) {
           setIsTestingAgent(true);
@@ -521,6 +521,44 @@ export function ChatInterface() {
           return;
         }
       }
+      // All other agents: if not tested, show fake loading/results
+      if (!hasManuallyTestedAgent && results) {
+        setIsTestingAgent(true);
+        setHasManuallyTestedAgent(true);
+        setAutoTestInProgress(true);
+        setLoadingStep(0);
+        setLoadingMessage("Selecting representative sample from your target list...");
+
+        setTimeout(() => setLoadingMessage("Running analysis on sample companies..."), 2000);
+        setTimeout(() => setLoadingMessage("Evaluating qualification criteria..."), 4000);
+        setTimeout(() => setLoadingMessage("Preparing sample results..."), 6000);
+
+        setTimeout(() => {
+          setIsTestingAgent(false);
+          setLoadingStep(0);
+          setAutoTestInProgress(false);
+          // Show confirmation/results screen, do NOT advance yet
+          setQualificationResults(results);
+          const personaNames = selectedPersonas.map(p => p.name);
+          const allCompanies = results.map(r => ({
+            ...r,
+            assignedPersonas: r.qualified ? personaNames : [],
+            researchResults: { summary: r.researchSummary, sources: r.dataSources },
+          }));
+          setSelectedAgentConfig({
+            agent: agentForTest,
+            testResults: results,
+            qualifiedCompanies: allCompanies,
+          });
+          setQualifiedCompanies(allCompanies);
+          setShowAgentConfirmation(true);
+          setShowTestResults(true);
+          setCurrentStep('agent-details');
+          setWorkflowStep(2);
+        }, 7500);
+        return;
+      }
+      // Already tested: show results/confirmation immediately
       if (hasManuallyTestedAgent && results) {
         setQualificationResults(results);
         // Connect selected personas to qualified companies
