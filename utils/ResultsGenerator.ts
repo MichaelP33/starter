@@ -904,6 +904,10 @@ export class ResultsGenerator {
   ];
 
   generateResults(agentId: string, companySample?: Company[]): AgentResult[] {
+    if (agentId === 'tech-migration') {
+      // Always return zero matches for tech-migration test
+      return [];
+    }
     console.log('🔍 AGENT TEST DEBUG:');
     console.log('Agent ID requested:', agentId);
     console.log('Available mockResults keys:', Object.keys(this.mockResults || {}));

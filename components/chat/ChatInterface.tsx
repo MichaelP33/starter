@@ -482,93 +482,87 @@ export function ChatInterface() {
       setShowFullResults(false);
 
     } else if (action === 'add') {
-      if (hasManuallyTestedAgent) {
-        const results = resultsGenerator?.generateResults(agentForTest.id);
-        if (results) {
-          setQualificationResults(results);
-          // Connect selected personas to qualified companies
-          const personaNames = selectedPersonas.map(p => p.name);
-          console.log('---CONNECTING PERSONAS---');
-          console.log('Selected personas:', personaNames);
-          
-          const allCompanies: QualifiedCompanyWithResearch[] = results.map(r => ({
-            ...r,
-            assignedPersonas: r.qualified ? personaNames : [],
-            researchResults: { summary: r.researchSummary, sources: r.dataSources },
-          }));
-
-          console.log('Companies with assigned personas:', allCompanies.filter(c => c.assignedPersonas.length > 0));
-          
-          setSelectedAgentConfig({
-            agent: agentForTest,
-            testResults: results,
-            qualifiedCompanies: allCompanies,
-          });
-          setQualifiedCompanies(allCompanies);
-
-          // Show confirmation/results screen, do NOT advance yet
-          setShowAgentConfirmation(true);
-          setShowTestResults(true);
-        }
-      } else {
-        setIsTestingAgent(true);
-        setHasManuallyTestedAgent(true);
-        setAutoTestInProgress(true);
-        setLoadingStep(0);
-        setLoadingMessage("Selecting representative sample from your target list...");
-
-        // Simulate loading steps
-        setTimeout(() => setLoadingMessage("Running analysis on sample companies..."), 2000);
-        setTimeout(() => setLoadingMessage("Evaluating qualification criteria..."), 4000);
-        setTimeout(() => setLoadingMessage("Preparing sample results..."), 6000);
-
-        // Generate results
-        const sample = [...uploadedAccounts].sort(() => 0.5 - Math.random()).slice(0, 10);
-        const sampleCompanies = sample.map(acc => ({
-          id: acc.companyName.toLowerCase().replace(/[^a-z0-9]/g, ''),
-          companyName: acc.companyName,
-          website: acc.website,
-          industry: acc.industry,
-          employeeCount: acc.employeeCount,
-          employeeCountNumeric: parseInt(acc.employeeCount.replace(/,/g, '')) || 0,
-          hqCountry: acc.hqCountry,
-          hqCity: acc.hqCity || '',
-          hqState: null,
-          totalFunding: acc.totalFunding || '',
-          estimatedAnnualRevenue: acc.estimatedAnnualRevenue || '',
-          yearFounded: acc.yearFounded ? parseInt(acc.yearFounded) : 2000,
-          tags: []
-        }));
-        const results = resultsGenerator?.generateResults(agentForTest.id, sampleCompanies);
-        if (results) {
-          setQualificationResults(results);
-          const allCompanies: QualifiedCompanyWithResearch[] = results
-            .map(r => ({ ...r, assignedPersonas: [], researchResults: { summary: r.researchSummary, sources: r.dataSources } }));
-          setSelectedAgentConfig({ agent: agentForTest, testResults: results, qualifiedCompanies: allCompanies });
-          setQualifiedCompanies(allCompanies);
-        }
-
-        setTimeout(() => {
-          setIsTestingAgent(false);
+      const results = resultsGenerator?.generateResults(agentForTest.id);
+      console.log('[ADD TO CAMPAIGN DEBUG]', {
+        agentId: agentForTest.id,
+        resultsLength: results?.length,
+        results
+      });
+      // Special handling for tech-migration: show loading then no-results if not manually tested
+      if (agentForTest.id === 'tech-migration' && results && results.length === 0) {
+        if (!hasManuallyTestedAgent) {
+          setIsTestingAgent(true);
+          setHasManuallyTestedAgent(true);
+          setAutoTestInProgress(true);
           setLoadingStep(0);
-          setAutoTestInProgress(false);
-          // Show confirmation/results screen, do NOT advance yet
-          setShowAgentConfirmation(true);
+          setLoadingMessage("Selecting representative sample from your target list...");
+
+          setTimeout(() => setLoadingMessage("Running analysis on sample companies..."), 2000);
+          setTimeout(() => setLoadingMessage("Evaluating qualification criteria..."), 4000);
+          setTimeout(() => setLoadingMessage("Preparing sample results..."), 6000);
+
+          setTimeout(() => {
+            setIsTestingAgent(false);
+            setShowTestResults(true);
+            setShowAgentConfirmation(false);
+            setShowFullResults(false);
+            setQualificationResults(results);
+            setSelectedAgentConfig({ agent: agentForTest, testResults: results, qualifiedCompanies: [] });
+            setQualifiedCompanies([]);
+          }, 7500);
+          return;
+        } else {
           setShowTestResults(true);
-          setCurrentStep('agent-details');
-          setWorkflowStep(2);
-        }, 7500);
+          setShowAgentConfirmation(false);
+          setShowFullResults(false);
+          setQualificationResults(results);
+          setSelectedAgentConfig({ agent: agentForTest, testResults: results, qualifiedCompanies: [] });
+          setQualifiedCompanies([]);
+          return;
+        }
+      }
+      if (hasManuallyTestedAgent && results) {
+        setQualificationResults(results);
+        // Connect selected personas to qualified companies
+        const personaNames = selectedPersonas.map(p => p.name);
+        console.log('---CONNECTING PERSONAS---');
+        console.log('Selected personas:', personaNames);
+        
+        const allCompanies: QualifiedCompanyWithResearch[] = results.map(r => ({
+          ...r,
+          assignedPersonas: r.qualified ? personaNames : [],
+          researchResults: { summary: r.researchSummary, sources: r.dataSources },
+        }));
+
+        console.log('Companies with assigned personas:', allCompanies.filter(c => c.assignedPersonas.length > 0));
+        
+        setSelectedAgentConfig({
+          agent: agentForTest,
+          testResults: results,
+          qualifiedCompanies: allCompanies,
+        });
+        setQualifiedCompanies(allCompanies);
+
+        // Show confirmation/results screen, do NOT advance yet
+        setShowAgentConfirmation(true);
+        setShowTestResults(true);
       }
     }
   };
 
   const handleStartFindingContacts = () => {
+    // Prevent advancing if tech-migration agent and no qualified companies
+    if (selectedAgentConfig?.agent?.id === 'tech-migration' && (selectedAgentConfig?.qualifiedCompanies?.length ?? 0) === 0) {
+      setShowTestResults(true);
+      setShowAgentConfirmation(false);
+      setShowFullResults(false);
+      return;
+    }
     // Clear all agent-related displays
     setShowTestResults(false);
     setShowAgentConfirmation(false);
     setShowFullResults(false);
     setIsTestingAgent(false);
-    
     // Proceed to Step 3
     setWorkflowStep(3);
     setCurrentStep("find-contacts");
@@ -576,7 +570,6 @@ export function ChatInterface() {
     setSelectedPersona(null);
     setSelectedPersonaCategoryId(null);
     setShowMultiPersonaSelection(false);
-
     // Update qualified companies with selected personas before proceeding
     if (selectedAgentConfig) {
       const personaNames = selectedPersonas.map(p => p.name);
@@ -1465,6 +1458,15 @@ export function ChatInterface() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
+              {(() => {
+                console.log('LEFT PANEL DEBUG', {
+                  agentId: selectedAgentConfig?.agent?.id,
+                  showTestResults,
+                  testResultsLength: selectedAgentConfig?.testResults?.length
+                });
+                return null;
+              })()}
+              
               {showAgentConfirmation ? (
                 <div className="space-y-6">
                   <div className="space-y-2">
@@ -1495,22 +1497,58 @@ export function ChatInterface() {
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className="space-y-3">
-                    <p className="text-lg font-medium text-primary">
-                      Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
-                    </p>
+                selectedAgentConfig?.agent?.id === 'tech-migration' && showTestResults && selectedAgentConfig?.testResults?.length === 0 ? (
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <p className="text-lg font-medium text-primary">
+                        No problem! Here are your options to find matches:
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        onClick={() => { setShowTestResults(false); setIsTestingAgent(false); setAutoTestInProgress(false); setLoadingStep(0); setLoadingMessage(''); }}
+                      >
+                        <span role="img" aria-label="Test More Companies">🔄</span> Test More Companies
+                      </button>
+                      <button
+                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        onClick={() => { setIsAgentEditMode(true); setShowTestResults(false); setShowFullResults(false); }}
+                      >
+                        <span role="img" aria-label="Adjust Agent">🎯</span> Adjust Agent
+                      </button>
+                      <button
+                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        onClick={() => { setSelectedAgent(null); setShowTestResults(false); setShowFullResults(false); setIsAgentEditMode(false); }}
+                      >
+                        <span role="img" aria-label="Select Different Agent">↩️</span> Select Different Agent
+                      </button>
+                    </div>
+                    <div className="pt-4">
+                      <ChatInput
+                        onSend={handleSend}
+                        placeholder="Choose above or ask about the agent..."
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    {agentActions.map(renderActionChip)}
-                  </div>
-                  <div className="pt-4">
-                    <ChatInput
-                      onSend={handleSend}
-                      placeholder="Choose above or ask about the agent..."
-                    />
-                  </div>
-                </>
+                ) : (
+                  <>
+                    <div className="space-y-3">
+                      <p className="text-lg font-medium text-primary">
+                        Let's explore the {selectedAgent?.title} agent. You can test it on your companies or modify the approach before adding it to your campaign.
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-3">
+                      {agentActions.map(renderActionChip)}
+                    </div>
+                    <div className="pt-4">
+                      <ChatInput
+                        onSend={handleSend}
+                        placeholder="Choose above or ask about the agent..."
+                      />
+                    </div>
+                  </>
+                )
               )}
             </motion.div>
           </div>
@@ -1626,19 +1664,59 @@ export function ChatInterface() {
                 }
                 return (
                   <div className="p-8">
-                    {selectedAgentConfig?.agent && (
-                      <QualificationResultsTable
-                        results={resultsToShow}
-                        allTestedCount={allTestedCount}
-                        qualifiedCount={qualifiedCount}
-                        needsReviewCount={needsReviewCount}
-                        companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
-                        activeTab={activeResultsTab}
-                        setActiveTab={setActiveResultsTab}
-                        onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
-                        agent={selectedAgentConfig.agent}
-                        icon={categories.find(c => c.id === selectedCategoryId)?.icon || '🤖'}
-                      />
+                    {selectedAgentConfig?.agent?.id === 'tech-migration' && resultsToShow.length === 0 ? (
+                      <div className="h-full flex items-center justify-center p-8">
+                        <div className="w-full max-w-2xl">
+                          <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 space-y-8">
+                            {/* Agent Title Section */}
+                            <div className="text-center space-y-2">
+                              <h2 className="text-2xl font-semibold text-gray-900">
+                                Data Infrastructure Migration
+                              </h2>
+                              <p className="text-sm text-muted-foreground">
+                                Test Results
+                              </p>
+                            </div>
+
+                            {/* No Results Animation */}
+                            <div className="flex justify-center">
+                              <div className="text-6xl">🔍😔</div>
+                            </div>
+
+                            {/* Current Status */}
+                            <div className="space-y-4">
+                              <div className="text-center space-y-2">
+                                <p className="text-lg font-medium text-gray-900">
+                                  Hmm, no matches found in our sample...
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-center mt-6">
+                              <p className="text-base text-gray-700 max-w-xl mx-auto">
+                                Don't worry—this is exactly what sample testing is for!<br />
+                                We show you a preview so you can adjust your research question to the right level: not too broad, not too narrow.<br />
+                                <br />
+                                <span className="text-muted-foreground">Use the options on the left to try again or tweak your agent.</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      selectedAgentConfig?.agent && (
+                        <QualificationResultsTable
+                          results={resultsToShow}
+                          allTestedCount={allTestedCount}
+                          qualifiedCount={qualifiedCount}
+                          needsReviewCount={needsReviewCount}
+                          companies={lastTestedCompanies.length > 0 ? lastTestedCompanies : uploadedAccounts.slice(0, 10)}
+                          activeTab={activeResultsTab}
+                          setActiveTab={setActiveResultsTab}
+                          onViewAllResults={activeResultsTab !== 'all' ? handleViewAllResults : undefined}
+                          agent={selectedAgentConfig.agent}
+                          icon={categories.find(c => c.id === selectedCategoryId)?.icon || '🤖'}
+                        />
+                      )
                     )}
                   </div>
                 );

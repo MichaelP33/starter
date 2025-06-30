@@ -56,6 +56,7 @@ export interface Agent {
     Picklist: string;
   };
   availableQuestionTypes?: QuestionType[];
+  timeframe?: string;
 }
 
 export interface AgentAction {

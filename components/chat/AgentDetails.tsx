@@ -58,6 +58,14 @@ const getDefaultResponseOptions = (agentId: string): string[] => {
   }
 };
 
+const TIMEFRAME_OPTIONS = [
+  "6 months",
+  "9 months",
+  "1 year",
+  "18 months",
+  "2 years"
+];
+
 export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave, onSourcesChange, allAgents }: AgentDetailsProps) {
   // Debug logging
   console.log('AgentDetails received agent:', agent);
@@ -77,6 +85,9 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
   const inputRef = useRef<HTMLInputElement>(null);
   const [booleanQualification, setBooleanQualification] = useState<'true' | 'false'>('true');
   const [qualifyingOptions, setQualifyingOptions] = useState<string[]>(responseOptions || []);
+  const [timeframe, setTimeframe] = useState(
+    agent.id === "tech-migration" ? (agent.timeframe || "9 months") : undefined
+  );
 
   // Update sources when question type changes
   useEffect(() => {
@@ -133,6 +144,22 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
     setQualifyingOptions(responseOptions || []);
   }, [responseOptions]);
 
+  // Replace the auto-injection useEffect for tech-migration
+  useEffect(() => {
+    if (agent.id === "tech-migration" && editMode && timeframe) {
+      if (questionType === "Picklist") {
+        setResearchQuestion(
+          `What type of data infrastructure change has the company completed or announced in the last ${timeframe} that suggests timing for Segment evaluation?`
+        );
+      } else if (questionType === "Boolean") {
+        setResearchQuestion(
+          `Has the company migrated or upgraded their data infrastructure or analytics platform in the last ${timeframe}?`
+        );
+      }
+    }
+    // eslint-disable-next-line
+  }, [timeframe, editMode, agent.id, questionType]);
+
   const handleSaveChanges = () => {
     console.log('AgentDetails: Saving changes');
     setEditMode(false);
@@ -161,18 +188,26 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
       const found = allAgents.find(a => a.id === agent.id);
       if (found) canonicalAgent = found;
     }
-    // Always use canonical templates for the new type
-    const template = canonicalAgent.rewriteTemplates?.[newType as keyof typeof canonicalAgent.rewriteTemplates];
-    setQuestionType(newType);
-    if (template) {
-      let cleanedTemplate = template;
-      if (newType === 'Picklist') {
-        cleanedTemplate = template.replace(/\s*Categories:.*$/, '');
-      }
-      setResearchQuestion(cleanedTemplate);
+    // Special case for tech-migration Picklist
+    if (agent.id === "tech-migration" && newType === "Picklist") {
+      setQuestionType(newType);
+      setResearchQuestion(
+        `What type of data infrastructure change has the company completed or announced in the last ${timeframe || "9 months"} that suggests timing for Segment evaluation?`
+      );
     } else {
-      // Fallback to default
-      setResearchQuestion(questionTemplates[newType]);
+      // Always use canonical templates for the new type
+      const template = canonicalAgent.rewriteTemplates?.[newType as keyof typeof canonicalAgent.rewriteTemplates];
+      setQuestionType(newType);
+      if (template) {
+        let cleanedTemplate = template;
+        if (newType === 'Picklist') {
+          cleanedTemplate = template.replace(/\s*Categories:.*$/, '');
+        }
+        setResearchQuestion(cleanedTemplate);
+      } else {
+        // Fallback to default
+        setResearchQuestion(questionTemplates[newType]);
+      }
     }
     // Update sources
     const newSources = canonicalAgent.sourcesByQuestionType?.[newType] || canonicalAgent.sources || [];
@@ -180,7 +215,6 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
       onSourcesChange(newSources);
     }
     if (newType === 'Picklist') {
-      console.log('[AgentDetails] handleQuestionTypeChange: canonicalAgent.responseOptions:', canonicalAgent.responseOptions);
       setResponseOptions(canonicalAgent.responseOptions || getDefaultResponseOptions(agent.id));
     } else {
       setResponseOptions([]);
@@ -324,6 +358,22 @@ export default function AgentDetails({ agent, isEditMode, icon = "🤖", onSave,
             )}
           </AnimatePresence>
         </div>
+
+        {/* After Research Question, before Data Sources */}
+        {editMode && agent.id === "tech-migration" && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Timeframe</label>
+            <select
+              className="w-full rounded-lg border border-gray-200 p-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white"
+              value={timeframe}
+              onChange={e => setTimeframe(e.target.value)}
+            >
+              {TIMEFRAME_OPTIONS.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* After Research Question, before Data Sources */}
         {editMode && questionType === 'Boolean' && (
