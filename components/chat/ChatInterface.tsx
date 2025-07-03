@@ -1539,27 +1539,33 @@ export function ChatInterface() {
                   <div className="space-y-6">
                     <div className="space-y-3">
                       <p className="text-lg font-medium text-primary">
-                        No problem! Here are your options to find matches:
+                        Hmm, no matches found in our sample...
+                        <br />
+                        <br />
+                        That's totally normal! Use the options below to adjust your agent or try a different approach.
                       </p>
                     </div>
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap gap-3">
                       <button
-                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        type="button"
+                        className="rounded-full text-sm font-medium py-2 px-4 h-auto transition-colors duration-200 shadow-sm bg-white border-muted text-muted-foreground hover:bg-accent/10 hover:text-accent-foreground hover:border-accent/20"
                         onClick={() => { setShowTestResults(false); setIsTestingAgent(false); setAutoTestInProgress(false); setLoadingStep(0); setLoadingMessage(''); }}
                       >
-                        <span role="img" aria-label="Test More Companies">🔄</span> Test More Companies
+                        <span className="mr-2">🧪</span>Test More
                       </button>
                       <button
-                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        type="button"
+                        className="rounded-full text-sm font-medium py-2 px-4 h-auto transition-colors duration-200 shadow-sm bg-white border-muted text-muted-foreground hover:bg-accent/10 hover:text-accent-foreground hover:border-accent/20"
                         onClick={() => { setIsAgentEditMode(true); setShowTestResults(false); setShowFullResults(false); }}
                       >
-                        <span role="img" aria-label="Adjust Agent">🎯</span> Adjust Agent
+                        <span className="mr-2">⚙️</span>Adjust Agent
                       </button>
                       <button
-                        className="w-full px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold shadow hover:bg-gray-50 transition flex items-center justify-center gap-2 border border-gray-200"
+                        type="button"
+                        className="rounded-full text-sm font-medium py-2 px-4 h-auto transition-colors duration-200 shadow-sm bg-white border-muted text-muted-foreground hover:bg-accent/10 hover:text-accent-foreground hover:border-accent/20"
                         onClick={() => { setSelectedAgent(null); setShowTestResults(false); setShowFullResults(false); setIsAgentEditMode(false); }}
                       >
-                        <span role="img" aria-label="Select Different Agent">↩️</span> Select Different Agent
+                        <span className="mr-2">🔄</span>New Agent
                       </button>
                     </div>
                     <div className="pt-4">
@@ -1727,15 +1733,14 @@ export function ChatInterface() {
                                 <p className="text-lg font-medium text-gray-900">
                                   Hmm, no matches found in our sample...
                                 </p>
+                                <p className="text-base text-gray-700 max-w-xl mx-auto">
+                                  Don't worry—this is exactly what sample testing is for! <br />
+                                  <br />
+                                  We show you a preview so you can adjust your research question to the right level: not too broad, not too narrow.<br />
+                                  <br />
+                                  <span className="text-muted-foreground">Use the options on the left to try again or tweak your agent.</span>
+                                </p>
                               </div>
-                            </div>
-                            <div className="text-center mt-6">
-                              <p className="text-base text-gray-700 max-w-xl mx-auto">
-                                Don't worry—this is exactly what sample testing is for!<br />
-                                We show you a preview so you can adjust your research question to the right level: not too broad, not too narrow.<br />
-                                <br />
-                                <span className="text-muted-foreground">Use the options on the left to try again or tweak your agent.</span>
-                              </p>
                             </div>
                           </div>
                         </div>
