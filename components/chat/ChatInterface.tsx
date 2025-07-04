@@ -20,6 +20,17 @@ import {
   PersonaAction,
   PersonaTestResult
 } from './types';
+
+// Campaign data structure for multi-campaign support
+interface CampaignData {
+  id: string;
+  agent: Agent;
+  qualifiedCompanies: QualifiedCompanyWithResearch[];
+  selectedPersonas: SelectedPersona[];
+  personaTestResults?: PersonaTestResult[];
+  createdAt: string;
+  name: string;
+}
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -911,14 +922,30 @@ export function ChatInterface() {
       }, 1000);
 
       setTimeout(() => {
-        const campaignData = {
+        // Create new campaign with unique ID
+        const newCampaign = {
+          id: `campaign-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           agent: selectedAgentConfig?.agent,
           qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies,
           selectedPersonas,
           personaTestResults,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          name: `${selectedAgentConfig?.agent?.title || 'Untitled'} Campaign`
         };
-        localStorage.setItem('campaignData', JSON.stringify(campaignData));
+
+        // Load existing campaigns and append new one
+        try {
+          const existingCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+          const updatedCampaigns = [...existingCampaigns, newCampaign];
+          localStorage.setItem('campaigns', JSON.stringify(updatedCampaigns));
+          console.log('Campaign saved to localStorage:', newCampaign);
+          console.log('Total campaigns:', updatedCampaigns.length);
+        } catch (error) {
+          console.error('Error saving campaign:', error);
+          // Fallback: save as single campaign
+          localStorage.setItem('campaigns', JSON.stringify([newCampaign]));
+        }
+
         router.push('/inbox');
         setIsLaunchingCampaign(false);
       }, 8200);
