@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronRight } from "lucide-react";
-import { QualifiedCompanyWithResearch, SelectedPersona, Account } from "@/components/chat/types";
+import { ChevronRight, Plus } from "lucide-react";
+import { QualifiedCompanyWithResearch, SelectedPersona, Account, CampaignData } from "@/components/chat/types";
 import { useDataConfig } from "@/hooks/useDataConfig";
 import { Agent } from "@/components/chat/types";
 import { AgentHeader } from "@/components/chat/AgentHeader";
@@ -10,6 +10,9 @@ import { QualifiedCompaniesTable } from "@/components/chat/QualifiedCompaniesTab
 import { Button } from "@/components/ui/button";
 import { EnrichmentOption } from "@/components/chat/types";
 import { cn } from "@/lib/utils";
+import { getCampaigns, getActiveCampaign, setActiveCampaign, deleteCampaign, updateCampaign } from "@/utils/campaignManager";
+import { CampaignCard } from "@/components/ui/campaign-card-simple";
+import { useRouter } from "next/navigation";
 
 const initialEnrichmentOptions: EnrichmentOption[] = [
   { id: "companyName", label: "Company Name", icon: "🏢", isSelected: true, field: "companyName" },
@@ -23,60 +26,124 @@ const initialEnrichmentOptions: EnrichmentOption[] = [
   { id: "yearFounded", label: "Year founded", icon: "📅", isSelected: false, field: "yearFounded" },
 ];
 
-interface CampaignData {
-  agent: Agent;
-  qualifiedCompanies: QualifiedCompanyWithResearch[];
-  selectedPersonas: SelectedPersona[];
-  createdAt: string;
-}
-
 export default function CampaignInbox() {
-  const [campaignData, setCampaignData] = useState<CampaignData | null>(null);
+  const router = useRouter();
+  const [campaigns, setCampaigns] = useState<CampaignData[]>([]);
+  const [activeCampaign, setActiveCampaignState] = useState<CampaignData | null>(null);
   const [activeTab, setActiveTab] = useState<'qualified' | 'needsReview' | 'all'>('qualified');
+  const [showCampaignList, setShowCampaignList] = useState(false);
   const { agents, isLoadingAgents } = useDataConfig();
 
   useEffect(() => {
-    const storedData = localStorage.getItem('campaignData');
-    if (storedData) {
-      const data = JSON.parse(storedData) as CampaignData;
-      console.log('Inbox: Loaded campaign data from localStorage:', data);
-
-      // --- FIX: START ---
-      // Force assign personas to demonstrate UI, as localStorage data may be stale.
-      if (data.qualifiedCompanies && data.qualifiedCompanies.length > 0) {
-        // Ensure the array exists before trying to access it
-        data.qualifiedCompanies.forEach(company => {
-          if (!company.assignedPersonas) {
-            company.assignedPersonas = [];
-          }
-        });
-
-        // Assign to first company
-        data.qualifiedCompanies[0].assignedPersonas = ['Strategic Marketing Executive'];
-
-        // Assign to second company if it exists
-        if (data.qualifiedCompanies.length > 1) {
-          data.qualifiedCompanies[1].assignedPersonas = ['Growth Hacker', 'Product Marketing Manager'];
-        }
+    const campaignsState = getCampaigns();
+    setCampaigns(campaignsState.campaigns);
+    
+    if (campaignsState.campaigns.length === 0) {
+      setShowCampaignList(true);
+    } else if (campaignsState.activeCampaignId) {
+      const active = campaignsState.campaigns.find(c => c.id === campaignsState.activeCampaignId);
+      if (active) {
+        setActiveCampaignState(active);
+        setShowCampaignList(false);
+      } else {
+        setActiveCampaignState(campaignsState.campaigns[0]);
+        setActiveCampaign(campaignsState.campaigns[0].id);
+        setShowCampaignList(false);
       }
-      // --- FIX: END ---
-      
-      setCampaignData(data);
+    } else {
+      setActiveCampaignState(campaignsState.campaigns[0]);
+      setActiveCampaign(campaignsState.campaigns[0].id);
+      setShowCampaignList(false);
     }
   }, []);
 
-  if (isLoadingAgents || !campaignData) {
+  const handleCampaignSelect = (campaign: CampaignData) => {
+    setActiveCampaignState(campaign);
+    setActiveCampaign(campaign.id);
+    setShowCampaignList(false);
+  };
+
+  const handleNewCampaign = () => {
+    router.push('/app');
+  };
+
+  const handleDeleteCampaign = (campaignId: string) => {
+    deleteCampaign(campaignId);
+    const updatedCampaigns = getCampaigns();
+    setCampaigns(updatedCampaigns.campaigns);
+    
+    if (updatedCampaigns.campaigns.length === 0) {
+      setActiveCampaignState(null);
+      setShowCampaignList(true);
+    } else if (activeCampaign?.id === campaignId) {
+      const newActive = updatedCampaigns.campaigns[0];
+      setActiveCampaignState(newActive);
+      setActiveCampaign(newActive.id);
+    }
+  };
+
+  if (isLoadingAgents) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <p className="text-lg font-medium">Loading Campaign...</p>
-          <p className="text-sm text-muted-foreground">Please wait while we load your campaign data.</p>
+          <p className="text-lg font-medium">Loading...</p>
+          <p className="text-sm text-muted-foreground">Please wait while we load your data.</p>
         </div>
       </div>
     );
   }
 
-  const { agent, qualifiedCompanies, selectedPersonas } = campaignData;
+  // Show campaign list view
+  if (showCampaignList || !activeCampaign) {
+    return (
+      <div className="min-h-screen bg-gray-50/50">
+        <div className="bg-white border-b border-gray-100 sticky top-0 z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center gap-4">
+                <h1 className="text-xl font-semibold text-gray-900">Campaigns</h1>
+              </div>
+              <Button onClick={handleNewCampaign} className="bg-primary text-primary-foreground">
+                <Plus className="w-4 h-4 mr-2" />
+                Build New Campaign
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        <main className="container mx-auto p-4 md:p-8">
+          {campaigns.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="max-w-md mx-auto">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-4">No campaigns yet</h2>
+                <p className="text-gray-600 mb-6">
+                  Get started by building your first target account list campaign.
+                </p>
+                <Button onClick={handleNewCampaign} size="lg" className="bg-primary text-primary-foreground">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Build Your First Campaign
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {campaigns.map((campaign) => (
+                <CampaignCard
+                  key={campaign.id}
+                  campaign={campaign}
+                  isActive={false}
+                  onClick={() => handleCampaignSelect(campaign)}
+                  onDelete={() => handleDeleteCampaign(campaign.id)}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+    );
+  }
+
+  const { agent, qualifiedCompanies, selectedPersonas } = activeCampaign;
   const qualifiedCount = qualifiedCompanies.filter(c => c.qualified && !c.needsReview).length;
   const needsReviewCount = qualifiedCompanies.filter(c => c.needsReview).length;
   const totalCount = qualifiedCompanies.length;
@@ -94,12 +161,20 @@ export default function CampaignInbox() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span className="text-gray-900 font-medium">Campaigns</span>
+                <button 
+                  onClick={() => setShowCampaignList(true)}
+                  className="text-gray-900 font-medium hover:text-primary cursor-pointer"
+                >
+                  Campaigns
+                </button>
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-gray-900 font-medium">{agent?.title}</span>
               </div>
             </div>
-            {/* Action buttons can go here */}
+            <Button onClick={handleNewCampaign} variant="outline">
+              <Plus className="w-4 h-4 mr-2" />
+              Build New Campaign
+            </Button>
           </div>
         </div>
       </div>

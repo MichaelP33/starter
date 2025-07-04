@@ -44,6 +44,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AgentDetails from "./AgentDetails";
 import { CampaignLaunchScreen } from "./CampaignLaunchScreen";
 import { AutoTestLoadingScreen } from "./AutoTestLoadingScreen";
+import { saveCampaign } from "@/utils/campaignManager";
 
 interface Suggestion {
   title: string;
@@ -911,14 +912,13 @@ export function ChatInterface() {
       }, 1000);
 
       setTimeout(() => {
-        const campaignData = {
-          agent: selectedAgentConfig?.agent,
-          qualifiedCompanies: selectedAgentConfig?.qualifiedCompanies,
-          selectedPersonas,
-          personaTestResults,
-          createdAt: new Date().toISOString()
-        };
-        localStorage.setItem('campaignData', JSON.stringify(campaignData));
+        if (selectedAgentConfig?.agent) {
+          saveCampaign(
+            selectedAgentConfig.agent,
+            selectedAgentConfig.qualifiedCompanies || [],
+            selectedPersonas
+          );
+        }
         router.push('/inbox');
         setIsLaunchingCampaign(false);
       }, 8200);

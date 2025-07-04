@@ -207,3 +207,20 @@ export interface Company {
   yearFounded: number;
   tags: string[];
 }
+
+// New types for multiple campaign support
+export interface CampaignData {
+  id: string;
+  name: string;
+  agent: Agent;
+  qualifiedCompanies: QualifiedCompanyWithResearch[];
+  selectedPersonas: SelectedPersona[];
+  createdAt: string;
+  lastModified: string;
+  status: 'active' | 'paused' | 'completed';
+}
+
+export interface CampaignsState {
+  campaigns: CampaignData[];
+  activeCampaignId: string | null;
+}
