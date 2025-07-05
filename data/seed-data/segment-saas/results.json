@@ -1,0 +1,260 @@
+{
+  "metadata": {
+    "description": "Mock qualification results for Segment SaaS dataset",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-15",
+    "totalResults": 100
+  },
+  "results": {
+    "marketing-hiring": {
+      "qualified": {
+        "companyIds": ["stripe", "shopify", "webflow", "airtable", "canva", "framer"],
+        "defaultCount": 15,
+        "variations": [
+          {
+            "selectedOptions": ["Marketing Leadership", "Growth Marketing", "Digital Marketing"],
+            "whyQualified": "Yes, multiple senior marketing roles including Marketing Operations Manager and Director of Growth Marketing",
+            "researchSummary": "Currently has 3 open marketing leadership positions focused on data-driven marketing. Key roles include Marketing Operations Manager responsible for martech stack optimization and lead routing, Director of Growth Marketing overseeing acquisition channels and conversion optimization, and Senior Marketing Technology Manager managing CDP implementation and data integration.",
+            "evidence": [
+              "Marketing Operations Manager focusing on martech stack optimization",
+              "Director of Growth Marketing managing acquisition channels",
+              "Senior Marketing Technology Manager for CDP implementation"
+            ]
+          },
+          {
+            "selectedOptions": ["Marketing Operations", "Growth Marketing"],
+            "whyQualified": "Yes, with positions like Senior Performance Marketer, Growth Marketing Lead, and Marketing Analytics Manager",
+            "researchSummary": "Expanding their performance marketing team with data-focused roles. They're hiring a Senior Performance Marketer to lead growth efforts and digital marketing strategies, a Growth Marketing Lead for acquisition channel optimization, and a Marketing Analytics Manager to build data-driven marketing measurement capabilities.",
+            "evidence": [
+              "Senior Performance Marketer leading growth efforts and digital strategies",
+              "Growth Marketing Lead for acquisition channel optimization", 
+              "Marketing Analytics Manager building data-driven measurement"
+            ]
+          }
+        ]
+      },
+      "unqualified": {
+        "companyIds": ["docker", "gitlab", "typeform", "miro", "postman"],
+        "defaultCount": 8,
+        "variations": [
+          {
+            "selectedOptions": [],
+            "whyQualified": "No, only brand and creative roles currently posted",
+            "researchSummary": "Current marketing openings focus primarily on brand and creative functions rather than operations or data-driven roles. Available positions include Brand Designer for visual identity work, Content Marketing Specialist for blog content creation, and Creative Marketing Coordinator for campaign asset development.",
+            "evidence": [
+              "Brand Designer role focused on visual identity",
+              "Content Marketing Specialist for content creation",
+              "Creative Marketing Coordinator for campaign assets"
+            ]
+          }
+        ]
+      },
+      "needsReview": {
+        "companyIds": ["raycast", "spline"],
+        "defaultCount": 2,
+        "variations": [
+          {
+            "selectedOptions": ["Marketing Operations"],
+            "whyQualified": "Needs Review: Junior marketing roles found, seniority unclear",
+            "researchSummary": "Has entry-level marketing roles including Marketing Intern, Junior Marketing Associate, and Marketing Coordinator, which don't indicate senior operations or leadership investment.",
+            "evidence": [
+              "Marketing Intern - campaign support",
+              "Junior Marketing Associate - administrative tasks",
+              "Marketing Coordinator - basic coordination"
+            ]
+          }
+        ]
+      }
+    },
+    "data-hiring": {
+      "qualified": {
+        "companyIds": ["stripe", "deno", "fly", "snowflake", "databricks"],
+        "defaultCount": 12,
+        "variations": [
+          {
+            "selectedOptions": ["Data Engineering", "Data Science", "Analytics"],
+            "whyQualified": "Yes, hiring for Staff Data Engineer, Principal Data Scientist, and Senior Analytics Engineer roles as part of a major data team expansion.",
+            "researchSummary": "Scaling their data team with multiple senior-level openings. The company is investing in a new data platform, advanced analytics, and machine learning initiatives.",
+            "evidence": [
+              "Staff Data Engineer - building distributed data pipelines for real-time analytics and reporting",
+              "Principal Data Scientist - leading machine learning projects to drive product innovation",
+              "Senior Analytics Engineer - developing BI solutions and self-serve dashboards for business teams",
+              "Data Team Expansion - 4 new roles posted in the last 30 days, signaling rapid growth"
+            ]
+          }
+        ]
+      },
+      "unqualified": {
+        "companyIds": ["canva", "figma", "notion", "linear"],
+        "defaultCount": 10,
+        "variations": [
+          {
+            "selectedOptions": [],
+            "whyQualified": "No data team hiring: all open roles are in sales, marketing, or support.",
+            "researchSummary": "Has no open positions for data engineering, science, or analytics. Current job postings are focused on other departments.",
+            "evidence": [
+              "Sales Development Rep - expanding sales team to drive new business",
+              "Customer Support Specialist - focus on customer retention and support",
+              "No data roles found in the last 60 days across all job boards"
+            ]
+          }
+        ]
+      },
+      "needsReview": {
+        "companyIds": ["vercel", "supabase"],
+        "defaultCount": 3,
+        "variations": [
+          {
+            "selectedOptions": ["Analytics"],
+            "whyQualified": "Needs Review: Hiring for junior analytics roles, unclear if expanding senior team.",
+            "researchSummary": "Hiring for Junior Data Analyst and Analytics Assistant, but no senior data roles are posted. Some evidence suggests possible future expansion.",
+            "evidence": [
+              "Junior Data Analyst - supporting ad hoc reporting and data entry",
+              "Analytics Assistant - assisting with basic dashboard updates",
+              "Recent blog post hints at future data hiring and analytics investment"
+            ]
+          }
+        ]
+      }
+    },
+    "leadership-changes": {
+      "qualified": {
+        "companyIds": ["stripe", "fly", "deno", "webflow", "airtable"],
+        "defaultCount": 8,
+        "variations": [
+          {
+            "selectedOptions": ["CTO/VP Engineering", "CDO/VP Data"],
+            "whyQualified": "Recent CTO or CDO hire signals strategic shift toward data and technology modernization.",
+            "researchSummary": "Announced a new CTO and CDO in the last 6 months, with a mandate to modernize data infrastructure and drive innovation.",
+            "evidence": [
+              "LinkedIn: New CTO joins from leading SaaS company",
+              "Press release: Appointment of Chief Data Officer to lead analytics strategy",
+              "Company blog: Leadership team expands to accelerate digital transformation"
+            ]
+          }
+        ]
+      },
+      "unqualified": {
+        "companyIds": ["docker", "gitlab", "typeform", "linear"],
+        "defaultCount": 12,
+        "variations": [
+          {
+            "selectedOptions": [],
+            "whyQualified": "No recent leadership changes in technology or data roles.",
+            "researchSummary": "Has had a stable leadership team for the past 2 years, with no new executive hires.",
+            "evidence": [
+              "No press releases or LinkedIn updates on leadership changes",
+              "Company blog focuses on existing team achievements",
+              "No new executive roles listed in company announcements"
+            ]
+          }
+        ]
+      },
+      "needsReview": {
+        "companyIds": ["framer", "spline"],
+        "defaultCount": 5,
+        "variations": [
+          {
+            "selectedOptions": ["VP Product"],
+            "whyQualified": "VP Product role filled, but unclear impact on technology direction.",
+            "researchSummary": "Hired a VP Product, but public materials do not specify changes to tech stack or data strategy.",
+            "evidence": [
+              "Press release: VP Product joins, no mention of technology initiatives",
+              "LinkedIn: New product leadership, unclear mandate",
+              "Company blog: Product roadmap under review"
+            ]
+          }
+        ]
+      }
+    },
+    "news-funding": {
+      "qualified": {
+        "companyIds": ["stripe", "fly", "deno", "anthropic", "perplexity"],
+        "defaultCount": 10,
+        "variations": [
+          {
+            "selectedOptions": ["Series B", "Series C+", "Growth/Late Stage"],
+            "whyQualified": "Recent funding round indicates strong growth trajectory and budget availability for new technology investments.",
+            "researchSummary": "Recently raised a significant Series B funding round, indicating strong growth trajectory and budget availability for new technology investments. This presents an ideal opportunity for Segment evaluation.",
+            "evidence": [
+              "TechCrunch: $50M Series B funding announced",
+              "Company blog: New funding to accelerate product development",
+              "Press release: Investment to fuel growth and market expansion"
+            ]
+          }
+        ]
+      },
+      "unqualified": {
+        "companyIds": ["docker", "gitlab", "linear", "notion"],
+        "defaultCount": 15,
+        "variations": [
+          {
+            "selectedOptions": [],
+            "whyQualified": "No recent funding activity in the last 18 months.",
+            "researchSummary": "Has not raised funding in the past 18 months and appears to be in steady-state operations mode.",
+            "evidence": [
+              "No funding announcements in financial databases",
+              "Company blog focuses on product updates, not growth",
+              "No investor relations updates or press releases"
+            ]
+          }
+        ]
+      },
+      "needsReview": {
+        "companyIds": ["raycast", "cal"],
+        "defaultCount": 0,
+        "variations": [
+          {
+            "selectedOptions": ["Series A"],
+            "whyQualified": "Recent seed funding, but amount and timeline need verification.",
+            "researchSummary": "Some evidence of recent seed funding, but the amount and timing need human verification to determine qualification.",
+            "evidence": [
+              "Unconfirmed reports of seed funding",
+              "LinkedIn posts suggest investment, but no official announcement",
+              "Company hiring suggests funding, but no public confirmation"
+            ]
+          }
+        ]
+      }
+    },
+    "tech-migration": {
+      "qualified": {
+        "companyIds": ["postman", "sentry", "miro", "snowflake"],
+        "defaultCount": 6,
+        "variations": [
+          {
+            "selectedOptions": ["Cloud Migration", "Data Platform", "Analytics Tools"],
+            "whyQualified": "Currently undergoing a data infrastructure migration, evaluating modern data warehouse solutions and CDP platforms.",
+            "researchSummary": "Currently undergoing a data infrastructure migration, evaluating modern data warehouse solutions and CDP platforms. This presents perfect timing for Segment evaluation.",
+            "evidence": [
+              "Company blog: Data warehouse migration to Snowflake announced",
+              "Job posting: Data Platform Engineer for migration tools",
+              "Engineering blog: Modernizing our data stack"
+            ]
+          }
+        ]
+      },
+      "unqualified": {
+        "companyIds": ["canva", "figma", "notion", "linear", "framer"],
+        "defaultCount": 19,
+        "variations": [
+          {
+            "selectedOptions": [],
+            "whyQualified": "No evidence of data infrastructure changes or migrations.",
+            "researchSummary": "Shows no signs of data infrastructure migration or platform evaluation. Recent engineering blog posts focus on product features rather than infrastructure.",
+            "evidence": [
+              "Engineering blog focuses on product features",
+              "No job postings for data platform or migration roles",
+              "No mentions of infrastructure modernization in company updates"
+            ]
+          }
+        ]
+      },
+      "needsReview": {
+        "companyIds": [],
+        "defaultCount": 0,
+        "variations": []
+      }
+    }
+  }
+}

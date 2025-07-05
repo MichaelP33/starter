@@ -1,0 +1,15 @@
+{
+  "name": "FinTech Companies - Segment",
+  "description": "Target account list for Segment targeting financial technology companies",
+  "vertical": "Financial Technology",
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15",
+  "author": "Sales Team",
+  "companyCount": 75,
+  "agentCount": 8,
+  "personaCount": 12,
+  "tags": ["segment", "fintech", "financial-services", "b2b"],
+  "description_long": "This dataset contains 75 financial technology companies with specialized qualification agents for Segment's customer data platform. Focus on payment processors, digital banks, lending platforms, and investment technology companies.",
+  "targetCustomer": "FinTech companies with 50-2000 employees handling sensitive financial data",
+  "qualificationFocus": ["Data Compliance", "Financial Analytics", "Customer Data Security", "Regulatory Reporting"]
+}

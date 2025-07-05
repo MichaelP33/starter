@@ -1,0 +1,616 @@
+{
+  "metadata": {
+    "name": "Segment CDP - Buyer Personas",
+    "description": "Streamlined persona data for targeting and configuration",
+    "version": "2.0",
+    "lastUpdated": "2025-06-20",
+    "totalPersonas": 24
+  },
+  "personaCategories": {
+    "data-driven-marketers": {
+      "categoryId": "data-driven-marketers",
+      "categoryTitle": "Data-Driven Marketers",
+      "categoryIcon": "📊",
+      "categoryDescription": "Marketing professionals who rely on data and analytics to drive campaign performance and customer insights"
+    },
+    "data-team": {
+      "categoryId": "data-team", 
+      "categoryTitle": "Data Team",
+      "categoryIcon": "🔬",
+      "categoryDescription": "Data engineers, analysts, and scientists responsible for data infrastructure and analytics"
+    },
+    "engineering-leadership": {
+      "categoryId": "engineering-leadership",
+      "categoryTitle": "Engineering Leadership", 
+      "categoryIcon": "⚙️",
+      "categoryDescription": "Technical leaders overseeing product development, infrastructure, and engineering teams"
+    },
+    "executive-leadership": {
+      "categoryId": "executive-leadership",
+      "categoryTitle": "Executive Leadership",
+      "categoryIcon": "👔", 
+      "categoryDescription": "C-level executives and senior leadership making strategic technology and budget decisions"
+    }
+  },
+  "personas": [
+    {
+      "id": "growth-marketing-leader",
+      "categoryId": "data-driven-marketers",
+      "icon": "🚀",
+      "name": "Growth Marketing Leader",
+      "expandedName": "VP of Growth Marketing",
+      "seniorName": "Chief Growth Officer",
+      "description": "Revenue-focused marketing leader responsible for customer acquisition and growth experiments",
+      "expandedDescription": "Revenue-focused marketing leader responsible for customer acquisition, growth experiments, and scaling marketing programs through data-driven insights and cross-channel campaign optimization",
+      "titles": [
+        "Growth Marketing Manager",
+        "Head of Growth",
+        "Growth Marketing Director"
+      ],
+      "expandedTitles": [
+        "VP of Growth",
+        "Head of Growth Marketing",
+        "Director of Growth",
+        "VP of Marketing",
+        "Chief Growth Officer",
+        "Growth Marketing Director",
+        "VP of Customer Acquisition",
+        "Head of Performance Marketing",
+        "Senior Growth Marketing Manager",
+        "Growth Marketing Lead"
+      ]
+    },
+    {
+      "id": "marketing-operations-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "⚙️",
+      "name": "Marketing Operations Manager",
+      "expandedName": "Director of Marketing Operations",
+      "seniorName": "VP of Marketing Operations",
+      "description": "Operations specialist responsible for marketing technology stack and data integration",
+      "expandedDescription": "Operations specialist responsible for marketing technology stack, data integration, campaign performance measurement, and enabling marketing team efficiency through automation and analytics",
+      "titles": [
+        "Marketing Operations Manager",
+        "Marketing Technology Manager",
+        "Marketing Analytics Manager"
+      ],
+      "expandedTitles": [
+        "Marketing Operations Manager",
+        "Director of Marketing Operations",
+        "Marketing Technology Manager",
+        "Head of Marketing Ops",
+        "Senior Marketing Operations Specialist",
+        "VP of Marketing Operations",
+        "Marketing Analytics Manager",
+        "Marketing Systems Manager",
+        "Marketing Automation Lead"
+      ]
+    },
+    {
+      "id": "performance-marketing-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "📈",
+      "name": "Performance Marketing Manager",
+      "expandedName": "Director of Performance Marketing",
+      "seniorName": "VP of Performance Marketing",
+      "description": "Data-driven marketer focused on paid acquisition and conversion optimization",
+      "expandedDescription": "Data-driven marketer focused on paid acquisition, conversion optimization, and performance measurement across digital channels with emphasis on ROI and customer acquisition cost optimization",
+      "titles": [
+        "Performance Marketing Manager",
+        "Digital Marketing Manager",
+        "Paid Media Manager"
+      ],
+      "expandedTitles": [
+        "Performance Marketing Manager",
+        "Director of Performance Marketing",
+        "Head of Paid Acquisition",
+        "Digital Marketing Manager",
+        "Paid Media Manager",
+        "Customer Acquisition Manager",
+        "Growth Marketing Manager",
+        "Paid Acquisition Lead",
+        "Performance Marketing Lead"
+      ]
+    },
+    {
+      "id": "customer-lifecycle-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "🔄",
+      "name": "Customer Lifecycle Manager",
+      "expandedName": "Director of Customer Lifecycle Marketing",
+      "seniorName": "VP of Customer Experience",
+      "description": "Marketing professional focused on customer retention and lifecycle automation",
+      "expandedDescription": "Marketing professional focused on customer retention, lifecycle automation, post-purchase experience optimization, and maximizing customer lifetime value through personalized engagement strategies",
+      "titles": [
+        "Customer Lifecycle Manager",
+        "Retention Marketing Manager",
+        "Customer Experience Manager"
+      ],
+      "expandedTitles": [
+        "Customer Lifecycle Manager",
+        "Retention Marketing Manager",
+        "Customer Experience Manager",
+        "Lifecycle Marketing Director",
+        "Customer Success Marketing Manager",
+        "Engagement Marketing Manager",
+        "CRM Marketing Manager",
+        "Customer Journey Manager"
+      ]
+    },
+    {
+      "id": "marketing-analytics-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "📊",
+      "name": "Marketing Analytics Manager",
+      "expandedName": "Director of Marketing Analytics",
+      "seniorName": "VP of Marketing Intelligence",
+      "description": "Analytics specialist focused on measuring marketing performance and attribution",
+      "expandedDescription": "Analytics specialist focused on measuring marketing performance, attribution modeling, customer journey analytics, and providing data-driven insights for marketing strategy optimization",
+      "titles": [
+        "Marketing Analytics Manager",
+        "Marketing Data Analyst",
+        "Marketing Insights Manager"
+      ],
+      "expandedTitles": [
+        "Marketing Analytics Manager",
+        "Director of Marketing Analytics",
+        "Marketing Data Analyst",
+        "Head of Marketing Intelligence",
+        "Senior Marketing Analyst",
+        "Marketing Insights Manager",
+        "Marketing Performance Analyst",
+        "Customer Analytics Manager"
+      ]
+    },
+    {
+      "id": "demand-generation-manager",
+      "categoryId": "data-driven-marketers",
+      "icon": "🎯",
+      "name": "Demand Generation Manager",
+      "expandedName": "Director of Demand Generation",
+      "seniorName": "VP of Demand Generation",
+      "description": "Marketing specialist focused on lead generation and pipeline building",
+      "expandedDescription": "Marketing specialist focused on creating qualified leads, building pipeline through targeted campaigns, account-based marketing, and optimizing the entire demand generation funnel",
+      "titles": [
+        "Demand Generation Manager",
+        "Lead Generation Manager",
+        "Pipeline Marketing Manager"
+      ],
+      "expandedTitles": [
+        "Demand Generation Manager",
+        "Director of Demand Generation",
+        "Head of Lead Generation",
+        "Demand Marketing Manager",
+        "Pipeline Marketing Manager",
+        "Growth Marketing Manager",
+        "ABM Manager",
+        "Field Marketing Manager"
+      ]
+    },
+    {
+      "id": "senior-data-engineer",
+      "categoryId": "data-team",
+      "icon": "🔧",
+      "name": "Senior Data Engineer",
+      "expandedName": "Staff Data Engineer",
+      "seniorName": "Principal Data Engineer",
+      "description": "Technical specialist building scalable data pipelines and infrastructure",
+      "expandedDescription": "Technical specialist building scalable data pipelines, ETL processes, and managing data infrastructure for analytics, machine learning, and real-time data processing at enterprise scale",
+      "titles": [
+        "Data Engineer",
+        "Senior Data Engineer",
+        "Analytics Engineer"
+      ],
+      "expandedTitles": [
+        "Senior Data Engineer",
+        "Staff Data Engineer",
+        "Principal Data Engineer",
+        "Data Infrastructure Engineer",
+        "Analytics Engineer",
+        "Data Platform Engineer",
+        "ETL Developer",
+        "Data Pipeline Engineer"
+      ]
+    },
+    {
+      "id": "data-analyst",
+      "categoryId": "data-team",
+      "icon": "📊",
+      "name": "Data Analyst",
+      "expandedName": "Senior Data Analyst",
+      "seniorName": "Lead Data Analyst",
+      "description": "Analytics professional focused on extracting insights and creating reports",
+      "expandedDescription": "Analytics professional focused on extracting insights from data, creating reports, supporting data-driven decision making, and enabling self-service analytics across business functions",
+      "titles": [
+        "Data Analyst",
+        "Business Intelligence Analyst",
+        "Marketing Data Analyst"
+      ],
+      "expandedTitles": [
+        "Data Analyst",
+        "Senior Data Analyst",
+        "Business Intelligence Analyst",
+        "Marketing Data Analyst",
+        "Product Data Analyst",
+        "Analytics Specialist",
+        "Business Analyst",
+        "Reporting Analyst"
+      ]
+    },
+    {
+      "id": "analytics-engineer",
+      "categoryId": "data-team",
+      "icon": "🛠️",
+      "name": "Analytics Engineer",
+      "expandedName": "Senior Analytics Engineer",
+      "seniorName": "Principal Analytics Engineer",
+      "description": "Technical analyst responsible for data modeling and analytics infrastructure",
+      "expandedDescription": "Technical analyst responsible for data modeling, transformation pipelines, building self-service analytics capabilities, and enabling data democratization across the organization",
+      "titles": [
+        "Analytics Engineer",
+        "Data Modeling Engineer",
+        "BI Engineer"
+      ],
+      "expandedTitles": [
+        "Analytics Engineer",
+        "Senior Analytics Engineer",
+        "Data Modeling Engineer",
+        "BI Engineer",
+        "Data Infrastructure Analyst",
+        "Analytics Platform Engineer",
+        "Data Transformation Engineer",
+        "Business Intelligence Developer"
+      ]
+    },
+    {
+      "id": "data-scientist",
+      "categoryId": "data-team",
+      "icon": "🧪",
+      "name": "Data Scientist",
+      "expandedName": "Senior Data Scientist",
+      "seniorName": "Principal Data Scientist",
+      "description": "Advanced analytics professional focused on machine learning and predictive modeling",
+      "expandedDescription": "Advanced analytics professional focused on machine learning, predictive modeling, statistical analysis, and developing data science solutions to drive business insights and automation",
+      "titles": [
+        "Data Scientist",
+        "Machine Learning Engineer",
+        "Applied Scientist"
+      ],
+      "expandedTitles": [
+        "Data Scientist",
+        "Senior Data Scientist",
+        "Machine Learning Engineer",
+        "Applied Scientist",
+        "Research Scientist",
+        "Principal Data Scientist",
+        "AI Engineer",
+        "Quantitative Analyst"
+      ]
+    },
+    {
+      "id": "head-of-data",
+      "categoryId": "data-team",
+      "icon": "👨‍💼",
+      "name": "Head of Data",
+      "expandedName": "VP of Data",
+      "seniorName": "Chief Data Officer",
+      "description": "Senior data leader responsible for overall data strategy and team management",
+      "expandedDescription": "Senior data leader responsible for overall data strategy, team management, driving data-driven decision making, and establishing data governance across the organization",
+      "titles": [
+        "Head of Data",
+        "Director of Data",
+        "Head of Analytics"
+      ],
+      "expandedTitles": [
+        "Head of Data",
+        "VP of Data",
+        "Chief Data Officer",
+        "Director of Data",
+        "Head of Analytics",
+        "VP of Data and Analytics",
+        "Chief Analytics Officer",
+        "Director of Data Science"
+      ]
+    },
+    {
+      "id": "business-intelligence-manager",
+      "categoryId": "data-team",
+      "icon": "📈",
+      "name": "Business Intelligence Manager",
+      "expandedName": "BI Director",
+      "seniorName": "VP of Business Intelligence",
+      "description": "BI professional focused on enterprise reporting and dashboard development",
+      "expandedDescription": "BI professional focused on enterprise reporting, dashboard development, enabling data-driven decision making, and providing self-service analytics capabilities across business functions",
+      "titles": [
+        "Business Intelligence Manager",
+        "BI Manager",
+        "Analytics Manager"
+      ],
+      "expandedTitles": [
+        "Business Intelligence Manager",
+        "BI Director",
+        "Head of Business Intelligence",
+        "Analytics Manager",
+        "Reporting Manager",
+        "BI and Analytics Lead",
+        "Business Intelligence Lead",
+        "Data Visualization Manager"
+      ]
+    },
+    {
+      "id": "vp-engineering",
+      "categoryId": "engineering-leadership",
+      "icon": "⚙️",
+      "name": "VP of Engineering",
+      "expandedName": "VP of Product Engineering",
+      "seniorName": "Chief Technology Officer",
+      "description": "Senior technical leader overseeing engineering teams and technology strategy",
+      "expandedDescription": "Senior technical leader overseeing engineering teams, technology strategy, product development infrastructure, and driving technical excellence across the organization",
+      "titles": [
+        "VP of Engineering",
+        "Head of Engineering",
+        "Director of Engineering"
+      ],
+      "expandedTitles": [
+        "VP of Engineering",
+        "Head of Engineering",
+        "VP of Product Engineering",
+        "Chief Technology Officer",
+        "Director of Engineering",
+        "VP of Software Engineering",
+        "Engineering Director",
+        "VP of Technology"
+      ]
+    },
+    {
+      "id": "cto",
+      "categoryId": "engineering-leadership",
+      "icon": "💻",
+      "name": "Chief Technology Officer",
+      "expandedName": "CTO",
+      "seniorName": "Chief Technology Officer",
+      "description": "Chief technology officer responsible for overall technical vision and architecture",
+      "expandedDescription": "Chief technology officer responsible for overall technical vision, architecture decisions, engineering team leadership, and driving technology innovation across the organization",
+      "titles": [
+        "Chief Technology Officer",
+        "CTO",
+        "VP of Technology"
+      ],
+      "expandedTitles": [
+        "Chief Technology Officer",
+        "CTO",
+        "VP of Technology",
+        "Head of Technology",
+        "Chief Technical Officer",
+        "Technology Director",
+        "VP of Engineering",
+        "Chief Information Officer"
+      ]
+    },
+    {
+      "id": "head-of-product-engineering",
+      "categoryId": "engineering-leadership",
+      "icon": "🛠️",
+      "name": "Head of Product Engineering",
+      "expandedName": "VP of Product Engineering",
+      "seniorName": "Chief Product Officer",
+      "description": "Product-focused engineering leader managing technical product strategy",
+      "expandedDescription": "Product-focused engineering leader managing product development teams, technical product strategy, and building data-driven product capabilities and analytics infrastructure",
+      "titles": [
+        "Head of Product Engineering",
+        "Director of Product Engineering",
+        "Product Engineering Manager"
+      ],
+      "expandedTitles": [
+        "Head of Product Engineering",
+        "VP of Product Engineering",
+        "Director of Product Engineering",
+        "Principal Product Engineer",
+        "Product Engineering Manager",
+        "Head of Product Technology",
+        "VP of Product Development",
+        "Chief Product Officer"
+      ]
+    },
+    {
+      "id": "engineering-director",
+      "categoryId": "engineering-leadership",
+      "icon": "🏗️",
+      "name": "Director of Engineering",
+      "expandedName": "Senior Director of Engineering",
+      "seniorName": "VP of Engineering",
+      "description": "Mid-senior engineering leader responsible for technical delivery and team management",
+      "expandedDescription": "Mid-senior engineering leader responsible for specific engineering teams, technical delivery, engineering best practices, and cross-team technical coordination",
+      "titles": [
+        "Director of Engineering",
+        "Engineering Director",
+        "Head of Backend Engineering"
+      ],
+      "expandedTitles": [
+        "Director of Engineering",
+        "Engineering Director",
+        "Head of Backend Engineering",
+        "Head of Frontend Engineering",
+        "Director of Software Engineering",
+        "Principal Engineering Manager",
+        "Senior Engineering Manager",
+        "Lead Engineering Manager"
+      ]
+    },
+    {
+      "id": "platform-engineering-lead",
+      "categoryId": "engineering-leadership",
+      "icon": "🏭",
+      "name": "Platform Engineering Lead",
+      "expandedName": "Head of Platform Engineering",
+      "seniorName": "VP of Platform",
+      "description": "Technical leader focused on platform infrastructure and developer tools",
+      "expandedDescription": "Technical leader focused on platform infrastructure, developer tools, enabling engineering team productivity, and building scalable platform capabilities",
+      "titles": [
+        "Platform Engineering Lead",
+        "Infrastructure Engineering Manager",
+        "DevOps Engineering Lead"
+      ],
+      "expandedTitles": [
+        "Platform Engineering Lead",
+        "Head of Platform Engineering",
+        "Director of Platform",
+        "Principal Platform Engineer",
+        "Infrastructure Engineering Manager",
+        "DevOps Engineering Lead",
+        "VP of Platform",
+        "Head of Infrastructure"
+      ]
+    },
+    {
+      "id": "ceo",
+      "categoryId": "executive-leadership",
+      "icon": "👑",
+      "name": "Chief Executive Officer",
+      "expandedName": "CEO",
+      "seniorName": "Chief Executive Officer",
+      "description": "Chief executive responsible for overall company strategy and growth initiatives",
+      "expandedDescription": "Chief executive responsible for overall company strategy, growth initiatives, major technology investment decisions, and driving data-driven decision making across the organization",
+      "titles": [
+        "Chief Executive Officer",
+        "CEO",
+        "Founder and CEO"
+      ],
+      "expandedTitles": [
+        "Chief Executive Officer",
+        "CEO",
+        "Founder and CEO",
+        "President and CEO",
+        "Managing Director",
+        "Chief Executive",
+        "Executive Director",
+        "Company President"
+      ]
+    },
+    {
+      "id": "chief-revenue-officer",
+      "categoryId": "executive-leadership",
+      "icon": "💰",
+      "name": "Chief Revenue Officer",
+      "expandedName": "CRO",
+      "seniorName": "Chief Revenue Officer",
+      "description": "Senior executive overseeing sales, marketing, and customer success",
+      "expandedDescription": "Senior executive overseeing sales, marketing, and customer success with focus on revenue growth, customer acquisition, and data-driven revenue operations",
+      "titles": [
+        "Chief Revenue Officer",
+        "CRO",
+        "VP of Revenue"
+      ],
+      "expandedTitles": [
+        "Chief Revenue Officer",
+        "CRO",
+        "VP of Revenue",
+        "Head of Revenue",
+        "Chief Commercial Officer",
+        "VP of Sales and Marketing",
+        "VP of Go-to-Market",
+        "Chief Growth Officer"
+      ]
+    },
+    {
+      "id": "chief-marketing-officer",
+      "categoryId": "executive-leadership",
+      "icon": "📢",
+      "name": "Chief Marketing Officer",
+      "expandedName": "CMO",
+      "seniorName": "Chief Marketing Officer",
+      "description": "Senior executive responsible for marketing strategy and customer acquisition",
+      "expandedDescription": "Senior executive responsible for marketing strategy, brand management, customer acquisition, and building data-driven marketing capabilities across the organization",
+      "titles": [
+        "Chief Marketing Officer",
+        "CMO",
+        "VP of Marketing"
+      ],
+      "expandedTitles": [
+        "Chief Marketing Officer",
+        "CMO",
+        "VP of Marketing",
+        "Head of Marketing",
+        "Chief Brand Officer",
+        "VP of Brand and Marketing",
+        "Marketing Director",
+        "VP of Growth Marketing"
+      ]
+    },
+    {
+      "id": "vp-of-product",
+      "categoryId": "executive-leadership",
+      "icon": "🎯",
+      "name": "VP of Product",
+      "expandedName": "Chief Product Officer",
+      "seniorName": "Chief Product Officer",
+      "description": "Senior product leader responsible for product strategy and user experience",
+      "expandedDescription": "Senior product leader responsible for product strategy, user experience, product-driven growth initiatives, and building data-driven product capabilities",
+      "titles": [
+        "VP of Product",
+        "Head of Product",
+        "Director of Product"
+      ],
+      "expandedTitles": [
+        "VP of Product",
+        "Chief Product Officer",
+        "Head of Product",
+        "Director of Product",
+        "VP of Product Management",
+        "Product Leadership",
+        "Senior Director of Product",
+        "VP of Product Strategy"
+      ]
+    },
+    {
+      "id": "chief-financial-officer",
+      "categoryId": "executive-leadership",
+      "icon": "💼",
+      "name": "Chief Financial Officer",
+      "expandedName": "CFO",
+      "seniorName": "Chief Financial Officer",
+      "description": "Senior financial executive responsible for financial strategy and analysis",
+      "expandedDescription": "Senior financial executive responsible for financial strategy, planning, analysis, and leveraging data-driven insights for business performance measurement and forecasting",
+      "titles": [
+        "Chief Financial Officer",
+        "CFO",
+        "VP of Finance"
+      ],
+      "expandedTitles": [
+        "Chief Financial Officer",
+        "CFO",
+        "VP of Finance",
+        "Head of Finance",
+        "Financial Director",
+        "VP of Finance and Operations",
+        "Chief Financial and Operations Officer",
+        "VP of Financial Planning"
+      ]
+    },
+    {
+      "id": "chief-operating-officer",
+      "categoryId": "executive-leadership",
+      "icon": "⚡",
+      "name": "Chief Operating Officer",
+      "expandedName": "COO",
+      "seniorName": "Chief Operating Officer",
+      "description": "Senior operations executive responsible for operational efficiency and performance",
+      "expandedDescription": "Senior operations executive responsible for day-to-day operations, process optimization, operational efficiency, and leveraging data for performance measurement across the organization",
+      "titles": [
+        "Chief Operating Officer",
+        "COO",
+        "VP of Operations"
+      ],
+      "expandedTitles": [
+        "Chief Operating Officer",
+        "COO",
+        "VP of Operations",
+        "Head of Operations",
+        "Operations Director",
+        "VP of Business Operations",
+        "Chief Operations and Strategy Officer",
+        "VP of Operational Excellence"
+      ]
+    }
+  ]
+} 

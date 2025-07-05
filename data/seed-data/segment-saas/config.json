@@ -1,0 +1,15 @@
+{
+  "name": "SaaS Companies - Segment",
+  "description": "Target account list for Segment targeting modern SaaS companies with growth indicators",
+  "vertical": "SaaS Technology",
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15",
+  "author": "Segment Sales Team",
+  "companyCount": 100,
+  "agentCount": 10,
+  "personaCount": 15,
+  "tags": ["segment", "saas", "b2b", "growth-companies"],
+  "description_long": "This dataset contains 100 modern SaaS companies with comprehensive qualification agents for Segment's customer data platform. Includes hiring trends, funding signals, technical stack analysis, and market expansion indicators.",
+  "targetCustomer": "Fast-growing SaaS companies with 100-5000 employees that need advanced customer data infrastructure",
+  "qualificationFocus": ["Data Infrastructure", "Marketing Operations", "Product Analytics", "Customer Experience"]
+}
